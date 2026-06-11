@@ -409,4 +409,114 @@ class Leads extends RestController
             $this->response(['message' => _l('invalid_lead_id')], RestController::HTTP_NOT_FOUND);
         }
     }
+
+    public function voice_notes_get()
+    {
+        if (!empty($this->get()) && !in_array('id', array_keys($this->get()))) {
+            $this->response(['message' => _l('something_went_wrong')], RestController::HTTP_INTERNAL_ERROR);
+        }
+        
+        $leadID = $this->get('id');
+        $table_name = db_prefix() . 'leads_chat_messages';
+        $staff_table = db_prefix() . 'staff';
+        
+        // Auto-create table if not exists just in case
+        $this->db->query("CREATE TABLE IF NOT EXISTS `$table_name` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `lead_id` INT NOT NULL,
+            `sender_id` INT NOT NULL,
+            `sender_role` VARCHAR(20) NOT NULL,
+            `staff_id` INT DEFAULT 0,
+            `message_type` VARCHAR(10) NOT NULL,
+            `message` TEXT NOT NULL,
+            `timestamp` DATETIME NOT NULL,
+            KEY `lead_id` (`lead_id`),
+            KEY `sender_id` (`sender_id`),
+            KEY `staff_id` (`staff_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+        $this->db->select("m.*, CONCAT(s.firstname, ' ', s.lastname) as sender_name");
+        $this->db->from("$table_name m");
+        $this->db->join("$staff_table s", "s.staffid = m.sender_id", "left");
+        $this->db->where('m.lead_id', $leadID);
+        $this->db->where('m.message_type', 'voice');
+        $this->db->order_by('m.timestamp', 'desc');
+        $voice_notes = $this->db->get()->result_array();
+        
+        foreach ($voice_notes as &$note) {
+            $note['formatted_time'] = _dt($note['timestamp']);
+            $note['relative_time'] = time_ago($note['timestamp']);
+            $note['avatar_url'] = staff_profile_image_url($note['sender_id'], 'small');
+            $note['message'] = base_url($note['message']);
+        }
+        
+        if (!empty($voice_notes)) {
+            $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $voice_notes], RestController::HTTP_OK);
+        } else {
+            $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function voice_notes_post()
+    {
+        try {
+            if (!empty($this->get()) && !in_array('id', array_keys($this->get()))) {
+                $this->response(['message' => _l('something_went_wrong')], RestController::HTTP_INTERNAL_ERROR);
+            }
+            
+            $leadID = $this->get('id');
+            
+            if (!isset($_FILES['audio'])) {
+                $this->response(['message' => 'Missing audio file'], RestController::HTTP_BAD_REQUEST);
+            }
+            
+            $upload_dir = FCPATH . 'uploads/leads_chat';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            $filename = 'audio_' . time() . '_' . rand(1000, 9999) . '.wav';
+            $filepath = $upload_dir . '/' . $filename;
+            
+            if (move_uploaded_file($_FILES['audio']['tmp_name'], $filepath)) {
+                $data = [
+                    'lead_id' => intval($leadID),
+                    'sender_id' => $this->staffInfo['data']->staff_id,
+                    'sender_role' => is_admin() ? 'admin' : 'staff',
+                    'staff_id' => is_admin() ? 0 : $this->staffInfo['data']->staff_id,
+                    'message_type' => 'voice',
+                    'message' => 'uploads/leads_chat/' . $filename,
+                    'timestamp' => date('Y-m-d H:i:s')
+                ];
+                
+                $table_name = db_prefix() . 'leads_chat_messages';
+                
+                // Auto-create table if not exists just in case
+                $this->db->query("CREATE TABLE IF NOT EXISTS `$table_name` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `lead_id` INT NOT NULL,
+                    `sender_id` INT NOT NULL,
+                    `sender_role` VARCHAR(20) NOT NULL,
+                    `staff_id` INT DEFAULT 0,
+                    `message_type` VARCHAR(10) NOT NULL,
+                    `message` TEXT NOT NULL,
+                    `timestamp` DATETIME NOT NULL,
+                    KEY `lead_id` (`lead_id`),
+                    KEY `sender_id` (`sender_id`),
+                    KEY `staff_id` (`staff_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                
+                if ($this->db->insert($table_name, $data)) {
+                    $this->response(['message' => 'Voice note uploaded successfully'], RestController::HTTP_OK);
+                } else {
+                    @unlink($filepath);
+                    $this->response(['message' => 'Failed to save to database'], RestController::HTTP_INTERNAL_ERROR);
+                }
+            } else {
+                $this->response(['message' => 'Audio upload failed'], RestController::HTTP_INTERNAL_ERROR);
+            }
+        } catch (\Throwable $th) {
+            $this->response(['message' => _l('something_went_wrong')], RestController::HTTP_INTERNAL_ERROR);
+        }
+    }
 }

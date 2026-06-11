@@ -600,6 +600,7 @@ class LocalStrings {
   static const String pleaseEnterNote = "Please, Enter Note.";
   static const String dateContacted = "Date Contacted";
   static const String activityLogs = "Activity Logs";
+  static const String voiceNotes = "Voice Notes";
   static const String createdLead = "Created lead by";
   static const String createdNewTask = "Created new task";
   static const String updatedLeadStatusFrom = "Updated lead status from";

@@ -43,6 +43,7 @@ $route['flutex_admin_api/leads/search/(:any)']  = 'leads/search/search/$1';     
 $route['flutex_admin_api/leads/activity_log/(:num)']  = 'leads/activity_log/id/$1'; // GET: Leads Activity Log
 $route['flutex_admin_api/leads/notes/(:num)']  = 'leads/notes/id/$1';               // GET: Leads Notes                         // POST: Add New Note
 $route['flutex_admin_api/leads/reminders/(:num)']  = 'leads/reminders/id/$1';       // GET: Leads Reminders                     // POST: Add New Reminder
+$route['flutex_admin_api/leads/voice_notes/(:num)']  = 'leads/voice_notes/id/$1';   // GET: Leads Voice Notes                   // POST: Add New Voice Note
 
 // Contracts
 $route['flutex_admin_api/contracts'] = 'contracts/contracts';                       // GET: List All Contracts                   // POST: Add New Contract

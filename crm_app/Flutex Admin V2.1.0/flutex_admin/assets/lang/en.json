@@ -1,4 +1,4 @@
-﻿{
+{
   "Nooryak CRM": "Nooryak CRM",
   "Onboarding one": "Welcome to Nooryak CRM",
   "Onboarding One Description": "Your gateway to enhanced customer relationships on the go. Get ready to revolutionize how you manage contacts, deals, and tasks with ease.",
@@ -484,6 +484,7 @@
   "Please, Enter Note.": "Please, Enter Note.",
   "Date Contacted": "Date Contacted",
   "Activity Logs": "Activity Logs",
+  "Voice Notes": "Voice Notes",
   "Created lead by": "Created lead by",
   "Created new task": "Created new task",
   "Updated lead status from": "Updated lead status from",

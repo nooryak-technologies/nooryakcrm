@@ -16,6 +16,7 @@ import 'package:flutex_admin/features/lead/section/lead_activity_log.dart';
 import 'package:flutex_admin/features/lead/section/lead_attachment.dart';
 import 'package:flutex_admin/features/lead/section/lead_notes.dart';
 import 'package:flutex_admin/features/lead/section/lead_reminders.dart';
+import 'package:flutex_admin/features/lead/section/lead_voice_notes.dart';
 import 'package:flutex_admin/features/lead/widget/lead_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -143,6 +144,15 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                         iconSize: 18,
                         space: Dimensions.space10,
                       ),
+                      TextIcon(
+                        text: LocalStrings.voiceNotes.tr,
+                        textStyle: regularLarge.copyWith(
+                            color:
+                                Theme.of(context).textTheme.bodyMedium!.color),
+                        icon: Icons.mic,
+                        iconSize: 18,
+                        space: Dimensions.space10,
+                      ),
                     ],
                     views: [
                       LeadProfile(
@@ -158,6 +168,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                         id: controller.leadDetailsModel.data!.id!,
                       ),
                       LeadActivityLog(
+                        id: controller.leadDetailsModel.data!.id!,
+                      ),
+                      LeadVoiceNotes(
                         id: controller.leadDetailsModel.data!.id!,
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:flutex_admin/core/utils/url_container.dart';
 import 'package:flutex_admin/common/models/response_model.dart';
 import 'package:flutex_admin/features/lead/model/lead_create_model.dart';
 import 'package:flutex_admin/features/lead/model/reminder_create_model.dart';
+import 'package:http/http.dart' as http;
 
 class LeadRepo {
   ApiClient apiClient;
@@ -132,6 +133,46 @@ class LeadRepo {
       passHeader: true,
     );
     return responseModel;
+  }
+
+  Future<ResponseModel> getLeadVoiceNotes(leadId) async {
+    String url =
+        "${UrlContainer.baseUrl}${UrlContainer.leadsUrl}/voice_notes/$leadId";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.getMethod,
+      null,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
+  Future<ResponseModel> postLeadVoiceNote(
+    leadId,
+    List<int> audioBytes,
+    String filename,
+  ) async {
+    String url =
+        "${UrlContainer.baseUrl}${UrlContainer.leadsUrl}/voice_notes/$leadId";
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    apiClient.initToken();
+    request.headers.addAll(<String, String>{'Authorization': apiClient.token});
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'audio',
+        audioBytes,
+        filename: filename,
+      ),
+    );
+
+    http.StreamedResponse response = await request.send();
+    String jsonResponse = await response.stream.bytesToString();
+    if (response.statusCode == 200) {
+      return ResponseModel(true, 'success', jsonResponse);
+    } else {
+      return ResponseModel(false, 'failed', jsonResponse);
+    }
   }
 
   Future<ResponseModel> attachmentDownload(String attachmentKey) async {

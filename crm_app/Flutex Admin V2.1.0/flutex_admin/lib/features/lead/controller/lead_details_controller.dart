@@ -10,6 +10,7 @@ import 'package:flutex_admin/features/lead/model/lead_details_model.dart';
 import 'package:flutex_admin/features/lead/model/notes_model.dart';
 import 'package:flutex_admin/features/lead/model/reminder_create_model.dart';
 import 'package:flutex_admin/features/lead/model/reminders_model.dart';
+import 'package:flutex_admin/features/lead/model/voice_note_model.dart';
 import 'package:flutex_admin/features/lead/repo/lead_repo.dart';
 import 'package:flutex_admin/features/staff/model/staff_model.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class LeadDetailsController extends GetxController {
   ActivityLogModel activityLogModel = ActivityLogModel();
   NotesModel notesModel = NotesModel();
   RemindersModel remindersModel = RemindersModel();
+  VoiceNotesModel voiceNotesModel = VoiceNotesModel();
+  bool isVoiceNotesLoading = true;
   bool sendEmailReminder = false;
   bool leadContacted = false;
 
@@ -224,6 +227,45 @@ class LeadDetailsController extends GetxController {
 
     downloadLoading = false;
     update();
+  }
+
+  Future<void> loadLeadVoiceNotes(leadId) async {
+    isVoiceNotesLoading = true;
+    update();
+    ResponseModel responseModel = await leadRepo.getLeadVoiceNotes(leadId);
+    if (responseModel.status) {
+      voiceNotesModel = VoiceNotesModel.fromJson(
+        jsonDecode(responseModel.responseJson),
+      );
+    } else {
+      voiceNotesModel = VoiceNotesModel(status: false, message: responseModel.message, data: []);
+    }
+
+    isVoiceNotesLoading = false;
+    update();
+  }
+
+  Future<bool> uploadVoiceNote(leadId, List<int> audioBytes, String filename) async {
+    isSubmitLoading = true;
+    update();
+
+    ResponseModel responseModel = await leadRepo.postLeadVoiceNote(
+      leadId,
+      audioBytes,
+      filename,
+    );
+
+    isSubmitLoading = false;
+    update();
+
+    if (responseModel.status) {
+      await loadLeadVoiceNotes(leadId);
+      CustomSnackBar.success(successList: ['Voice note uploaded successfully'.tr]);
+      return true;
+    } else {
+      CustomSnackBar.error(errorList: [responseModel.message.tr]);
+      return false;
+    }
   }
 
   clearData() {
