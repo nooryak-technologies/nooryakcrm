@@ -103,7 +103,7 @@ class LocalStrings {
   static const String convertedLeads = "Converted Leads";
   static const String notCompleted = "Not Completed Tasks";
   static const String projectsInProgress = "Projects In Progress";
-  static const String advancePaid = "Advance Paid";
+  static const String advancePaid = "Paid Payment";
   static const String pendingPayment = "Pending Payment";
   static const String projectStatistics = "Statistics by Project Status";
 
