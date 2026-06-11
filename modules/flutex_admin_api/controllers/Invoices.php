@@ -86,6 +86,25 @@ class Invoices extends RestController
                 'percent' => strval($percent_data['percent'])
             ]);
         }
+
+        // Add Paid Payment and Pending Payment KPI
+        $invoices_total = $this->invoices_model->get_invoices_total([]);
+        $total_amount = floatval($invoices_total['due']) + floatval($invoices_total['paid']);
+        $this->load->model('currencies_model');
+        $base_currency = $this->currencies_model->get_base_currency();
+        $currency_symbol = $base_currency ? $base_currency->symbol : '$';
+
+        array_push($invoices, [
+            'status' => 'Paid Payment',
+            'total' => $currency_symbol . number_format($invoices_total['advance_paid'], 2),
+            'percent' => strval($total_amount > 0 ? number_format(($invoices_total['advance_paid'] * 100) / $total_amount, 2) : 0)
+        ]);
+        array_push($invoices, [
+            'status' => 'Pending Payment',
+            'total' => $currency_symbol . number_format($invoices_total['pending_payment'], 2),
+            'percent' => strval($total_amount > 0 ? number_format(($invoices_total['pending_payment'] * 100) / $total_amount, 2) : 0)
+        ]);
+
         return $invoices;
     }
     

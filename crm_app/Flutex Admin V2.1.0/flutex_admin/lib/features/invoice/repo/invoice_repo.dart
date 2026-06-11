@@ -55,6 +55,17 @@ class InvoiceRepo {
     return responseModel;
   }
 
+  Future<ResponseModel> getAllStaffs() async {
+    String url = "${UrlContainer.baseUrl}${UrlContainer.staffsUrl}";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.getMethod,
+      null,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
   Future<ResponseModel> getAllProjects() async {
     String url = "${UrlContainer.baseUrl}${UrlContainer.projectsUrl}";
     ResponseModel responseModel = await apiClient.request(
@@ -131,25 +142,14 @@ class InvoiceRepo {
       "billing_street": invoiceModel.billingStreet,
       "project_id": invoiceModel.projectId,
       "adminnote": invoiceModel.adminNote,
-      //"billing_city": invoiceModel.billingCity,
-      //"billing_state": invoiceModel.billingState,
-      //"billing_zip": invoiceModel.billingZip,
-      //"billing_country": invoiceModel.billingCountry,
-      //"include_shipping": invoiceModel.includeShipping,
-      //"show_shipping_on_invoice": invoiceModel.showShippingOnInvoice,
-      //"shipping_street": invoiceModel.shippingStreet,
-      //"shipping_city": invoiceModel.shippingCity,
-      //"shipping_state": invoiceModel.shippingState,
-      //"shipping_zip": invoiceModel.shippingZip,
-      //"shipping_country": invoiceModel.shippingCountry,
-      //"cancel_overdue_reminders": invoiceModel.cancelOverdueReminders,
-      //"tags": invoiceModel.tags,
-      //"sale_agent": invoiceModel.saleAgent,
-      //"recurring": invoiceModel.recurring,
-      //"discount_type": invoiceModel.discountType,
-      //"repeat_every_custom": invoiceModel.repeatEveryCustom,
-      //"repeat_type_custom": invoiceModel.repeatTypeCustom,
-      //"cycles": invoiceModel.cycles,
+      "cancel_overdue_reminders": invoiceModel.cancelOverdueReminders,
+      "tags": invoiceModel.tags,
+      "sale_agent": invoiceModel.saleAgent,
+      "recurring": invoiceModel.recurring,
+      "discount_type": invoiceModel.discountType,
+      "discount_percent": invoiceModel.discountPercent,
+      "adjustment": invoiceModel.adjustment,
+      "advance": invoiceModel.advance,
       "clientnote": invoiceModel.clientNote,
       "terms": invoiceModel.terms,
     };

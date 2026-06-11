@@ -18,6 +18,7 @@ import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/local_strings.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/customer/model/customer_model.dart';
+import 'package:flutex_admin/features/staff/model/staff_model.dart';
 import 'package:flutex_admin/features/invoice/controller/invoice_controller.dart';
 import 'package:flutex_admin/features/invoice/repo/invoice_repo.dart';
 import 'package:flutex_admin/features/item/model/item_model.dart';
@@ -39,6 +40,7 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
   final itemFormKey = GlobalKey<FormState>();
   final AsyncMemoizer<CustomersModel> customersMemoizer = AsyncMemoizer();
   final AsyncMemoizer<ProjectsModel> projectsMemoizer = AsyncMemoizer();
+  final AsyncMemoizer<StaffsModel> staffsMemoizer = AsyncMemoizer();
   final AsyncMemoizer<CurrenciesModel> currenciesMemoizer = AsyncMemoizer();
   final AsyncMemoizer<PaymentModesModel> paymentModesMemoizer = AsyncMemoizer();
   final AsyncMemoizer<ItemsModel> itemsMemoizer = AsyncMemoizer();
@@ -109,58 +111,58 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                         controller.loadCustomers,
                       ),
                       builder: (context, customerList) {
-                        if (customerList.data?.status ?? false) {
-                          return CustomDropDownTextField(
-                            hintText: LocalStrings.selectClient.tr,
-                            dropDownColor: Theme.of(context).cardColor,
-                            onChanged: (value) {
-                              final customer = value as Customer;
-                              controller.clientController.text =
-                                  customer.userId!;
-                              controller.billingStreetController.text =
-                                  customer.billingStreet ?? '';
-                              controller.currencyController.text =
-                                  customer.defaultCurrency == '0'
-                                  ? controller
-                                            .settingsModel
-                                            .data
-                                            ?.currency
-                                            ?.id ??
-                                        '0'
-                                  : customer.defaultCurrency ?? '0';
-                              controller.update();
-                            },
-                            validator: (value) {
-                              if (value == null) {
-                                return '${LocalStrings.client.tr} ${LocalStrings.isRequired.tr}';
-                              } else {
-                                return null;
-                              }
-                            },
-                            items: controller.customersModel.data!.map((
-                              customer,
-                            ) {
-                              return DropdownMenuItem(
-                                value: customer,
-                                child: Text(
-                                  customer.company ?? '',
-                                  style: regularDefault.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium!.color,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else if (customerList.data?.status == false) {
+                        if (customerList.connectionState == ConnectionState.waiting) {
+                          return const CustomLoader(isFullScreen: false);
+                        }
+                        if (customerList.hasError || customerList.data == null || customerList.data?.status == false) {
                           return CustomDropDownWithTextField(
                             selectedValue: LocalStrings.noClientFound.tr,
                             list: [LocalStrings.noClientFound.tr],
                           );
-                        } else {
-                          return const CustomLoader(isFullScreen: false);
                         }
+                        return CustomDropDownTextField(
+                          hintText: LocalStrings.selectClient.tr,
+                          dropDownColor: Theme.of(context).cardColor,
+                          onChanged: (value) {
+                            final customer = value as Customer;
+                            controller.clientController.text =
+                                customer.userId!;
+                            controller.billingStreetController.text =
+                                customer.billingStreet ?? '';
+                            controller.currencyController.text =
+                                customer.defaultCurrency == '0'
+                                ? controller
+                                          .settingsModel
+                                          .data
+                                          ?.currency
+                                          ?.id ??
+                                      '0'
+                                : customer.defaultCurrency ?? '0';
+                            controller.update();
+                          },
+                          validator: (value) {
+                            if (value == null) {
+                              return '${LocalStrings.client.tr} ${LocalStrings.isRequired.tr}';
+                            } else {
+                              return null;
+                            }
+                          },
+                          items: controller.customersModel.data!.map((
+                            customer,
+                          ) {
+                            return DropdownMenuItem(
+                              value: customer,
+                              child: Text(
+                                customer.company ?? '',
+                                style: regularDefault.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.color,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
                       },
                     ),
 
@@ -169,41 +171,153 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                         controller.loadProjects,
                       ),
                       builder: (context, projectList) {
-                        if (projectList.data?.status ?? false) {
-                          return CustomDropDownTextField(
-                            hintText: LocalStrings.selectProject.tr,
-                            dropDownColor: Theme.of(context).cardColor,
-                            selectedValue: controller.projectController.text.isEmpty
-                                ? null
-                                : controller.projectController.text,
-                            onChanged: (value) {
-                              controller.projectController.text = value.toString();
-                            },
-                            items: controller.projectsModel.data!.map((
-                              project,
-                            ) {
-                              return DropdownMenuItem(
-                                value: project.id,
-                                child: Text(
-                                  project.name ?? '',
-                                  style: regularDefault.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium!.color,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else if (projectList.data?.status == false) {
+                        if (projectList.connectionState == ConnectionState.waiting) {
+                          return const CustomLoader(isFullScreen: false);
+                        }
+                        if (projectList.hasError || projectList.data == null || projectList.data?.status == false) {
                           return CustomDropDownWithTextField(
                             selectedValue: LocalStrings.noProjectFound.tr,
                             list: [LocalStrings.noProjectFound.tr],
                           );
-                        } else {
+                        }
+                        return CustomDropDownTextField(
+                          hintText: LocalStrings.selectProject.tr,
+                          dropDownColor: Theme.of(context).cardColor,
+                          selectedValue: controller.projectController.text.isEmpty
+                              ? null
+                              : controller.projectController.text,
+                          onChanged: (value) {
+                            controller.projectController.text = value.toString();
+                          },
+                          items: controller.projectsModel.data!.map((
+                            project,
+                          ) {
+                            return DropdownMenuItem(
+                              value: project.id,
+                              child: Text(
+                                project.name ?? '',
+                                style: regularDefault.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.color,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+
+                    CustomTextField(
+                      labelText: LocalStrings.tags.tr,
+                      controller: controller.tagsController,
+                      focusNode: controller.tagsFocusNode,
+                      textInputType: TextInputType.text,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
+
+                    FutureBuilder(
+                      future: staffsMemoizer.runOnce(
+                        controller.loadStaffs,
+                      ),
+                      builder: (context, staffList) {
+                        if (staffList.connectionState == ConnectionState.waiting) {
                           return const CustomLoader(isFullScreen: false);
                         }
+                        if (staffList.hasError || staffList.data == null || staffList.data?.status == false) {
+                          return CustomDropDownWithTextField(
+                            selectedValue: 'No Staff Found',
+                            list: ['No Staff Found'],
+                          );
+                        }
+                        return CustomDropDownTextField(
+                          hintText: 'Select Sale Agent',
+                          dropDownColor: Theme.of(context).cardColor,
+                          selectedValue: controller.saleAgentController.text.isEmpty
+                              ? null
+                              : controller.saleAgentController.text,
+                          onChanged: (value) {
+                            controller.saleAgentController.text = value.toString();
+                          },
+                          items: controller.staffsModel.data!.map((
+                            staff,
+                          ) {
+                            return DropdownMenuItem(
+                              value: staff.id,
+                              child: Text(
+                                '${staff.firstName ?? ''} ${staff.lastName ?? ''}',
+                                style: regularDefault.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.color,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
                       },
+                    ),
+
+                    CustomDropDownTextField(
+                      hintText: 'Recurring Invoice?',
+                      dropDownColor: Theme.of(context).cardColor,
+                      selectedValue: controller.recurringController.text.isEmpty
+                          ? null
+                          : controller.recurringController.text,
+                      onChanged: (value) {
+                        controller.recurringController.text = value.toString();
+                      },
+                      items: [
+                        DropdownMenuItem(value: '0', child: Text('No', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '1-week', child: Text('1 Week', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '2-week', child: Text('2 Weeks', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '3-week', child: Text('3 Weeks', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '4-week', child: Text('4 Weeks', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '1-month', child: Text('1 Month', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '2-month', child: Text('2 Months', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '3-month', child: Text('3 Months', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '6-month', child: Text('6 Months', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: '1-year', child: Text('1 Year', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                      ],
+                    ),
+
+                    CustomDropDownTextField(
+                      hintText: 'Discount Type',
+                      dropDownColor: Theme.of(context).cardColor,
+                      selectedValue: controller.discountTypeController.text.isEmpty
+                          ? null
+                          : controller.discountTypeController.text,
+                      onChanged: (value) {
+                        controller.discountTypeController.text = value.toString();
+                      },
+                      items: [
+                        DropdownMenuItem(value: '', child: Text('No discount', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: 'before_tax', child: Text('Before Tax', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                        DropdownMenuItem(value: 'after_tax', child: Text('After Tax', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color))),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: controller.cancelOverdueReminders,
+                          activeColor: Theme.of(context).primaryColor,
+                          onChanged: (value) {
+                            controller.cancelOverdueReminders = value ?? false;
+                            controller.update();
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Prevent sending overdue reminders for this invoice',
+                            style: regularDefault.copyWith(
+                              color: Theme.of(context).textTheme.bodyMedium!.color,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
                     // Invoice Date
@@ -272,41 +386,41 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                         controller.loadCurrencies,
                       ),
                       builder: (context, currenciesList) {
-                        if (currenciesList.data?.status ?? false) {
-                          return CustomDropDownTextField(
-                            hintText: LocalStrings.defaultCurrency.tr,
-                            onChanged: null,
-                            //(value) {
-                            //  controller.currencyController.text = value;
-                            //},
-                            selectedValue:
-                                controller.currencyController.text.isEmpty
-                                ? controller.settingsModel.data?.currency?.id
-                                : controller.currencyController.text,
-                            items: controller.currenciesModel.data!.map((
-                              currency,
-                            ) {
-                              return DropdownMenuItem(
-                                value: currency.id,
-                                child: Text(
-                                  currency.name ?? '',
-                                  style: regularDefault.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium!.color,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        } else if (currenciesList.data?.status == false) {
+                        if (currenciesList.connectionState == ConnectionState.waiting) {
+                          return const CustomLoader(isFullScreen: false);
+                        }
+                        if (currenciesList.hasError || currenciesList.data == null || currenciesList.data?.status == false) {
                           return CustomDropDownWithTextField(
                             selectedValue: LocalStrings.noCurrencyFound.tr,
                             list: [LocalStrings.noCurrencyFound.tr],
                           );
-                        } else {
-                          return const CustomLoader(isFullScreen: false);
                         }
+                        return CustomDropDownTextField(
+                          hintText: LocalStrings.defaultCurrency.tr,
+                          onChanged: null,
+                          //(value) {
+                          //  controller.currencyController.text = value;
+                          //},
+                          selectedValue:
+                              controller.currencyController.text.isEmpty
+                              ? controller.settingsModel.data?.currency?.id
+                              : controller.currencyController.text,
+                          items: controller.currenciesModel.data!.map((
+                            currency,
+                          ) {
+                            return DropdownMenuItem(
+                              value: currency.id,
+                              child: Text(
+                                currency.name ?? '',
+                                style: regularDefault.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.color,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        );
                       },
                     ),
 
@@ -316,35 +430,35 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                         controller.loadPaymentModes,
                       ),
                       builder: (context, paymentModesList) {
-                        if (paymentModesList.data?.status ?? false) {
-                          return CustomMultiDropDownTextField(
-                            controller: controller.paymentModeController,
-                            hintText: LocalStrings.selectPaymentMode.tr,
-                            onChanged: (options) {
-                              controller.allowedPaymentModesList.clear();
-                              for (var v in options) {
-                                controller.allowedPaymentModesList.add(
-                                  v.toString(),
-                                );
-                              }
-                            },
-                            items: controller.paymentModesModel.data!.map((
-                              paymentMode,
-                            ) {
-                              return DropdownItem(
-                                label: paymentMode.name?.tr ?? '',
-                                value: paymentMode.id!,
-                              );
-                            }).toList(),
-                          );
-                        } else if (paymentModesList.data?.status == false) {
+                        if (paymentModesList.connectionState == ConnectionState.waiting) {
+                          return const CustomLoader(isFullScreen: false);
+                        }
+                        if (paymentModesList.hasError || paymentModesList.data == null || paymentModesList.data?.status == false) {
                           return CustomDropDownWithTextField(
                             selectedValue: LocalStrings.noPaymentModeFound.tr,
                             list: [LocalStrings.noPaymentModeFound.tr],
                           );
-                        } else {
-                          return const CustomLoader(isFullScreen: false);
                         }
+                        return CustomMultiDropDownTextField(
+                          controller: controller.paymentModeController,
+                          hintText: LocalStrings.selectPaymentMode.tr,
+                          onChanged: (options) {
+                            controller.allowedPaymentModesList.clear();
+                            for (var v in options) {
+                              controller.allowedPaymentModesList.add(
+                                v.toString(),
+                              );
+                            }
+                          },
+                          items: controller.paymentModesModel.data!.map((
+                            paymentMode,
+                          ) {
+                            return DropdownItem(
+                              label: paymentMode.name?.tr ?? '',
+                              value: paymentMode.id!,
+                            );
+                          }).toList(),
+                        );
                       },
                     ),
 
@@ -400,46 +514,46 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                           child: FutureBuilder(
                             future: itemsMemoizer.runOnce(controller.loadItems),
                             builder: (context, itemsList) {
-                              if (itemsList.data?.status ?? false) {
-                                return CustomDropDownTextField(
-                                  hintText: LocalStrings.addItem.tr,
-                                  onChanged: (value) {
-                                    final item = value as Item;
-                                    controller.itemController.text =
-                                        item.description ?? '';
-                                    controller.descriptionController.text =
-                                        item.longDescription ?? '';
-                                    controller.qtyController.text = '1';
-                                    controller.unitController.text =
-                                        item.unit ?? '';
-                                    controller.rateController.text =
-                                        item.rate ?? '';
-                                    controller.update();
-                                  },
-                                  items: controller.itemsModel.data!.map((
-                                    Item item,
-                                  ) {
-                                    return DropdownMenuItem(
-                                      value: item,
-                                      child: Text(
-                                        item.description ?? '',
-                                        style: regularDefault.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium!.color,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                );
-                              } else if (itemsList.data?.status == false) {
+                              if (itemsList.connectionState == ConnectionState.waiting) {
+                                return const CustomLoader(isFullScreen: false);
+                              }
+                              if (itemsList.hasError || itemsList.data == null || itemsList.data?.status == false) {
                                 return CustomDropDownWithTextField(
                                   selectedValue: LocalStrings.noItemFound.tr,
                                   list: [LocalStrings.noItemFound.tr],
                                 );
-                              } else {
-                                return const CustomLoader(isFullScreen: false);
                               }
+                              return CustomDropDownTextField(
+                                hintText: LocalStrings.addItem.tr,
+                                onChanged: (value) {
+                                  final item = value as Item;
+                                  controller.itemController.text =
+                                      item.description ?? '';
+                                  controller.descriptionController.text =
+                                      item.longDescription ?? '';
+                                  controller.qtyController.text = '1';
+                                  controller.unitController.text =
+                                      item.unit ?? '';
+                                  controller.rateController.text =
+                                      item.rate ?? '';
+                                  controller.update();
+                                },
+                                items: controller.itemsModel.data!.map((
+                                  Item item,
+                                ) {
+                                  return DropdownMenuItem(
+                                    value: item,
+                                    child: Text(
+                                      item.description ?? '',
+                                      style: regularDefault.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium!.color,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              );
                             },
                           ),
                         ),
@@ -687,6 +801,60 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                           );
                         },
                       ),
+
+                    Card(
+                      margin: const EdgeInsets.symmetric(vertical: Dimensions.space10),
+                      child: Padding(
+                        padding: const EdgeInsets.all(Dimensions.space15),
+                        child: Column(
+                          spacing: Dimensions.space10,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Sub Total', style: regularDefault),
+                                Text(controller.subtotalInvoiceAmount, style: boldDefault),
+                              ],
+                            ),
+                            CustomTextField(
+                              labelText: 'Discount %',
+                              controller: controller.discountPercentController,
+                              focusNode: controller.discountPercentFocusNode,
+                              textInputType: TextInputType.number,
+                              onChanged: (value) {
+                                controller.calculateInvoiceAmount();
+                              },
+                            ),
+                            CustomTextField(
+                              labelText: 'Adjustment',
+                              controller: controller.adjustmentController,
+                              focusNode: controller.adjustmentFocusNode,
+                              textInputType: TextInputType.number,
+                              onChanged: (value) {
+                                controller.calculateInvoiceAmount();
+                              },
+                            ),
+                            CustomTextField(
+                              labelText: 'Advance Paid',
+                              controller: controller.advanceController,
+                              focusNode: controller.advanceFocusNode,
+                              textInputType: TextInputType.number,
+                              onChanged: (value) {
+                                controller.calculateInvoiceAmount();
+                              },
+                            ),
+                            const Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Total', style: boldDefault.copyWith(fontSize: 16)),
+                                Text(controller.totalInvoiceAmount, style: boldDefault.copyWith(fontSize: 16, color: Theme.of(context).primaryColor)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
                     CustomTextField(
                       labelText: LocalStrings.adminNote.tr,

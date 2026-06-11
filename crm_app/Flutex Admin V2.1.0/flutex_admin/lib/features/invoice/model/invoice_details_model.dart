@@ -52,6 +52,7 @@ class InvoiceDetails {
     String? couponDiscount,
     String? total,
     String? adjustment,
+    String? advance,
     String? addedFrom,
     String? hash,
     String? status,
@@ -124,6 +125,7 @@ class InvoiceDetails {
     _couponDiscount = couponDiscount;
     _total = total;
     _adjustment = adjustment;
+    _advance = advance;
     _addedFrom = addedFrom;
     _hash = hash;
     _status = status;
@@ -198,6 +200,7 @@ class InvoiceDetails {
     _couponDiscount = json['coupon_discount'];
     _total = json['total'];
     _adjustment = json['adjustment'];
+    _advance = json['advance'];
     _addedFrom = json['addedfrom'];
     _hash = json['hash'];
     _status = json['status'];
@@ -292,6 +295,7 @@ class InvoiceDetails {
   String? _couponDiscount;
   String? _total;
   String? _adjustment;
+  String? _advance;
   String? _addedFrom;
   String? _hash;
   String? _status;
@@ -364,6 +368,7 @@ class InvoiceDetails {
   String? get couponDiscount => _couponDiscount;
   String? get total => _total;
   String? get adjustment => _adjustment;
+  String? get advance => _advance;
   String? get addedFrom => _addedFrom;
   String? get hash => _hash;
   String? get status => _status;
@@ -439,6 +444,7 @@ class InvoiceDetails {
     map['coupon_discount'] = _couponDiscount;
     map['total'] = _total;
     map['adjustment'] = _adjustment;
+    map['advance'] = _advance;
     map['addedfrom'] = _addedFrom;
     map['hash'] = _hash;
     map['status'] = _status;

@@ -177,6 +177,12 @@ class ColorResources {
       case 'Paid':
         color = ColorResources.greenColor;
         break;
+      case 'Paid Payment':
+        color = ColorResources.greenColor;
+        break;
+      case 'Pending Payment':
+        color = ColorResources.redColor;
+        break;
       case 'Partialy Paid':
         color = ColorResources.colorOrange;
         break;

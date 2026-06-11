@@ -34,6 +34,10 @@ class InvoicePostModel {
   final String? adminNote;
   final String? clientNote;
   final String? terms;
+  final List<String>? removedItems;
+  final String? discountPercent;
+  final String? adjustment;
+  final String? advance;
 
   InvoicePostModel({
     required this.clientId,
@@ -68,6 +72,9 @@ class InvoicePostModel {
     this.projectId,
     this.adminNote,
     this.removedItems,
+    this.discountPercent,
+    this.adjustment,
+    this.advance,
     this.clientNote,
     this.terms,
   });
