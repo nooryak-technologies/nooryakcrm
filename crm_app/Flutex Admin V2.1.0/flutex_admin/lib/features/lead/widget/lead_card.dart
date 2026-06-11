@@ -57,6 +57,58 @@ class LeadCard extends StatelessWidget {
                                 maxLines: 2,
                                 style: regularLarge,
                               ),
+                              if (lead.phoneNumber != null &&
+                                  lead.phoneNumber!.isNotEmpty) ...[
+                                const SizedBox(height: Dimensions.space3),
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(4),
+                                  onTap: () async {
+                                    final Uri launchUri = Uri(
+                                      scheme: 'tel',
+                                      path: lead.phoneNumber,
+                                    );
+                                    try {
+                                      await launchUrl(launchUri);
+                                    } catch (e) {
+                                      // Handle launch error
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: ColorResources.blueColor
+                                          .withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: ColorResources.blueColor
+                                            .withOpacity(0.4),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.phone,
+                                          size: 12,
+                                          color: ColorResources.blueColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Call Now',
+                                          style: regularSmall.copyWith(
+                                            color: ColorResources.blueColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                               Text(
                                 '${lead.title} - ${lead.company}',
                                 overflow: TextOverflow.ellipsis,
