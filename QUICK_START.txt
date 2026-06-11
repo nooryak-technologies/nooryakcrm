@@ -1,0 +1,133 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    CURRENCY & KANBAN FIX - QUICK START                     ║
+║                           Implementation Guide                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: UPDATE CURRENCY SYMBOLS (Choose ONE method)                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  ► METHOD A - Web Interface (EASIEST - Recommended):
+    1. Open: http://localhost/crm/update_currency_symbol.php
+    2. Click "Update $ to ₹" button
+    3. DELETE the file after success
+
+  ► METHOD B - phpMyAdmin:
+    1. Login to phpMyAdmin
+    2. Select database: nooryak_crm  
+    3. Run SQL:
+       UPDATE `tbl_currencies` SET `symbol` = '₹' WHERE `symbol` = '$';
+
+  ► METHOD C - Import SQL File:
+    1. Open phpMyAdmin → Import
+    2. Select: update_currency_to_rupee.sql
+    3. Click "Go"
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: VERIFY CSS CHANGES                                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  ✓ File already updated: assets/css/custom.css
+  ✓ No action needed - changes are already applied
+  
+  To verify, check that custom.css contains:
+    - .ui-sortable-helper with z-index: 9999
+    - .hidden-lead-card with display: none
+    - overflow properties in .kan-ban-content-wrapper
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: CLEAR CACHE                                                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  ► Browser Cache:
+    Windows: Press Ctrl + F5 (force refresh)
+    Mac:     Press Cmd + Shift + R
+    
+    OR
+    
+    Chrome/Edge: Ctrl + Shift + Delete → Clear cache
+    Firefox:     Ctrl + Shift + Delete → Clear cache
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: TEST EVERYTHING                                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  ☑ Test Currency Display:
+    □ Dashboard shows ₹
+    □ Leads Kanban shows ₹ 
+    □ Invoices show ₹
+    □ Estimates show ₹
+    
+  ☑ Test Kanban Drag & Drop:
+    □ Cards stay visible when dragging
+    □ Cards follow cursor smoothly
+    □ Cards drop in correct column
+    □ Scrollbar works properly
+    □ "Load More" button works
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: CLEANUP (After successful testing)                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+  Delete these temporary files:
+    □ update_currency_symbol.php (SECURITY: Delete this!)
+    □ check_currency.php
+    □ update_currency_to_rupee.sql
+    □ QUICK_START.txt (this file)
+    
+  Keep these files:
+    ✓ assets/css/custom.css (KEEP - Contains your fixes)
+    ✓ IMPLEMENTATION_SUMMARY.md (Optional - for reference)
+    ✓ CURRENCY_AND_KANBAN_FIX_GUIDE.md (Optional - detailed guide)
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                             TROUBLESHOOTING                                ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+  ⚠ Currency still shows $?
+    → Clear browser cache completely (Ctrl + F5)
+    → Check database was updated: Run in phpMyAdmin SQL tab:
+      SELECT * FROM tbl_currencies WHERE symbol = '$';
+      (Should return 0 rows)
+
+  ⚠ Lead card disappears when dragging?
+    → Clear browser cache (Ctrl + F5)
+    → Open browser console (F12) - Check for errors
+    → Verify custom.css file was saved correctly
+
+  ⚠ Scrollbar not working?
+    → Clear cache
+    → Check browser console for errors
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          ROLLBACK (If needed)                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+  To revert currency changes:
+    UPDATE `tbl_currencies` SET `symbol` = '$' WHERE `symbol` = '₹';
+
+  To revert CSS changes:
+    Restore backup of assets/css/custom.css (if you have one)
+    OR manually remove the added CSS rules
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         IMPLEMENTATION STATUS                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+  ✅ CSS Fixed:        assets/css/custom.css updated
+  ⏳ Database Update:  Run update_currency_symbol.php or SQL query
+  ⏳ Cache Clear:      Clear browser cache after database update
+  ⏳ Testing:          Test currency and Kanban after above steps
+  ⏳ Cleanup:          Delete temporary files after successful testing
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         ESTIMATED TIME: 5-10 MINUTES                       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+  Need more details? See: IMPLEMENTATION_SUMMARY.md
+  Having issues? See: CURRENCY_AND_KANBAN_FIX_GUIDE.md
+
+  ────────────────────────────────────────────────────────────────────────────
+  Implementation Date: June 3, 2026
+  System: Windows + XAMPP + Perfex CRM
+  ────────────────────────────────────────────────────────────────────────────

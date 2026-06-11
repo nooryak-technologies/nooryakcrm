@@ -1,0 +1,688 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+
+// ── Data preparation ──────────────────────────────────────────────────────────
+$company_name  = get_option('companyname');
+$company_phone = get_option('companyphonenumber');
+$company_email = get_option('companyemail');
+
+$invoice_no   = $invoice_number;
+$invoice_date = _d($invoice->date);
+
+// Client name
+$client_name = $invoice->client->company
+    ? $invoice->client->company
+    : trim($invoice->client->firstname . ' ' . $invoice->client->lastname);
+
+// Client full address
+$client_address = '';
+if (!empty($invoice->client->address)) {
+    $client_address .= $invoice->client->address;
+}
+if (!empty($invoice->client->city)) {
+    $client_address .= ($client_address ? ', ' : '') . $invoice->client->city;
+}
+if (!empty($invoice->client->state)) {
+    $client_address .= ($client_address ? ', ' : '') . $invoice->client->state;
+}
+if (!empty($invoice->client->country)) {
+    $country_name = get_country($invoice->client->country)->short_name ?? '';
+    if ($country_name) {
+        $client_address .= ($client_address ? ', ' : '') . $country_name;
+    }
+}
+if (!empty($invoice->client->zip)) {
+    $client_address .= ($client_address ? ' ' : '') . $invoice->client->zip;
+}
+
+// Package / project label
+$package_label = '';
+if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
+    $package_label = get_project_name_by_id($invoice->project_id);
+} else {
+    $package_label = trim((string) $invoice->clientnote);
+}
+
+// Prices
+$subtotal     = (float) $invoice->subtotal;
+$total        = (float) $invoice->total;
+$advance      = (float) ($invoice->advance ?? 0);
+$balance      = $total - $advance;
+
+// Calculate advance percentage
+$advance_percentage = 0;
+if ($total > 0 && $advance > 0) {
+    $advance_percentage = round(($advance / $total) * 100);
+}
+$balance_percentage = 100 - $advance_percentage;
+
+// Currency symbol
+$currency_symbol = $invoice->currency_name ?? get_base_currency()->symbol ?? '₹';
+
+// Note / terms
+$note_text = trim((string) $invoice->terms);
+if ($note_text === '') {
+    $note_text = 'We prioritize customer satisfaction. Our team of passionate Developers, graphic designers and digital marketers are dedicated to deliver exceptional service and ensuring your growth and success among competitors in the crowded online market.';
+}
+
+// Helper: format money
+function _inv_money($amount, $symbol) {
+    return $symbol . number_format((float)$amount, 0, '.', ',');
+}
+
+// Logo path
+$logo_path = 'C:/xampp/htdocs/crm/assets/images/nooryak_logo.jpeg';
+if (!file_exists($logo_path)) {
+    $logo_path = FCPATH . 'assets/images/nooryak_logo.jpeg';
+}
+$logo_html = file_exists($logo_path) ? '<img src="' . $logo_path . '" style="height:60px;" />' : '';
+
+// ── HTML ──────────────────────────────────────────────────────────────────────
+$html = '
+<style>
+    body { 
+        font-family: "Arial", "Helvetica", sans-serif; 
+        color: #000000;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .page-container {
+        background: #ffffff;
+        position: relative;
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Curved design element */
+    .curve-design {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 300px;
+        background: linear-gradient(135deg, #17a2b8 0%, #20c0d8 100%);
+        border-bottom-left-radius: 200px;
+        z-index: 1;
+    }
+    
+    /* Header Section */
+    .header-section {
+        padding: 35px 40px 25px 40px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .logo-col {
+        width: 35%;
+        vertical-align: top;
+    }
+    
+    .title-col {
+        width: 65%;
+        vertical-align: top;
+        text-align: right;
+    }
+    
+    .invoice-title {
+        font-size: 56px;
+        font-weight: 700;
+        color: #1a202c;
+        letter-spacing: 3px;
+        margin: 0 0 8px 0;
+        line-height: 1;
+    }
+    
+    .company-name-header {
+        font-size: 11px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 4px 0;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+    
+    .company-details {
+        font-size: 9px;
+        color: #718096;
+        line-height: 1.6;
+        font-weight: 400;
+    }
+    
+    .company-details strong {
+        font-weight: 700;
+        color: #2d3748;
+    }
+    
+    /* Client Info Section */
+    .client-section {
+        padding: 20px 40px 25px 40px;
+        background: #ffffff;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .client-info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .client-left {
+        width: 50%;
+        vertical-align: top;
+        padding-right: 30px;
+    }
+    
+    .client-right {
+        width: 50%;
+        vertical-align: top;
+    }
+    
+    .section-label {
+        font-size: 10px;
+        color: #666666;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 8px 0;
+    }
+    
+    .client-name-large {
+        font-size: 16px;
+        font-weight: 700;
+        color: #000000;
+        margin: 0 0 4px 0;
+        letter-spacing: 0.3px;
+        line-height: 1.3;
+    }
+    
+    .package-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #000000;
+        margin: 0 0 10px 0;
+        text-transform: uppercase;
+    }
+    
+    .client-address {
+        font-size: 11px;
+        color: #000000;
+        line-height: 1.6;
+        margin: 0 0 15px 0;
+    }
+    
+    .offer-left {
+        margin: 15px 0;
+        padding: 12px 0;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        display: none;
+    }
+    
+    .detail-line {
+        margin-bottom: 6px;
+        line-height: 1.6;
+        font-size: 12px;
+    }
+    
+    .detail-label {
+        font-weight: 700;
+        color: #000000;
+        display: inline-block;
+        min-width: 120px;
+    }
+    
+    .detail-value {
+        font-weight: 600;
+        color: #000000;
+    }
+    
+    .amount-value {
+        font-weight: 700;
+        color: #000000;
+    }
+    
+    .strikethrough {
+        text-decoration: line-through;
+        color: #999999;
+        margin-right: 6px;
+    }
+    
+    .gst-note {
+        font-size: 10px;
+        color: #666666;
+        font-weight: 400;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        background: #48bb78;
+        color: #ffffff;
+        padding: 3px 12px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    /* Items Table */
+    .items-header-section {
+        padding: 0 40px;
+        margin: 20px 0 0 0;
+    }
+    
+    .items-header-pill {
+        background: linear-gradient(90deg, #17a2b8 0%, #20c0d8 100%);
+        border-radius: 30px;
+        padding: 14px 30px;
+    }
+    
+    .items-header-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .items-header-table td {
+        font-size: 11px;
+        font-weight: 700;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 0;
+    }
+    
+    .items-content {
+        padding: 0 40px 20px 40px;
+        background: #ffffff;
+    }
+    
+    .item-row-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+    }
+    
+    .item-desc {
+        font-size: 10px;
+        color: #4a5568;
+        line-height: 1.7;
+    }
+    
+    .item-desc strong {
+        font-size: 11px;
+        color: #1a202c;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .item-desc ul {
+        margin: 5px 0 0 0;
+        padding-left: 18px;
+        list-style-type: disc;
+    }
+    
+    .item-desc li {
+        margin: 2px 0;
+        line-height: 1.6;
+    }
+    
+    .item-qty {
+        font-size: 11px;
+        font-weight: 600;
+        color: #2d3748;
+        text-align: center;
+    }
+    
+    .item-price {
+        font-size: 11px;
+        font-weight: 600;
+        color: #2d3748;
+        text-align: center;
+    }
+    
+    .item-price-strike {
+        text-decoration: line-through;
+        color: #a0aec0;
+        margin-right: 6px;
+    }
+    
+    .item-total-val {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a202c;
+        text-align: right;
+    }
+    
+    /* Offer Section */
+    .offer-section {
+        padding: 18px 40px;
+        background: #ffffff;
+        margin-top: 10px;
+    }
+    
+    .offer-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 0 0 4px 0;
+    }
+    
+    .offer-content {
+        font-size: 10px;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+    
+    /* Note Section */
+    .note-section {
+        padding: 20px 40px;
+        background: #ffffff;
+    }
+    
+    .note-box {
+        background: #e6f7f9;
+        padding: 15px 20px;
+        border-radius: 8px;
+    }
+    
+    .note-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 0 0 6px 0;
+    }
+    
+    .note-content {
+        font-size: 10px;
+        color: #2d3748;
+        line-height: 1.7;
+    }
+    
+    .note-content-right {
+        font-size: 9.5px;
+        color: #718096;
+        line-height: 1.7;
+        padding: 10px 0;
+    }
+    
+    /* Summary Section */
+    .summary-section {
+        padding: 20px 40px 30px 40px;
+        background: #ffffff;
+    }
+    
+    .summary-table {
+        width: 100%;
+        max-width: 320px;
+        margin-left: auto;
+        border-collapse: collapse;
+    }
+    
+    .summary-row td {
+        padding: 7px 0;
+        font-size: 12px;
+    }
+    
+    .sum-label {
+        text-align: right;
+        font-weight: 700;
+        color: #718096;
+        padding-right: 25px;
+        text-transform: uppercase;
+    }
+    
+    .sum-value {
+        text-align: right;
+        font-weight: 700;
+        color: #1a202c;
+        min-width: 120px;
+    }
+    
+    .balance-row .sum-label,
+    .balance-row .sum-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a202c;
+        padding-top: 8px;
+    }
+    
+    /* Footer */
+    .footer-section {
+        background: linear-gradient(90deg, #0d5f6e 0%, #17a2b8 100%);
+        padding: 18px 40px;
+        margin: 0 40px 40px 40px;
+        border-radius: 25px;
+        text-align: center;
+    }
+    
+    .footer-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .footer-table td {
+        font-size: 11px;
+        font-weight: 600;
+        color: #ffffff;
+        text-align: center;
+        padding: 0 15px;
+    }
+    
+    .footer-icon {
+        margin-right: 6px;
+    }
+</style>
+
+<div class="page-container">
+    
+    <!-- Curved Design Element -->
+    <div class="curve-design"></div>
+    
+    <!-- HEADER -->
+    <div class="header-section">
+        <table class="header-table">
+            <tr>
+                <td class="logo-col">
+                    ' . $logo_html . '
+                </td>
+                <td class="title-col">
+                    <div class="invoice-title">INVOICE</div>
+                    <div class="company-name-header">' . htmlspecialchars($company_name) . '</div>
+                    <div class="company-details">
+                        <strong>DEVELOPMENT AGENCY</strong><br>
+                        Old No.201, New, 194, Dr Natesan<br>
+                        Rd, Mirsahibpet, Triplicane,<br>
+                        Chennai, Tamil Nadu 600005<br>
+                        GSTIN : 33FMFPM6147A1ZB<br>
+                        Ph: <strong>www.nooryak.com</strong>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- CLIENT INFO -->
+    <div class="client-section">
+        <table class="client-info-table">
+            <tr>
+                <td class="client-left">
+                    <div class="section-label">CLIENT INFO:</div>
+                    <div class="client-name-large">' . htmlspecialchars($client_name) . '</div>
+                    ' . (!empty($client_address) ? '<div class="client-address">' . htmlspecialchars($client_address) . '</div>' : '') . '
+                    
+                    <div class="offer-left">
+                        <div class="offer-label">Offer :</div>
+                        <div class="offer-content">Including Yearly Maintenance For 1<sup>st</sup> Year and 101% website uptime guaranteed once Renewed Yearly.</div>
+                    </div>
+                    
+                    <div class="detail-line">
+                        <span class="detail-label">INVOICE NO :</span>
+                        <span class="detail-value">' . htmlspecialchars($invoice_no) . '</span>
+                    </div>
+                    <div class="detail-line">
+                        <span class="detail-label">INVOICE DATE:</span>
+                        <span class="detail-value">' . htmlspecialchars($invoice_date) . '</span>
+                    </div>
+                    <div class="detail-line">
+                        <span class="detail-label">AMOUNT:</span>
+                        ' . ($subtotal > $total ? '<span class="strikethrough">' . _inv_money($subtotal, $currency_symbol) . '</span> ' : '') . '
+                        <span class="amount-value">' . _inv_money($total, $currency_symbol) . '</span>
+                        <span class="gst-note">(Excluding 18% GST)</span>
+                    </div>'
+                . ($advance > 0 ? '
+                    <div class="detail-line">
+                        <span class="detail-label">ADVANCE :</span>
+                        <span class="amount-value">' . _inv_money($advance, $currency_symbol) . ' (' . $advance_percentage . '%)</span>
+                        <span style="font-size: 9px; color: #718096;"> - Balance ' . $balance_percentage . '% After Website Launch.</span>
+                    </div>
+                    <div class="detail-line">
+                        <span class="detail-label">STATUS :</span>
+                        <span class="status-badge">ADVANCE PAID (' . $advance_percentage . '%)</span>
+                    </div>' : '') . '
+                </td>
+                <td class="client-right">
+                    <div class="note-label">NOTE:</div>
+                    <div class="note-content-right">' . nl2br(htmlspecialchars($note_text)) . '</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- ITEMS HEADER -->
+    <div class="items-header-section">
+        <table class="items-header-table" style="background: #e8e8e8; width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 5%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: center;">#</td>
+                <td style="width: 40%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: left;">Item</td>
+                <td style="width: 10%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: center;">Qty</td>
+                <td style="width: 15%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: center;">Rate</td>
+                <td style="width: 15%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: center;">Tax</td>
+                <td style="width: 15%; padding: 12px 10px; font-size: 10px; font-weight: 700; color: #2d3748; text-align: right;">Amount</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- ITEMS CONTENT -->
+    <div class="items-content">';
+
+// Render items
+$item_number = 1;
+foreach ($invoice->items as $item) {
+    $item_total = (float)$item->qty * (float)$item->rate;
+    
+    // Get tax info
+    $tax_name = '';
+    $tax_rate = 0;
+    if (!empty($item->taxname)) {
+        $tax_parts = explode('|', $item->taxname);
+        if (count($tax_parts) > 0) {
+            $tax_name = $tax_parts[0];
+        }
+    }
+    if (!empty($item->taxrate)) {
+        $tax_rate = (float)$item->taxrate;
+    }
+    $tax_display = $tax_name ? $tax_name . ' ' . number_format($tax_rate, 2) . '%' : '';
+    
+    // Parse long description for bullet points
+    $description_html = '';
+    if (!empty($item->long_description)) {
+        $long_desc = trim($item->long_description);
+        
+        // Split by lines
+        $lines = preg_split('/\r\n|\r|\n/', $long_desc);
+        $bullet_items = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            // Remove bullet indicators and add to list
+            $line = preg_replace('/^[\*\-\•]\s*/', '', $line);
+            if (!empty($line)) {
+                $bullet_items[] = $line;
+            }
+        }
+        
+        if (count($bullet_items) > 0) {
+            foreach ($bullet_items as $bullet) {
+                $description_html .= htmlspecialchars($bullet) . '<br>';
+            }
+        }
+    }
+    
+    $html .= '
+        <table style="width: 100%; border-collapse: collapse; border-bottom: 1px solid #e8e8e8;">
+            <tr>
+                <td style="width: 5%; padding: 15px 10px; font-size: 10px; color: #2d3748; text-align: center; vertical-align: top;">' . $item_number . '</td>
+                <td style="width: 40%; padding: 15px 10px; vertical-align: top;">
+                    <div style="font-size: 10px; color: #1a202c; font-weight: 700; margin-bottom: 4px;">' . htmlspecialchars($item->description) . '</div>
+                    <div style="font-size: 9px; color: #718096; line-height: 1.6;">' . $description_html . '</div>
+                </td>
+                <td style="width: 10%; padding: 15px 10px; font-size: 10px; color: #2d3748; text-align: center; vertical-align: top;">' . htmlspecialchars($item->qty) . '</td>
+                <td style="width: 15%; padding: 15px 10px; font-size: 10px; color: #2d3748; text-align: center; vertical-align: top;">' . number_format((float)$item->rate, 2) . '</td>
+                <td style="width: 15%; padding: 15px 10px; font-size: 9px; color: #2d3748; text-align: center; vertical-align: top;">' . htmlspecialchars($tax_display) . '</td>
+                <td style="width: 15%; padding: 15px 10px; font-size: 11px; color: #1a202c; font-weight: 700; text-align: right; vertical-align: top;">' . number_format($item_total, 2) . '</td>
+            </tr>
+        </table>';
+    
+    $item_number++;
+}
+
+$html .= '
+    </div>
+    
+    <!-- OFFER & NOTE -->
+    <div style="padding: 20px 40px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 50%; vertical-align: top; padding-right: 20px;">
+                    <div class="offer-label">Offer :</div>
+                    <div class="offer-content">Including Yearly Maintenance For 1<sup>st</sup> Year and 10% website uptime guaranteed once renewed yearly.</div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="note-label">NOTE:</div>
+                        <div class="note-content">' . nl2br(htmlspecialchars($note_text)) . '</div>
+                    </div>
+                </td>
+                <td style="width: 50%; vertical-align: top;">
+                    <table class="summary-table">
+                        <tr class="summary-row">
+                            <td class="sum-label">SUB TOTAL</td>
+                            <td class="sum-value">' . _inv_money($subtotal, $currency_symbol) . '</td>
+                        </tr>'
+                        . ($advance > 0 ? '
+                        <tr class="summary-row">
+                            <td class="sum-label">ADVANCED</td>
+                            <td class="sum-value">' . _inv_money($advance, $currency_symbol) . '</td>
+                        </tr>' : '') . '
+                        <tr class="summary-row balance-row">
+                            <td class="sum-label" style="color: #e53e3e;">BALANCE</td>
+                            <td class="sum-value" style="color: #e53e3e;">' . _inv_money($balance, $currency_symbol) . '</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- FOOTER -->
+    <div class="footer-section">
+        <table class="footer-table">
+            <tr>
+                <td><span class="footer-icon">🌐</span> nooryak.com</td>
+                <td><span class="footer-icon">📞</span> +91-' . htmlspecialchars($company_phone) . '</td>
+                <td><span class="footer-icon">✉</span> ' . htmlspecialchars($company_email) . '</td>
+            </tr>
+        </table>
+    </div>
+    
+</div>';
+
+$pdf->writeHTML($html, true, false, true, false, '');

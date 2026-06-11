@@ -1,0 +1,101 @@
+/**
+ * Nooryak public navigation — landing / book-demo / legal pages
+ */
+:root {
+  --ny-nav-orange: #f15b25;
+  --ny-nav-max: 1140px;
+}
+
+body.nooryak-public-nav:not(.book-demo-page):not(.customers_legal) {
+  padding-top: 88px;
+}
+
+body.nooryak-public-nav nav.navbar.header,
+body.nooryak-public-nav > .header:not(.nooryak-public-header) {
+  display: none !important;
+}
+
+.nooryak-public-header .nooryak-nav.navbar-area {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+  padding: 8px 0;
+  margin: 16px auto 0;
+  border-radius: 20px;
+  width: calc(100% - 32px);
+  max-width: var(--ny-nav-max);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.nooryak-public-header .navbar-brand {
+  margin-right: 16px !important;
+}
+
+.nooryak-public-header .navbar-nav .nav-link {
+  color: #1e293b !important;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0.5rem 0.85rem !important;
+}
+
+.nooryak-public-header .navbar-nav .nav-link:hover {
+  color: var(--ny-nav-orange) !important;
+}
+
+.nooryak-public-header .ny-free-trial-btn {
+  background: #ff6b35 !important;
+  color: #fff !important;
+  padding: 10px 22px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 700 !important;
+  min-width: 150px;
+  font-size: 14px !important;
+}
+
+.nooryak-public-header .navbar-toggler {
+  border: none;
+  padding: 6px 8px;
+}
+
+.nooryak-public-header .navbar-toggler i {
+  color: #0c1629;
+  font-size: 22px;
+}
+
+.nooryak-public-header .nooryak-public-header-cta-mobile {
+  background: #ff6b35 !important;
+  color: #fff !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  margin-left: auto;
+  margin-right: 10px;
+  white-space: nowrap;
+  text-decoration: none !important;
+}
+
+.nooryak-public-header .dropdown-menu {
+  border: none;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+}
+
+@media (max-width: 991px) {
+  body.nooryak-public-nav:not(.book-demo-page):not(.customers_legal) {
+    padding-top: 76px;
+  }
+
+  .nooryak-public-header .nooryak-nav.navbar-area {
+    margin: 8px auto 0;
+    width: calc(100% - 16px);
+    border-radius: 14px;
+  }
+}

@@ -1,0 +1,622 @@
+/**
+ * Client login — NOORYAKCRM (reference layout)
+ * Scoped to body.customers_login
+ */
+
+:root {
+    --ny-navy: #1a1a2e;
+    --ny-orange: #f15b25;
+    --ny-orange-hover: #d94e1c;
+    --ny-orange-light: #fff0eb;
+    --ny-gray-text: #555555;
+    --ny-gray-muted: #888888;
+    --ny-bg-page: #f8f9fa;
+    --ny-border: #e2e2e2;
+    --ny-card-shadow: 0 2px 24px rgba(0, 0, 0, 0.07);
+}
+
+/* ── Page shell ── */
+body.customers_login {
+    font-family: Inter, 'Segoe UI', system-ui, sans-serif !important;
+    background: var(--ny-bg-page) !important;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body.customers_login #wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: transparent !important;
+}
+
+body.customers_login #content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: transparent !important;
+}
+
+body.customers_login nav.navbar.header {
+    display: none !important;
+}
+
+body.customers_login #wrapper #content > .container:first-of-type {
+    max-width: 100% !important;
+    padding: 12px 20px 0;
+    flex-shrink: 0;
+}
+
+body.customers_login #wrapper #content > .container:first-of-type .alert {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 8px;
+}
+
+body.customers_login #wrapper #content > .container:last-of-type {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    min-height: 0;
+}
+
+body.customers_login #wrapper .container {
+    max-width: 100% !important;
+}
+
+body.customers_login #wrapper #content > .container:last-of-type > .row {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0 !important;
+    min-height: 0;
+}
+
+body.customers_login #wrapper #content > .container:last-of-type > .row > .ny-login-page {
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    min-height: 0;
+}
+
+/* ── Split layout ── */
+body.customers_login .ny-login-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    min-height: 100%;
+}
+
+/* ── Left panel (white) ── */
+body.customers_login .ny-login-left {
+    background: #ffffff;
+    padding: 32px 40px 36px 48px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+body.customers_login .ny-login-brand-top {
+    margin-bottom: 24px;
+}
+
+body.customers_login .ny-login-logo-link--brand {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+}
+
+body.customers_login .ny-login-brand-top img {
+    width: 150px;
+    height: auto;
+    display: block;
+}
+
+body.customers_login .ny-login-welcome h2 {
+    font-size: clamp(1.875rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    color: var(--ny-navy);
+    margin: 0 0 10px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+body.customers_login .ny-login-welcome p {
+    color: var(--ny-gray-text);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin: 0 0 12px;
+    max-width: 400px;
+}
+
+body.customers_login .ny-login-accent-line {
+    width: 40px;
+    height: 3px;
+    background: var(--ny-orange);
+    border-radius: 2px;
+    margin-bottom: 20px;
+}
+
+body.customers_login .ny-login-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 24px;
+    min-height: 200px;
+}
+
+body.customers_login .ny-login-illustration img {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    object-fit: contain;
+}
+
+body.customers_login .ny-login-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 20px;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+body.customers_login .ny-login-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+body.customers_login .ny-feature-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ny-orange-light);
+    border: 1.5px solid rgba(241, 91, 37, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+}
+
+body.customers_login .ny-feature-icon-wrap svg {
+    width: 18px;
+    height: 18px;
+    color: var(--ny-orange);
+}
+
+body.customers_login .ny-login-feature h3 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--ny-navy);
+    margin: 0 0 4px;
+    line-height: 1.3;
+}
+
+body.customers_login .ny-login-feature p {
+    font-size: 0.6875rem;
+    color: var(--ny-gray-text);
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* ── Right panel (gray + card) ── */
+body.customers_login .ny-login-right {
+    background: var(--ny-bg-page);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 28px 40px;
+    box-sizing: border-box;
+}
+
+body.customers_login .ny-login-card {
+    width: 100%;
+    max-width: 600px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: var(--ny-card-shadow);
+    border: none;
+    padding: 32px 32px 28px;
+    box-sizing: border-box;
+}
+
+body.customers_login .ny-login-card-logo {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--ny-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+body.customers_login .ny-login-card-logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: block;
+}
+
+body.customers_login .ny-login-card h1 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--ny-navy);
+    text-align: center;
+    margin: 0 0 6px;
+}
+
+body.customers_login .ny-login-card .ny-login-card-sub {
+    text-align: center;
+    color: var(--ny-gray-muted);
+    font-size: 0.8125rem;
+    margin: 0 0 22px;
+    line-height: 1.4;
+}
+
+/* Hidden language (keeps form logic, hidden from UI per reference) */
+body.customers_login .ny-lang-sr,
+body.customers_login .ny-lang-sr .bootstrap-select,
+body.customers_login select#language + .bootstrap-select,
+body.customers_login .ny-login-form .dropdown.bootstrap-select:has([data-id="language"]) {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.customers_login .ny-login-form {
+    position: relative;
+}
+
+body.customers_login .ny-login-form .form-group {
+    margin-bottom: 16px;
+}
+
+body.customers_login .ny-login-submit-wrap {
+    margin-bottom: 0 !important;
+}
+
+body.customers_login .ny-login-form label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--ny-navy);
+    margin-bottom: 6px;
+    display: block;
+}
+
+body.customers_login .ny-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+body.customers_login .ny-input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ny-gray-muted);
+    pointer-events: none;
+    display: flex;
+    z-index: 2;
+}
+
+body.customers_login .ny-input-wrap .form-control {
+    height: 44px;
+    border-radius: 8px !important;
+    border: 1.5px solid var(--ny-border) !important;
+    padding-left: 40px;
+    font-size: 0.875rem;
+    box-shadow: none !important;
+    color: var(--ny-navy);
+    background: #fff !important;
+}
+
+body.customers_login .ny-input-wrap .form-control::placeholder {
+    color: #bbbbbb;
+}
+
+body.customers_login .ny-input-wrap.ny-input-wrap-password .form-control {
+    padding-right: 44px;
+}
+
+body.customers_login .ny-input-wrap .form-control:focus {
+    border-color: var(--ny-orange) !important;
+    outline: none;
+    box-shadow: none !important;
+}
+
+body.customers_login .ny-pw-toggle {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--ny-gray-muted);
+    line-height: 0;
+}
+
+body.customers_login .ny-pw-toggle:hover {
+    color: var(--ny-navy);
+}
+
+body.customers_login .ny-login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding: 0rem 1.1rem;
+}
+
+body.customers_login .ny-login-options .checkbox {
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+}
+
+body.customers_login .ny-login-options .checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0 6px 0 0;
+    vertical-align: middle;
+    accent-color: var(--ny-orange);
+    cursor: pointer;
+}
+
+body.customers_login .ny-login-options .checkbox label {
+    font-weight: 400;
+    color: var(--ny-gray-text);
+    font-size: 0.8125rem;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+body.customers_login .ny-login-options a.ny-link-orange {
+    color: var(--ny-orange);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+body.customers_login .ny-login-options a.ny-link-orange:hover {
+    text-decoration: underline;
+}
+
+body.customers_login .ny-btn-login {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    background: var(--ny-orange) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
+}
+
+body.customers_login .ny-btn-login:hover,
+body.customers_login .ny-btn-login:focus {
+    background: var(--ny-orange-hover) !important;
+    color: #ffffff !important;
+}
+
+body.customers_login .ny-login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0 14px;
+    color: var(--ny-gray-muted);
+    font-size: 0.75rem;
+}
+
+body.customers_login .ny-login-divider::before,
+body.customers_login .ny-login-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--ny-border);
+}
+
+body.customers_login .ny-login-register-row {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--ny-gray-text);
+    line-height: 1.5;
+}
+
+body.customers_login .ny-login-register-row a {
+    color: var(--ny-orange);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+body.customers_login .ny-login-register-row a:hover {
+    color: var(--ny-orange-hover);
+}
+
+body.customers_login .ny-login-form .g-recaptcha {
+    margin-bottom: 12px;
+}
+
+body.customers_login .alert {
+    border-radius: 8px;
+}
+
+/* ── Footer (centered, full width) ── */
+body.customers_login footer.footer {
+    flex-shrink: 0;
+    margin-top: 0;
+    border-top: none;
+    background: var(--ny-bg-page);
+    padding: 16px 20px 20px;
+}
+
+body.customers_login footer.footer .container {
+    max-width: 100% !important;
+    padding: 0;
+}
+
+body.customers_login footer.footer .ny-login-footer-bar {
+    text-align: center;
+}
+
+body.customers_login footer.footer .ny-login-footer-text {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ny-gray-muted);
+    line-height: 1.6;
+}
+
+body.customers_login footer.footer .ny-login-footer-text a {
+    color: var(--ny-gray-muted);
+    text-decoration: none;
+}
+
+body.customers_login footer.footer .ny-login-footer-text a:hover {
+    color: var(--ny-navy);
+    text-decoration: underline;
+}
+
+body.customers_login footer.footer .ny-login-footer-sep {
+    margin: 0 8px;
+    color: #cccccc;
+}
+
+/* ── Desktop: ~58% / 42% split ── */
+@media (min-width: 992px) {
+    body.customers_login .ny-login-page {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        min-height: 100%;
+    }
+
+    body.customers_login .ny-login-left {
+        min-height: 100%;
+        padding: 40px 48px 40px 56px;
+    }
+
+    body.customers_login .ny-login-right {
+        min-height: 100%;
+        padding: 40px 40px 40px 32px;
+    }
+}
+
+/* ── Tablet ── */
+@media (max-width: 991px) {
+  
+    body.customers_login .ny-login-right {
+        padding: 28px 20px 12px;
+        background: var(--ny-bg-page);
+    }
+
+    body.customers_login .ny-login-left {
+        padding: 24px 20px 32px;
+        background: #fff;
+    }
+
+    body.customers_login .ny-login-features {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    body.customers_login .ny-login-feature {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    body.customers_login .ny-feature-icon-wrap {
+        margin-bottom: 0;
+    }
+}
+
+/* ── Mobile ── */
+@media (max-width: 575px) {
+    body.customers_login .ny-login-right {
+        padding: 0px;
+    }
+
+    body.customers_login .ny-login-card {
+        padding: 28px 22px 24px;
+        max-width: 100%;
+    }
+
+    body.customers_login .ny-login-left {
+        padding: 20px 16px 28px;
+    }
+
+    body.customers_login .ny-login-brand-top img {
+    }
+
+    body.customers_login .ny-login-welcome h2 {
+        font-size: 1.625rem;
+    }
+
+    body.customers_login footer.footer {
+        padding: 14px 12px 18px;
+    }
+
+    body.customers_login footer.footer .ny-login-footer-text {
+        font-size: 11px;
+    }
+
+    body.customers_login footer.footer .ny-login-footer-sep {
+        margin: 0 5px;
+    }
+}
+
+/* ── RTL ── */
+body.customers_login[dir="rtl"] .ny-input-icon {
+    left: auto;
+    right: 12px;
+}
+
+body.customers_login[dir="rtl"] .ny-input-wrap .form-control {
+    padding-left: 12px;
+    padding-right: 40px;
+}
+
+body.customers_login[dir="rtl"] .ny-input-wrap.ny-input-wrap-password .form-control {
+    padding-left: 44px;
+    padding-right: 40px;
+}
+
+body.customers_login[dir="rtl"] .ny-pw-toggle {
+    right: auto;
+    left: 4px;
+}
+
+body.customers_login[dir="rtl"] .ny-login-options .checkbox input[type="checkbox"] {
+    margin: 0 0 0 6px;
+}

@@ -1,0 +1,13 @@
+/Flutex Admin latest.zip
+/backups/
+/temp/
+/backup-old-crm/
+/error_log
+.idea/
+.vscode/
+*.log
+*.zip
+*.rar
+*.tar.gz
+*.sql
+*.csv

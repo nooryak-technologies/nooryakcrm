@@ -1,0 +1,265 @@
+/**
+ * Privacy Policy & Terms of Service — Nooryak CRM
+ * Scoped to body.customers_legal
+ */
+
+:root {
+    --legal-orange: #f15b25;
+    --legal-orange-hover: #d94e1c;
+    --legal-navy: #1a1a2e;
+    --legal-text: #555555;
+    --legal-muted: #888888;
+    --legal-border: #e2e2e2;
+    --legal-bg: #f8f9fa;
+}
+
+body.customers_legal {
+    font-family: Inter, 'Segoe UI', system-ui, sans-serif !important;
+    background: var(--legal-bg) !important;
+    color: var(--legal-navy);
+    margin: 0;
+}
+
+body.customers_legal #wrapper,
+body.customers_legal #content {
+    background: transparent !important;
+    min-height: auto;
+}
+
+body.customers_legal #wrapper #content > .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+body.customers_legal footer.footer {
+    display: none !important;
+}
+
+/* Legal pages: override softland nooryak-style.css (!important) + main.css sticky navbar */
+body.customers_legal.nooryak-public-nav {
+    padding-top: 0 !important;
+    --ny-legal-nav-clearance: 120px;
+}
+
+body.customers_legal .nooryak-public-header {
+    position: relative;
+    z-index: 10000;
+}
+
+body.customers_legal .nooryak-public-header .nooryak-nav.navbar-area,
+body.customers_legal .nooryak-public-header .nooryak-nav.navbar-area.sticky,
+body.customers_legal .nooryak-public-header .nooryak-nav.navbar-area.scrolled {
+    top: 8px !important;
+    width: calc(100% - 24px) !important;
+    max-width: 1140px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+}
+
+body.customers_legal .nooryak-public-header .navbar-area.sticky .navbar,
+body.customers_legal .nooryak-public-header .navbar-area .navbar.navbar-expand-lg,
+body.customers_legal .nooryak-public-header .nooryak-nav .navbar.navbar-expand-lg {
+    padding: 6px 14px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+}
+
+body.customers_legal .nooryak-public-header .navbar-brand {
+    padding: 0 !important;
+    margin-right: 12px !important;
+}
+
+body.customers_legal .nooryak-public-header .navbar-brand img,
+body.customers_legal .nooryak-public-header .ny-brand-icon img {
+
+    
+}
+
+body.customers_legal .nooryak-public-header .navbar-nav .nav-link {
+    padding: 0.25rem 0.65rem !important;
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+}
+
+body.customers_legal .nooryak-public-header .ny-free-trial-btn {
+    padding: 7px 16px !important;
+    min-width: auto !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+}
+
+body.customers_legal .nooryak-public-header .nooryak-public-header-cta-mobile {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+}
+
+body.customers_legal .nooryak-public-header .nooryak-nav .container {
+    padding: 0 8px !important;
+}
+
+body.customers_legal .ny-legal-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--ny-legal-nav-clearance) !important;
+}
+
+body.customers_legal .ny-legal-main {
+    flex: 1;
+    padding: 0 24px 48px;
+    margin-top: 0;
+}
+
+body.customers_legal .ny-legal-card {
+    max-width: 900px;
+    margin: 32px auto 0;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.06);
+    padding: 40px 44px 44px;
+}
+
+body.customers_legal .ny-legal-card h1 {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 800;
+    color: var(--legal-navy);
+    margin: 0 0 8px;
+    line-height: 1.2;
+}
+
+body.customers_legal .ny-legal-updated {
+    font-size: 13px;
+    color: var(--legal-muted);
+    margin: 0 0 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--legal-border);
+}
+
+body.customers_legal .ny-legal-intro {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--legal-text);
+    margin: 0 0 32px;
+}
+
+body.customers_legal .ny-legal-section {
+    margin-bottom: 28px;
+}
+
+body.customers_legal .ny-legal-section h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--legal-navy);
+    margin: 0 0 12px;
+    padding-top: 4px;
+}
+
+body.customers_legal .ny-legal-section p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--legal-text);
+    margin: 0 0 12px;
+}
+
+body.customers_legal .ny-legal-section ul,
+body.customers_legal .ny-legal-section ol {
+    margin: 0 0 12px;
+    padding-left: 22px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--legal-text);
+}
+
+body.customers_legal .ny-legal-section li {
+    margin-bottom: 6px;
+}
+
+body.customers_legal .ny-legal-section a {
+    color: var(--legal-orange);
+    font-weight: 500;
+}
+
+body.customers_legal .ny-legal-section a:hover {
+    text-decoration: underline;
+}
+
+body.customers_legal .ny-legal-custom-content {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--legal-text);
+}
+
+body.customers_legal .ny-legal-custom-content h2,
+body.customers_legal .ny-legal-custom-content h3 {
+    color: var(--legal-navy);
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+body.customers_legal .ny-legal-footer-bar {
+    background: #fff;
+    border-top: 1px solid var(--legal-border);
+    padding: 20px 24px;
+    text-align: center;
+}
+
+body.customers_legal .ny-legal-footer-bar p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--legal-muted);
+}
+
+body.customers_legal .ny-legal-footer-bar a {
+    color: var(--legal-muted);
+    text-decoration: none;
+    margin: 0 6px;
+}
+
+body.customers_legal .ny-legal-footer-bar a:hover {
+    color: var(--legal-orange);
+}
+
+@media (max-width: 991px) {
+    body.customers_legal.nooryak-public-nav {
+        --ny-legal-nav-clearance: 96px;
+    }
+
+    body.customers_legal .ny-legal-card {
+        margin-top: 20px;
+    }
+
+    body.customers_legal .nooryak-public-header .nooryak-nav.navbar-area,
+    body.customers_legal .nooryak-public-header .nooryak-nav.navbar-area.sticky {
+        top: 6px !important;
+        width: calc(100% - 16px) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    body.customers_legal.nooryak-public-nav {
+        --ny-legal-nav-clearance: 88px;
+    }
+
+    body.customers_legal .ny-legal-main {
+        padding: 0 16px 32px;
+    }
+
+    body.customers_legal .ny-legal-card {
+        margin-top: 16px;
+    }
+
+    body.customers_legal .ny-legal-card {
+        padding: 28px 20px 32px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    body.customers_legal .ny-legal-card {
+        padding: 22px 16px 26px;
+    }
+}
