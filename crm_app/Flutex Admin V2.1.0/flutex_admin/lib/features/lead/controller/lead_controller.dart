@@ -91,6 +91,7 @@ class LeadController extends GetxController {
       status: status,
     );
     leadsModel = LeadsModel.fromJson(jsonDecode(responseModel.responseJson));
+    print("LEADS API RESPONSE: ${responseModel.responseJson}");
     if (responseModel.status) {
       leads.addAll(leadsModel.data ?? []);
       if ((leadsModel.data?.length ?? 0) < int.parse(UrlContainer.limit)) {
