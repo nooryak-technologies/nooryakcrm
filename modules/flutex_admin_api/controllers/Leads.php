@@ -484,7 +484,7 @@ class Leads extends RestController
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
             // Check if it's a text message
-            $message_text = $this->post('message');
+            $message_text = $this->input->post('message');
             if (!empty($message_text)) {
                 $data = [
                     'lead_id' => intval($leadID),
