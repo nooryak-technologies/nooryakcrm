@@ -6,7 +6,6 @@ import 'package:flutex_admin/common/components/no_data.dart';
 import 'package:flutex_admin/core/service/api_service.dart';
 import 'package:flutex_admin/core/utils/color_resources.dart';
 import 'package:flutex_admin/core/utils/dimensions.dart';
-import 'package:flutex_admin/core/utils/local_strings.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/lead/controller/lead_details_controller.dart';
 import 'package:flutex_admin/features/lead/model/voice_note_model.dart';
@@ -39,6 +38,9 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   bool _isPlaying = false;
+
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   late StreamSubscription _positionSubscription;
   late StreamSubscription _durationSubscription;
@@ -76,7 +78,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      controller.loadLeadVoiceNotes(widget.id);
+      controller.loadLeadVoiceNotes(widget.id).then((_) => _scrollToBottom());
     });
   }
 
@@ -88,7 +90,19 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
     _audioPlayer.dispose();
     _audioRecorder.dispose();
     _recordTimer?.cancel();
+    _textController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   // Playback Control
@@ -162,7 +176,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Upload Voice Note'),
+          title: const Text('Upload Audio Update'),
           content: Text('Do you want to upload this ${_formatDuration(_recordDuration)} recording?'),
           actions: <Widget>[
             TextButton(
@@ -184,6 +198,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
                 }
                 String filename = 'voice_${DateTime.now().millisecondsSinceEpoch}.wav';
                 await controller.uploadVoiceNote(widget.id, bytes, filename);
+                _scrollToBottom();
               },
             ),
           ],
@@ -202,6 +217,15 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
     return _formatDuration(duration.inSeconds);
   }
 
+  void _sendMessage(LeadDetailsController controller) async {
+    final text = _textController.text.trim();
+    if (text.isNotEmpty) {
+      _textController.clear();
+      await controller.sendLeadTextMessage(widget.id, text);
+      _scrollToBottom();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LeadDetailsController>(
@@ -209,238 +233,282 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
         return Scaffold(
           body: controller.isVoiceNotesLoading
               ? const CustomLoader()
-              : controller.voiceNotesModel.data == null ||
-                      controller.voiceNotesModel.data!.isEmpty
-                  ? const Center(child: NoDataWidget())
-                  : RefreshIndicator(
-                      color: Theme.of(context).primaryColor,
-                      backgroundColor: Theme.of(context).cardColor,
-                      onRefresh: () async {
-                        controller.loadLeadVoiceNotes(widget.id);
-                      },
-                      child: ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(
-                          Dimensions.space10,
-                          Dimensions.space10,
-                          Dimensions.space10,
-                          100, // Spacing for recording panel
-                        ),
-                        itemCount: controller.voiceNotesModel.data!.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: Dimensions.space10),
-                        itemBuilder: (context, index) {
-                          final note = controller.voiceNotesModel.data![index];
-                          final isCurrent = _playingIndex == index;
+              : Column(
+                  children: [
+                    Expanded(
+                      child: controller.voiceNotesModel.data == null ||
+                              controller.voiceNotesModel.data!.isEmpty
+                          ? const Center(child: NoDataWidget())
+                          : RefreshIndicator(
+                              color: Theme.of(context).primaryColor,
+                              backgroundColor: Theme.of(context).cardColor,
+                              onRefresh: () async {
+                                await controller.loadLeadVoiceNotes(widget.id);
+                                _scrollToBottom();
+                              },
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                padding: const EdgeInsets.all(Dimensions.space10),
+                                itemCount: controller.voiceNotesModel.data!.length,
+                                itemBuilder: (context, index) {
+                                  final note = controller.voiceNotesModel.data![index];
+                                  final isCurrent = _playingIndex == index;
 
-                          return Card(
-                            elevation: 0.5,
-                            margin: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(Dimensions.cardRadius),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(Dimensions.space12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 18,
-                                        backgroundColor: ColorResources.colorGrey,
-                                        backgroundImage: note.avatarUrl != null
-                                            ? CachedNetworkImageProvider(note.avatarUrl!)
-                                            : null,
-                                        child: note.avatarUrl == null
-                                            ? const Icon(Icons.person, size: 18)
-                                            : null,
+                                  return Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: Dimensions.space12),
+                                      constraints: BoxConstraints(
+                                        maxWidth: MediaQuery.of(context).size.width * 0.85,
                                       ),
-                                      const SizedBox(width: Dimensions.space10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              note.senderName ?? 'System',
-                                              style: regularDefault.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const SizedBox(height: Dimensions.space2),
-                                            Text(
-                                              note.relativeTime ?? note.formattedTime ?? '',
-                                              style: lightSmall.copyWith(
-                                                color: ColorResources.blueGreyColor,
-                                              ),
-                                            ),
-                                          ],
+                                      child: Card(
+                                        elevation: 1,
+                                        margin: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 3,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: ColorResources.blueColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        child: Text(
-                                          (note.senderRole ?? 'staff').toUpperCase(),
-                                          style: regularSmall.copyWith(
-                                            color: ColorResources.blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: Dimensions.space12),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: Dimensions.space8,
-                                      vertical: Dimensions.space5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).scaffoldBackgroundColor,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            isCurrent && _isPlaying
-                                                ? Icons.pause_circle_filled
-                                                : Icons.play_circle_filled,
-                                            color: Theme.of(context).primaryColor,
-                                            size: 36,
-                                          ),
-                                          onPressed: () {
-                                            if (note.message != null) {
-                                              _playPause(index, note.message!);
-                                            }
-                                          },
-                                        ),
-                                        Expanded(
-                                          child: isCurrent
-                                              ? SliderTheme(
-                                                  data: SliderTheme.of(context).copyWith(
-                                                    trackHeight: 3.0,
-                                                    thumbShape: const RoundSliderThumbShape(
-                                                      enabledThumbRadius: 6.0,
-                                                    ),
-                                                    overlayShape: const RoundSliderOverlayShape(
-                                                      overlayRadius: 12.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(Dimensions.space12),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    note.senderName ?? 'System',
+                                                    style: regularDefault.copyWith(
+                                                      fontWeight: FontWeight.w600,
                                                     ),
                                                   ),
-                                                  child: Slider(
-                                                    min: 0,
-                                                    max: _duration.inSeconds.toDouble() > 0
-                                                        ? _duration.inSeconds.toDouble()
-                                                        : 1.0,
-                                                    value: _position.inSeconds.toDouble().clamp(
-                                                          0.0,
-                                                          _duration.inSeconds.toDouble() > 0
-                                                              ? _duration.inSeconds.toDouble()
-                                                              : 1.0,
+                                                  const SizedBox(width: Dimensions.space8),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical: 2,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: ColorResources.colorRed,
+                                                      borderRadius: BorderRadius.circular(4),
+                                                    ),
+                                                    child: Text(
+                                                      (note.senderRole ?? 'staff').toUpperCase(),
+                                                      style: regularSmall.copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 9,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: Dimensions.space8),
+                                              if (note.messageType == 'voice')
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: Dimensions.space8,
+                                                    vertical: Dimensions.space5,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).scaffoldBackgroundColor,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          isCurrent && _isPlaying
+                                                              ? Icons.pause_circle_filled
+                                                              : Icons.play_circle_filled,
+                                                          color: Theme.of(context).primaryColor,
+                                                          size: 32,
                                                         ),
-                                                    onChanged: (value) async {
-                                                      await _audioPlayer.seek(Duration(seconds: value.toInt()));
-                                                    },
+                                                        onPressed: () {
+                                                          if (note.message != null) {
+                                                            _playPause(index, note.message!);
+                                                          }
+                                                        },
+                                                      ),
+                                                      const SizedBox(width: Dimensions.space5),
+                                                      SizedBox(
+                                                        width: 120,
+                                                        child: isCurrent
+                                                            ? SliderTheme(
+                                                                data: SliderTheme.of(context).copyWith(
+                                                                  trackHeight: 2.0,
+                                                                  thumbShape: const RoundSliderThumbShape(
+                                                                    enabledThumbRadius: 5.0,
+                                                                  ),
+                                                                  overlayShape: const RoundSliderOverlayShape(
+                                                                    overlayRadius: 10.0,
+                                                                  ),
+                                                                ),
+                                                                child: Slider(
+                                                                  min: 0,
+                                                                  max: _duration.inSeconds.toDouble() > 0
+                                                                      ? _duration.inSeconds.toDouble()
+                                                                      : 1.0,
+                                                                  value: _position.inSeconds.toDouble().clamp(
+                                                                        0.0,
+                                                                        _duration.inSeconds.toDouble() > 0
+                                                                            ? _duration.inSeconds.toDouble()
+                                                                            : 1.0,
+                                                                      ),
+                                                                  onChanged: (value) async {
+                                                                    await _audioPlayer.seek(Duration(seconds: value.toInt()));
+                                                                  },
+                                                                ),
+                                                              )
+                                                            : Container(
+                                                                height: 2,
+                                                                margin: const EdgeInsets.symmetric(horizontal: 8),
+                                                                decoration: BoxDecoration(
+                                                                  color: ColorResources.colorGrey.withOpacity(0.3),
+                                                                  borderRadius: BorderRadius.circular(1),
+                                                                ),
+                                                              ),
+                                                      ),
+                                                      const SizedBox(width: Dimensions.space5),
+                                                      Text(
+                                                        isCurrent
+                                                            ? _formatPosition(_position)
+                                                            : '00:00',
+                                                        style: regularSmall.copyWith(
+                                                          color: ColorResources.blueGreyColor,
+                                                          fontSize: 11,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 )
-                                              : Container(
-                                                  height: 3,
-                                                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                                                  decoration: BoxDecoration(
-                                                    color: ColorResources.colorGrey.withOpacity(0.3),
-                                                    borderRadius: BorderRadius.circular(2),
+                                              else
+                                                Text(
+                                                  note.message ?? '',
+                                                  style: regularDefault,
+                                                ),
+                                              const SizedBox(height: Dimensions.space5),
+                                              Align(
+                                                alignment: Alignment.bottomRight,
+                                                child: Text(
+                                                  note.relativeTime ?? note.formattedTime ?? '',
+                                                  style: lightSmall.copyWith(
+                                                    color: ColorResources.blueGreyColor,
+                                                    fontSize: 10,
                                                   ),
                                                 ),
-                                        ),
-                                        Text(
-                                          isCurrent
-                                              ? _formatPosition(_position)
-                                              : '00:00',
-                                          style: regularSmall.copyWith(
-                                            color: ColorResources.blueGreyColor,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const SizedBox(width: Dimensions.space10),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
-                          );
-                        },
+                    ),
+                    if (_isRecording)
+                      Container(
+                        padding: const EdgeInsets.all(Dimensions.space10),
+                        color: Colors.red.withOpacity(0.1),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.fiber_manual_record, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Recording Audio Update... ${_formatDuration(_recordDuration)}',
+                              style: regularDefault.copyWith(color: Colors.red, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-          bottomSheet: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Dimensions.space20,
-              vertical: Dimensions.space15,
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      _isRecording ? Icons.mic : Icons.mic_none,
-                      color: _isRecording ? Colors.red : ColorResources.blueGreyColor,
-                    ),
-                    const SizedBox(width: Dimensions.space10),
-                    Text(
-                      _isRecording
-                          ? 'Recording... ${_formatDuration(_recordDuration)}'
-                          : 'Press record button to start',
-                      style: regularDefault.copyWith(
-                        color: _isRecording ? Colors.red : ColorResources.blueGreyColor,
-                        fontWeight: _isRecording ? FontWeight.bold : FontWeight.normal,
+                    Container(
+                      padding: const EdgeInsets.all(Dimensions.space10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 5,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: SafeArea(
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (_isRecording) {
+                                  _stopRecording(controller);
+                                } else {
+                                  _startRecording();
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(Dimensions.space10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: _isRecording ? Colors.red : ColorResources.colorLightGrey,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Icon(
+                                  _isRecording ? Icons.stop : Icons.mic,
+                                  color: _isRecording ? Colors.red : Colors.redAccent,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: Dimensions.space10),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: Dimensions.space12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: ColorResources.blueColor.withOpacity(0.6),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: TextField(
+                                  controller: _textController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Type your message...',
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: Dimensions.space10),
+                            GestureDetector(
+                              onTap: () => _sendMessage(controller),
+                              child: Container(
+                                padding: const EdgeInsets.all(Dimensions.space10),
+                                decoration: const BoxDecoration(
+                                  color: ColorResources.blueColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.send,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    if (_isRecording) {
-                      _stopRecording(controller);
-                    } else {
-                      _startRecording();
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(Dimensions.space12),
-                    decoration: BoxDecoration(
-                      color: _isRecording ? Colors.red : Theme.of(context).primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _isRecording ? Icons.stop : Icons.mic,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         );
       },
     );

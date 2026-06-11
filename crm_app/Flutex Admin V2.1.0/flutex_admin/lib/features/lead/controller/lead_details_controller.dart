@@ -268,6 +268,28 @@ class LeadDetailsController extends GetxController {
     }
   }
 
+  Future<bool> sendLeadTextMessage(leadId, String message) async {
+    if (message.trim().isEmpty) return false;
+    isSubmitLoading = true;
+    update();
+
+    ResponseModel responseModel = await leadRepo.postLeadTextMessage(
+      leadId,
+      message,
+    );
+
+    isSubmitLoading = false;
+    update();
+
+    if (responseModel.status) {
+      await loadLeadVoiceNotes(leadId);
+      return true;
+    } else {
+      CustomSnackBar.error(errorList: [responseModel.message.tr]);
+      return false;
+    }
+  }
+
   clearData() {
     dateController.text = '';
     staffController.text = '';

@@ -175,6 +175,26 @@ class LeadRepo {
     }
   }
 
+  Future<ResponseModel> postLeadTextMessage(
+    leadId,
+    String message,
+  ) async {
+    String url =
+        "${UrlContainer.baseUrl}${UrlContainer.leadsUrl}/voice_notes/$leadId";
+
+    Map<String, String> params = {
+      "message": message,
+    };
+
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.postMethod,
+      params,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
   Future<ResponseModel> attachmentDownload(String attachmentKey) async {
     String url = "${UrlContainer.leadAttachmentUrl}/$attachmentKey";
     ResponseModel responseModel = await apiClient.request(
