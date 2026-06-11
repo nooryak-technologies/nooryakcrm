@@ -3,8 +3,8 @@ import "package:flutex_admin/core/utils/images.dart";
 import "package:get/get.dart";
 
 class LocalStrings {
-  static const String appName = "Flutex";
-  static const String topic = "Flutex";
+  static const String appName = "Nooryak CRM";
+  static const String topic = "Nooryak CRM";
 
   static List<LanguageModel> appLanguages = [
     LanguageModel(
@@ -66,7 +66,7 @@ class LocalStrings {
       "Enter your email below to receive a password reset verification code";
   static const String signIn = "Sign In";
   static const String login = "Login";
-  static const String loginDesc = "Login to your account";
+  static const String loginDesc = "Login to Nooryak CRM";
 
   // Register Screen
   static const String firstName = "First Name";

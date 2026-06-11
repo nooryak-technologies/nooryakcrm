@@ -19,10 +19,11 @@ class LeadProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(Dimensions.space10),
       child: Column(
         children: [
+          // ── Header Card ──────────────────────────────────────
           Container(
             padding: const EdgeInsets.all(Dimensions.space15),
             decoration: BoxDecoration(
@@ -43,10 +44,8 @@ class LeadProfile extends StatelessWidget {
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width / 1.5,
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -66,16 +65,19 @@ class LeadProfile extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(width: Dimensions.space10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           leadModel.leadValue ?? '-',
                           style: regularDefault,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           leadModel.sourceName ?? '-',
                           style: lightSmall,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -97,11 +99,13 @@ class LeadProfile extends StatelessWidget {
                       icon: Icons.calendar_month,
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
           const SizedBox(height: Dimensions.space20),
+
+          // ── Company / VAT / Phone / Website Card ─────────────
           Container(
             padding: const EdgeInsets.all(Dimensions.space15),
             decoration: BoxDecoration(
@@ -121,38 +125,74 @@ class LeadProfile extends StatelessWidget {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(LocalStrings.company.tr, style: lightDefault),
-                    Text(LocalStrings.vatNumber.tr, style: lightDefault),
+                    Expanded(
+                      child: Text(LocalStrings.company.tr, style: lightDefault),
+                    ),
+                    Expanded(
+                      child: Text(
+                        LocalStrings.vatNumber.tr,
+                        style: lightDefault,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(leadModel.company ?? ''),
-                    Text(leadModel.vat ?? '-'),
+                    Expanded(
+                      child: Text(
+                        leadModel.company ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        leadModel.vat ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
                 const CustomDivider(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(LocalStrings.phone.tr, style: lightDefault),
-                    Text(LocalStrings.website.tr, style: lightDefault),
+                    Expanded(
+                      child: Text(LocalStrings.phone.tr, style: lightDefault),
+                    ),
+                    Expanded(
+                      child: Text(
+                        LocalStrings.website.tr,
+                        style: lightDefault,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(leadModel.phoneNumber ?? ''),
-                    Text(leadModel.website ?? '-'),
+                    Expanded(
+                      child: Text(
+                        leadModel.phoneNumber ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        leadModel.website ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
           const SizedBox(height: Dimensions.space20),
+
+          // ── Address Card ──────────────────────────────────────
           Container(
             padding: const EdgeInsets.all(Dimensions.space15),
             decoration: BoxDecoration(
@@ -170,51 +210,70 @@ class LeadProfile extends StatelessWidget {
               ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
+                Text(LocalStrings.address.tr),
+                Text(
+                  leadModel.address ?? '-',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+                const CustomDivider(),
+                Row(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(LocalStrings.address.tr),
-                      ],
+                    Expanded(child: Text(LocalStrings.city.tr)),
+                    Expanded(
+                      child: Text(
+                        LocalStrings.state.tr,
+                        textAlign: TextAlign.end,
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(leadModel.address ?? '-'),
-                      ],
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        leadModel.city ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        leadModel.state ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                      ),
                     ),
                   ],
                 ),
                 const CustomDivider(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(LocalStrings.city.tr),
-                    Text(LocalStrings.state.tr),
+                    Expanded(child: Text(LocalStrings.zipCode.tr)),
+                    Expanded(
+                      child: Text(
+                        LocalStrings.country.tr,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(leadModel.city ?? '-'),
-                    Text(leadModel.state ?? '-'),
-                  ],
-                ),
-                const CustomDivider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(LocalStrings.zipCode.tr),
-                    Text(LocalStrings.country.tr),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(leadModel.zip ?? '-'),
-                    Text(leadModel.country ?? '-'),
+                    Expanded(
+                      child: Text(
+                        leadModel.zip ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        leadModel.country ?? '-',
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
                   ],
                 ),
               ],

@@ -15,10 +15,9 @@ class CustomLinerProgress extends StatelessWidget {
   final String data;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Dimensions.space50,
-      child: Column(
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -43,7 +42,6 @@ class CustomLinerProgress extends StatelessWidget {
             ),
           ),
         ],
-      ),
     );
   }
 }

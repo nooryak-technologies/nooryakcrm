@@ -44,10 +44,8 @@ class LeadCard extends StatelessWidget {
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width: MediaQuery.sizeOf(context).width / 1.5,
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -140,11 +138,14 @@ class LeadCard extends StatelessWidget {
                                         color: ColorResources.blueColor,
                                       ),
                                       const SizedBox(width: Dimensions.space5),
-                                      Text(
-                                        lead.phoneNumber!,
-                                        style: regularSmall.copyWith(
-                                          color: ColorResources.blueColor,
-                                          decoration: TextDecoration.underline,
+                                      Flexible(
+                                        child: Text(
+                                          lead.phoneNumber!,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: regularSmall.copyWith(
+                                            color: ColorResources.blueColor,
+                                            decoration: TextDecoration.underline,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -154,16 +155,19 @@ class LeadCard extends StatelessWidget {
                             ],
                           ),
                         ),
+                        const SizedBox(width: Dimensions.space10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
                               lead.leadValue ?? '-',
                               style: regularDefault,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               lead.sourceName ?? '-',
                               style: lightSmall,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),

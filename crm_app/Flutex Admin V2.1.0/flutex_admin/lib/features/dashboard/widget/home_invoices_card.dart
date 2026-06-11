@@ -5,6 +5,7 @@ import 'package:flutex_admin/core/utils/local_strings.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/dashboard/model/dashboard_model.dart';
 import 'package:flutex_admin/features/dashboard/widget/custom_linerprogress.dart';
+import 'package:flutex_admin/core/route/route.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

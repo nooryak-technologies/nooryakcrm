@@ -206,7 +206,7 @@ class InvoiceController extends GetxController {
       termsController.text = invoiceDetailsModel.data?.terms ?? '';
       projectController.text = invoiceDetailsModel.data?.projectId ?? '';
       adminNoteController.text = invoiceDetailsModel.data?.adminNote ?? '';
-      tagsController.text = invoiceDetailsModel.data?.tags ?? '';
+      tagsController.text = '';
       saleAgentController.text = invoiceDetailsModel.data?.saleAgent ?? '';
       recurringController.text = invoiceDetailsModel.data?.recurring ?? '';
       discountTypeController.text = invoiceDetailsModel.data?.discountType ?? '';

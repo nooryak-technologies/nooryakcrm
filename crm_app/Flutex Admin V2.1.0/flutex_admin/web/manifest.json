@@ -1,6 +1,6 @@
-{
-    "name": "flutex_admin",
-    "short_name": "flutex_admin",
+﻿{
+    "name": "Nooryak CRM",
+    "short_name": "Nooryak CRM",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
