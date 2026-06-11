@@ -43,7 +43,7 @@ class LoginController extends GetxController {
         responseModel.data?.accessToken.toString() ?? '');
 
     await loginRepo.updateToken();
-    Get.offAndToNamed(RouteHelper.dashboardScreen);
+    Get.offAllNamed(RouteHelper.dashboardScreen);
 
     if (remember) {
       changeRememberMe();

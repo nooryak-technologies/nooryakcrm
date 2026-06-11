@@ -1,5 +1,5 @@
 class UrlContainer {
-  static const String domainUrl = 'http://www.nooryakcrm.com';
+  static const String domainUrl = 'http://nooryakcrm.com';
   static const String baseUrl = '$domainUrl/flutex_admin_api/';
   static const String downloadUrl = '$domainUrl/download/file';
   static const String uploadPath = 'uploads';
