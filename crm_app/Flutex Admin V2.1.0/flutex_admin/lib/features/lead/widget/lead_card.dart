@@ -1,5 +1,6 @@
 import 'package:flutex_admin/common/components/divider/custom_divider.dart';
 import 'package:flutex_admin/common/components/text/text_icon.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutex_admin/core/helper/date_converter.dart';
 import 'package:flutex_admin/core/helper/string_format_helper.dart';
 import 'package:flutex_admin/core/route/route.dart';
@@ -63,6 +64,41 @@ class LeadCard extends StatelessWidget {
                                 style: lightSmall.copyWith(
                                     color: ColorResources.blueGreyColor),
                               ),
+                              if (lead.phoneNumber != null &&
+                                  lead.phoneNumber!.isNotEmpty) ...[
+                                const SizedBox(height: Dimensions.space5),
+                                InkWell(
+                                  onTap: () async {
+                                    final Uri launchUri = Uri(
+                                      scheme: 'tel',
+                                      path: lead.phoneNumber,
+                                    );
+                                    try {
+                                      await launchUrl(launchUri);
+                                    } catch (e) {
+                                      // Handle launch error
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.phone,
+                                        size: 14,
+                                        color: ColorResources.blueColor,
+                                      ),
+                                      const SizedBox(width: Dimensions.space5),
+                                      Text(
+                                        lead.phoneNumber!,
+                                        style: regularSmall.copyWith(
+                                          color: ColorResources.blueColor,
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
