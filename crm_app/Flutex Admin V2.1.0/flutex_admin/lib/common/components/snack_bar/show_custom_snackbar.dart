@@ -18,30 +18,18 @@ class CustomSnackBar {
       }
     }
     message = Converter.removeQuotationAndSpecialCharacterFromString(message);
-    Get.rawSnackbar(
-      progressIndicatorBackgroundColor: ColorResources.transparentColor,
-      progressIndicatorValueColor: const AlwaysStoppedAnimation<Color>(
-        Colors.transparent,
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: regularLarge.copyWith(color: ColorResources.colorWhite),
+        ),
+        backgroundColor: ColorResources.colorRed,
+        duration: Duration(seconds: duration),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(Dimensions.space8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
-      messageText: Text(
-        message,
-        style: regularLarge.copyWith(color: ColorResources.colorWhite),
-      ),
-      dismissDirection: DismissDirection.horizontal,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: ColorResources.colorRed,
-      borderRadius: 4,
-      margin: const EdgeInsets.all(Dimensions.space8),
-      padding: const EdgeInsets.all(Dimensions.space8),
-      duration: Duration(seconds: duration),
-      isDismissible: true,
-      forwardAnimationCurve: Curves.easeIn,
-      showProgressIndicator: true,
-      leftBarIndicatorColor: ColorResources.transparentColor,
-      animationDuration: const Duration(seconds: 1),
-      borderColor: ColorResources.transparentColor,
-      reverseAnimationCurve: Curves.easeOut,
-      borderWidth: 2,
     );
   }
 
@@ -56,30 +44,18 @@ class CustomSnackBar {
       }
     }
     message = Converter.removeQuotationAndSpecialCharacterFromString(message);
-    Get.rawSnackbar(
-      progressIndicatorBackgroundColor: ColorResources.colorGreen,
-      progressIndicatorValueColor: const AlwaysStoppedAnimation<Color>(
-        ColorResources.transparentColor,
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: regularLarge.copyWith(color: ColorResources.colorWhite),
+        ),
+        backgroundColor: ColorResources.colorGreen,
+        duration: Duration(seconds: duration),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(Dimensions.space8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
-      messageText: Text(
-        message,
-        style: regularLarge.copyWith(color: ColorResources.colorWhite),
-      ),
-      dismissDirection: DismissDirection.horizontal,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: ColorResources.colorGreen,
-      borderRadius: 4,
-      margin: const EdgeInsets.all(Dimensions.space8),
-      padding: const EdgeInsets.all(Dimensions.space8),
-      duration: Duration(seconds: duration),
-      isDismissible: true,
-      forwardAnimationCurve: Curves.easeInOutCubicEmphasized,
-      showProgressIndicator: true,
-      leftBarIndicatorColor: ColorResources.transparentColor,
-      animationDuration: const Duration(seconds: 2),
-      borderColor: ColorResources.transparentColor,
-      reverseAnimationCurve: Curves.easeOut,
-      borderWidth: 2,
     );
   }
 }

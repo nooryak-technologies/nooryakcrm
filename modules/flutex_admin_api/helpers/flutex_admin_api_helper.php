@@ -66,6 +66,11 @@ if (!function_exists('isAuthorized')) {
             ];
         }
 
+        get_instance()->session->set_userdata([
+            'staff_logged_in' => true,
+            'staff_user_id'   => $staff->row()->staffid
+        ]);
+
         return $loggedInStaff;
     }
 }

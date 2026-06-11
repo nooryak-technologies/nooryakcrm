@@ -20,6 +20,9 @@ class AuthRepo {
   }
 
   Future<ResponseModel> updateToken() async {
+    if (kIsWeb) {
+      return ResponseModel(true, 'FCM bypassed on Web', '');
+    }
     String? deviceToken = '@';
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {

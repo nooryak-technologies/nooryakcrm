@@ -15,6 +15,7 @@ import 'package:flutex_admin/features/invoice/model/invoice_post_model.dart';
 import 'package:flutex_admin/features/invoice/model/payment_post_model.dart';
 import 'package:flutex_admin/features/invoice/repo/invoice_repo.dart';
 import 'package:flutex_admin/features/item/model/item_model.dart';
+import 'package:flutex_admin/features/project/model/project_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
@@ -22,6 +23,8 @@ import 'package:multi_dropdown/multi_dropdown.dart';
 class InvoiceController extends GetxController {
   InvoiceRepo invoiceRepo;
   InvoiceController({required this.invoiceRepo});
+
+  ProjectsModel projectsModel = ProjectsModel();
 
   bool isLoading = true;
   bool isSubmitLoading = false;
@@ -87,6 +90,13 @@ class InvoiceController extends GetxController {
     );
   }
 
+  Future<ProjectsModel> loadProjects() async {
+    ResponseModel responseModel = await invoiceRepo.getAllProjects();
+    return projectsModel = ProjectsModel.fromJson(
+      jsonDecode(responseModel.responseJson),
+    );
+  }
+
   Future<PaymentModesModel> loadPaymentModes() async {
     ResponseModel responseModel = await invoiceRepo.getPaymentModes();
     return paymentModesModel = PaymentModesModel.fromJson(
@@ -136,6 +146,8 @@ class InvoiceController extends GetxController {
       currencyController.text = invoiceDetailsModel.data?.currency ?? '';
       clientNoteController.text = invoiceDetailsModel.data?.clientNote ?? '';
       termsController.text = invoiceDetailsModel.data?.terms ?? '';
+      projectController.text = invoiceDetailsModel.data?.projectId ?? '';
+      adminNoteController.text = invoiceDetailsModel.data?.adminNote ?? '';
       totalInvoiceAmount = invoiceDetailsModel.data?.total ?? '';
       // Items
       removedItemsList.clear();
@@ -197,6 +209,8 @@ class InvoiceController extends GetxController {
   MultiSelectController<Object> paymentModeController = MultiSelectController();
   TextEditingController clientNoteController = TextEditingController();
   TextEditingController termsController = TextEditingController();
+  TextEditingController projectController = TextEditingController();
+  TextEditingController adminNoteController = TextEditingController();
 
   TextEditingController itemController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -212,6 +226,8 @@ class InvoiceController extends GetxController {
   FocusNode currencyFocusNode = FocusNode();
   FocusNode clientNoteFocusNode = FocusNode();
   FocusNode termsFocusNode = FocusNode();
+  FocusNode projectFocusNode = FocusNode();
+  FocusNode adminNoteFocusNode = FocusNode();
 
   FocusNode itemFocusNode = FocusNode();
   FocusNode descriptionFocusNode = FocusNode();
@@ -270,6 +286,8 @@ class InvoiceController extends GetxController {
     String currency = currencyController.text.toString();
     String clientNote = clientNoteController.text.toString();
     String terms = termsController.text.toString();
+    String projectId = projectController.text.toString();
+    String adminNote = adminNoteController.text.toString();
 
     if (number.isEmpty) {
       CustomSnackBar.error(errorList: [LocalStrings.enterNumber.tr]);
@@ -315,6 +333,8 @@ class InvoiceController extends GetxController {
       billingStreet: billingStreet,
       allowedPaymentModes: allowedPaymentModesList,
       removedItems: removedItemsList,
+      projectId: projectId,
+      adminNote: adminNote,
       clientNote: clientNote,
       terms: terms,
     );
@@ -470,6 +490,8 @@ class InvoiceController extends GetxController {
     currencyController.text = '';
     clientNoteController.text = '';
     termsController.text = '';
+    projectController.text = '';
+    adminNoteController.text = '';
 
     itemController.text = '';
     descriptionController.text = '';

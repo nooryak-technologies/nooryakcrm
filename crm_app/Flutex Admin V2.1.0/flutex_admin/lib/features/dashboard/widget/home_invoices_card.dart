@@ -45,7 +45,7 @@ class HomeInvoicesCard extends StatelessWidget {
               ),
               icon: Icon(Icons.assignment_outlined,
                   size: 20, color: Theme.of(context).primaryColor),
-              onPressed: () {},
+              onPressed: () => Get.toNamed(RouteHelper.invoiceScreen),
             ),
             const CustomDivider(space: Dimensions.space5),
             const SizedBox(height: Dimensions.space15),

@@ -21,6 +21,7 @@ import 'package:flutex_admin/features/customer/model/customer_model.dart';
 import 'package:flutex_admin/features/invoice/controller/invoice_controller.dart';
 import 'package:flutex_admin/features/invoice/repo/invoice_repo.dart';
 import 'package:flutex_admin/features/item/model/item_model.dart';
+import 'package:flutex_admin/features/project/model/project_model.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:get/get.dart';
@@ -37,6 +38,7 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
   final formKey = GlobalKey<FormState>();
   final itemFormKey = GlobalKey<FormState>();
   final AsyncMemoizer<CustomersModel> customersMemoizer = AsyncMemoizer();
+  final AsyncMemoizer<ProjectsModel> projectsMemoizer = AsyncMemoizer();
   final AsyncMemoizer<CurrenciesModel> currenciesMemoizer = AsyncMemoizer();
   final AsyncMemoizer<PaymentModesModel> paymentModesMemoizer = AsyncMemoizer();
   final AsyncMemoizer<ItemsModel> itemsMemoizer = AsyncMemoizer();
@@ -155,6 +157,48 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                           return CustomDropDownWithTextField(
                             selectedValue: LocalStrings.noClientFound.tr,
                             list: [LocalStrings.noClientFound.tr],
+                          );
+                        } else {
+                          return const CustomLoader(isFullScreen: false);
+                        }
+                      },
+                    ),
+
+                    FutureBuilder(
+                      future: projectsMemoizer.runOnce(
+                        controller.loadProjects,
+                      ),
+                      builder: (context, projectList) {
+                        if (projectList.data?.status ?? false) {
+                          return CustomDropDownTextField(
+                            hintText: LocalStrings.selectProject.tr,
+                            dropDownColor: Theme.of(context).cardColor,
+                            selectedValue: controller.projectController.text.isEmpty
+                                ? null
+                                : controller.projectController.text,
+                            onChanged: (value) {
+                              controller.projectController.text = value.toString();
+                            },
+                            items: controller.projectsModel.data!.map((
+                              project,
+                            ) {
+                              return DropdownMenuItem(
+                                value: project.id,
+                                child: Text(
+                                  project.name ?? '',
+                                  style: regularDefault.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium!.color,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          );
+                        } else if (projectList.data?.status == false) {
+                          return CustomDropDownWithTextField(
+                            selectedValue: LocalStrings.noProjectFound.tr,
+                            list: [LocalStrings.noProjectFound.tr],
                           );
                         } else {
                           return const CustomLoader(isFullScreen: false);
@@ -643,6 +687,18 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                           );
                         },
                       ),
+
+                    CustomTextField(
+                      labelText: LocalStrings.adminNote.tr,
+                      controller: controller.adminNoteController,
+                      focusNode: controller.adminNoteFocusNode,
+                      textInputType: TextInputType.multiline,
+                      maxLines: 4,
+                      nextFocus: controller.clientNoteFocusNode,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
 
                     CustomTextField(
                       labelText: LocalStrings.clientNote.tr,

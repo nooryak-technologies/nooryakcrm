@@ -55,6 +55,17 @@ class InvoiceRepo {
     return responseModel;
   }
 
+  Future<ResponseModel> getAllProjects() async {
+    String url = "${UrlContainer.baseUrl}${UrlContainer.projectsUrl}";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.getMethod,
+      null,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
   Future<ResponseModel> getCurrencies() async {
     String url =
         "${UrlContainer.baseUrl}${UrlContainer.miscellaneousUrl}/currencies";
@@ -118,6 +129,8 @@ class InvoiceRepo {
       "subtotal": invoiceModel.subtotal,
       "total": invoiceModel.total,
       "billing_street": invoiceModel.billingStreet,
+      "project_id": invoiceModel.projectId,
+      "adminnote": invoiceModel.adminNote,
       //"billing_city": invoiceModel.billingCity,
       //"billing_state": invoiceModel.billingState,
       //"billing_zip": invoiceModel.billingZip,
@@ -137,7 +150,6 @@ class InvoiceRepo {
       //"repeat_every_custom": invoiceModel.repeatEveryCustom,
       //"repeat_type_custom": invoiceModel.repeatTypeCustom,
       //"cycles": invoiceModel.cycles,
-      //"adminnote": invoiceModel.adminNote,
       "clientnote": invoiceModel.clientNote,
       "terms": invoiceModel.terms,
     };

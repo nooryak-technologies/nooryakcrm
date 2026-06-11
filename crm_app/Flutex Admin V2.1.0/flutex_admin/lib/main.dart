@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:flutex_admin/core/route/route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/service/di_services.dart' as services;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -23,7 +23,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       FirebaseMessaging.instance.requestPermission();
     }
   } catch (e) {
@@ -36,13 +36,15 @@ Future<void> main() async {
       'High Importance Notifications',
       importance: Importance.high,
     );
-    final RemoteMessage? remoteMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (remoteMessage != null) {
-      typeID = remoteMessage.notification!.titleLocKey;
+    if (!kIsWeb) {
+      final RemoteMessage? remoteMessage =
+          await FirebaseMessaging.instance.getInitialMessage();
+      if (remoteMessage != null) {
+        typeID = remoteMessage.notification!.titleLocKey;
+      }
+      await NotificationService.initialize(flutterLocalNotificationsPlugin);
+      FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
     }
-    await NotificationService.initialize(flutterLocalNotificationsPlugin);
-    FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   } catch (e) {
     debugPrint('====> Notification Error: ${e.toString()}');
   }
@@ -50,7 +52,9 @@ Future<void> main() async {
   Get.lazyPut(() => sharedPreferences);
   Map<String, Map<String, String>> languages = await services.init();
 
-  HttpOverrides.global = MyHttpOverrides();
+  if (!kIsWeb) {
+    HttpOverrides.global = MyHttpOverrides();
+  }
   runApp(MyApp(typeID: typeID, languages: languages));
 }
 

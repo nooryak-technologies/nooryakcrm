@@ -30,8 +30,8 @@ class InvoicePostModel {
   final String? repeatEveryCustom;
   final String? repeatTypeCustom;
   final String? cycles;
+  final String? projectId;
   final String? adminNote;
-  final List<String>? removedItems;
   final String? clientNote;
   final String? terms;
 
@@ -65,6 +65,7 @@ class InvoicePostModel {
     this.repeatEveryCustom,
     this.repeatTypeCustom,
     this.cycles,
+    this.projectId,
     this.adminNote,
     this.removedItems,
     this.clientNote,
