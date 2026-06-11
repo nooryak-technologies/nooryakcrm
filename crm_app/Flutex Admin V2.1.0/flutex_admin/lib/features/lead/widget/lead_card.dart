@@ -58,7 +58,7 @@ class LeadCard extends StatelessWidget {
                                 style: regularLarge,
                               ),
                               Text(
-                                '${lead.title} - ${lead.company} | Phone: ${lead.phoneNumber}',
+                                '${lead.title} - ${lead.company}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: lightSmall.copyWith(
