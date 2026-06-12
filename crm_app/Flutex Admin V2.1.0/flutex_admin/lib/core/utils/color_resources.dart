@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ColorResources {
-  static const Color primaryColor = Color(0xff1e293b);
-  static const Color secondaryColor = Color(0xff27B8DA);
+  static const Color primaryColor = Color(0xffff6b35);
+  static const Color secondaryColor = Color(0xffff6b35);
   static const Color screenBgColor = Color(0xFFF4F4F5);
   static const Color screenBgColorDark = Color(0xFF171e29);
   static const Color cardColor = Color(0xffF6F7FE);
