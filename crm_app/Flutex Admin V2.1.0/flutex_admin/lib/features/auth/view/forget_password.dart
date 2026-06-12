@@ -62,7 +62,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         child: Image.asset(
                           MyImages.appLogo,
                           color: ColorResources.colorWhite,
-                          height: 60,
+                          height: 120,
                         ),
                       ),
                     ),

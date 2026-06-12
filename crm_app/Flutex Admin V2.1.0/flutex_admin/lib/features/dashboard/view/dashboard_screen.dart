@@ -71,13 +71,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             centerTitle: true,
             title: CachedNetworkImage(
                 imageUrl: controller.homeModel.overview?.perfexLogo ?? '',
-                fit: BoxFit.cover,
-                height: 30,
+                fit: BoxFit.contain,
+                height: 50,
                 errorWidget: (ctx, object, trx) {
                   return Image.asset(
                     MyImages.appLogoWhite,
-                    fit: BoxFit.cover,
-                    height: 30,
+                    fit: BoxFit.contain,
+                    height: 50,
                   );
                 },
                 placeholder: (ctx, trx) {

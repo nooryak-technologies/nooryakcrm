@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Center(
                           child: Image.asset(
                             MyImages.appLogo,
-                            height: 70,
+                            height: 120,
                           ),
                         ),
                       ),

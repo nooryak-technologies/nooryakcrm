@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
       builder: (controller) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
-          child: Image.asset(MyImages.appLogo, height: 60),
+          child: Image.asset(MyImages.appLogo, height: 120),
         ),
       ),
     );
