@@ -31,6 +31,9 @@ class LeadController extends GetxController {
   String? sortBy;
   String? source;
   String? status;
+  String? dateFilter;
+  String? startDate;
+  String? endDate;
   bool hasMoreData = true;
   LeadDetailsModel leadDetailsModel = LeadDetailsModel();
   KanbanLeadModel kanbanLeadModel = KanbanLeadModel();
@@ -78,6 +81,9 @@ class LeadController extends GetxController {
     leads.clear();
     page = 0;
     hasMoreData = true;
+    if (statusesModel.data == null || statusesModel.data!.isEmpty) {
+      await loadLeadStatuses();
+    }
     await loadLeads();
     isLoading = false;
     update();
@@ -89,6 +95,9 @@ class LeadController extends GetxController {
       sort: sortBy,
       source: source,
       status: status,
+      dateFilter: dateFilter,
+      startDate: startDate,
+      endDate: endDate,
     );
     leadsModel = LeadsModel.fromJson(jsonDecode(responseModel.responseJson));
     if (responseModel.status) {
@@ -313,6 +322,9 @@ class LeadController extends GetxController {
   void clearData() {
     isLoading = false;
     isSubmitLoading = false;
+    dateFilter = null;
+    startDate = null;
+    endDate = null;
     sourceController.text = '';
     statusController.text = '';
     nameController.text = '';

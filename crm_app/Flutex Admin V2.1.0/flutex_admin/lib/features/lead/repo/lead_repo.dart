@@ -15,6 +15,9 @@ class LeadRepo {
     String? sort,
     String? source,
     String? status,
+    String? dateFilter,
+    String? startDate,
+    String? endDate,
   }) async {
     // Calculate offset based on page number
     int offset = page * int.parse(UrlContainer.limit);
@@ -23,6 +26,9 @@ class LeadRepo {
     sort != null ? url += "&sort=$sort" : null;
     status != null ? url += "&status=$status" : null;
     source != null ? url += "&source=$source" : null;
+    dateFilter != null ? url += "&date_filter=$dateFilter" : null;
+    startDate != null ? url += "&start_date=$startDate" : null;
+    endDate != null ? url += "&end_date=$endDate" : null;
     ResponseModel responseModel = await apiClient.request(
       url,
       Method.getMethod,

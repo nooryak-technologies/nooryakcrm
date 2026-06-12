@@ -3,14 +3,17 @@ import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutter/material.dart';
 
 class OverviewCard extends StatelessWidget {
-  const OverviewCard(
-      {super.key,
-      required this.name,
-      required this.number,
-      required this.color});
+  const OverviewCard({
+    super.key,
+    required this.name,
+    required this.number,
+    required this.color,
+    this.isSelected = false,
+  });
   final String name;
   final String number;
   final Color color;
+  final bool isSelected;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,6 +23,9 @@ class OverviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(Dimensions.cardRadius),
+        border: isSelected
+            ? Border.all(color: Theme.of(context).primaryColor, width: 2)
+            : null,
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withValues(alpha: 0.05),

@@ -61,7 +61,7 @@ class InvoicesModel {
   String? get advancePaidCount => _advancePaidCount;
   String? get pendingPaymentTotal => _pendingPaymentTotal;
   String? get pendingPaymentCount => _pendingPaymentCount;
-  String? get currencySymbol => _currencySymbol;
+  String? get currencySymbol => _currencySymbol == '\$' ? '₹' : _currencySymbol;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -405,7 +405,7 @@ class Invoice {
   String? get shortLink => _shortLink;
   String? get isDefault => _isDefault;
   String? get currencyId => _currencyId;
-  String? get currencySymbol => _currencySymbol;
+  String? get currencySymbol => _currencySymbol == '\$' ? '₹' : _currencySymbol;
   String? get currencyName => _currencyName;
   String? get currencyplacement => _currencyplacement;
   String? get decimalSeparator => _decimalSeparator;

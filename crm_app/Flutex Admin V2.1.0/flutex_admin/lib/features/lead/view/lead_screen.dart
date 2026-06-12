@@ -121,22 +121,33 @@ class _LeadScreenState extends State<LeadScreen> {
                                 horizontal: Dimensions.space15,
                               ),
                               child: SizedBox(
-                                height: 80,
+                                height: 85,
                                 child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
-                                    return OverviewCard(
-                                      name: controller
-                                          .leadsModel
-                                          .overview![index]
-                                          .status!
-                                          .tr,
-                                      number: controller
-                                          .leadsModel
-                                          .overview![index]
-                                          .total
-                                          .toString(),
-                                      color: ColorResources.blueColor,
+                                    final overviewItem = controller.leadsModel.overview![index];
+                                    final statusItem = controller.statusesModel.data?.firstWhereOrNull(
+                                      (s) => s.name?.toLowerCase().trim() == overviewItem.status?.toLowerCase().trim()
+                                    );
+                                    final isSelected = controller.status == statusItem?.id && statusItem != null;
+                                    
+                                    return InkWell(
+                                      onTap: () {
+                                        if (statusItem != null) {
+                                          if (controller.status == statusItem.id) {
+                                            controller.status = null;
+                                          } else {
+                                            controller.status = statusItem.id;
+                                          }
+                                          controller.initialData();
+                                        }
+                                      },
+                                      child: OverviewCard(
+                                        name: overviewItem.status!.tr,
+                                        number: overviewItem.total.toString(),
+                                        color: ColorResources.blueColor,
+                                        isSelected: isSelected,
+                                      ),
                                     );
                                   },
                                   separatorBuilder: (context, index) =>

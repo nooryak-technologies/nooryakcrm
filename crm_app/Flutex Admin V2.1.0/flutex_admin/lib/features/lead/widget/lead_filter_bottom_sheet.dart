@@ -1,4 +1,7 @@
 import 'package:async/async.dart';
+import 'package:date_field/date_field.dart';
+import 'package:flutex_admin/common/components/custom_date_form_field.dart';
+import 'package:flutex_admin/core/helper/date_converter.dart';
 import 'package:flutex_admin/common/components/bottom-sheet/bottom_sheet_header_row.dart';
 import 'package:flutex_admin/common/components/buttons/rounded_button.dart';
 import 'package:flutex_admin/common/components/buttons/rounded_loading_button.dart';
@@ -111,6 +114,63 @@ class _LeadFilterBottomSheetState extends State<LeadFilterBottomSheet> {
                 }
               },
             ),
+            CustomDropDownTextField(
+              needLabel: true,
+              labelText: 'Date Filter',
+              hintText: 'Select Date Filter',
+              onChanged: (value) {
+                setState(() {
+                  controller.dateFilter = value.toString();
+                  if (controller.dateFilter != 'custom') {
+                    controller.startDate = null;
+                    controller.endDate = null;
+                  }
+                });
+              },
+              selectedValue: controller.dateFilter,
+              items: [
+                DropdownMenuItem(
+                  value: 'today',
+                  child: Text('Today', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                ),
+                DropdownMenuItem(
+                  value: 'yesterday',
+                  child: Text('Yesterday', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                ),
+                DropdownMenuItem(
+                  value: 'tomorrow',
+                  child: Text('Tomorrow', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                ),
+                DropdownMenuItem(
+                  value: 'week',
+                  child: Text('This Week', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                ),
+                DropdownMenuItem(
+                  value: 'custom',
+                  child: Text('Custom Date', style: regularDefault.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color)),
+                ),
+              ],
+            ),
+            if (controller.dateFilter == 'custom') ...[
+              CustomDateFormField(
+                labelText: 'Start Date',
+                mode: DateTimeFieldPickerMode.date,
+                onChanged: (DateTime? value) {
+                  if (value != null) {
+                    controller.startDate = DateConverter.localDateToIsoString(value).split('T')[0];
+                  }
+                },
+              ),
+              CustomDateFormField(
+                labelText: 'End Date',
+                mode: DateTimeFieldPickerMode.date,
+                onChanged: (DateTime? value) {
+                  if (value != null) {
+                    controller.endDate = DateConverter.localDateToIsoString(value).split('T')[0];
+                  }
+                },
+              ),
+            ],
             const SizedBox(height: Dimensions.space10),
             controller.isSubmitLoading
                 ? const RoundedLoadingBtn()
@@ -133,6 +193,9 @@ class _LeadFilterBottomSheetState extends State<LeadFilterBottomSheet> {
                           Get.back();
                           controller.source = null;
                           controller.status = null;
+                          controller.dateFilter = null;
+                          controller.startDate = null;
+                          controller.endDate = null;
                           controller.initialData();
                         },
                       ),

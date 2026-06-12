@@ -249,7 +249,7 @@ class EstimateDetails {
   String? get referenceNo => _referenceNo;
   String? get showQuantityAs => _showQuantityAs;
   String? get currency => _currency;
-  String? get currencySymbol => _currencySymbol;
+  String? get currencySymbol => _currencySymbol == '\$' ? '₹' : _currencySymbol;
   String? get currencyName => _currencyName;
   String? get currencyplacement => _currencyplacement;
   String? get decimalSeparator => _decimalSeparator;

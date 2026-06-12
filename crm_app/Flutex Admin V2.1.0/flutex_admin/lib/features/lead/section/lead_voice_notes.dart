@@ -8,6 +8,7 @@ import 'package:flutex_admin/core/utils/color_resources.dart';
 import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/lead/controller/lead_details_controller.dart';
+import 'package:flutex_admin/core/helper/shared_preference_helper.dart';
 import 'package:flutex_admin/features/lead/model/voice_note_model.dart';
 import 'package:flutex_admin/features/lead/repo/lead_repo.dart';
 import 'package:flutter/foundation.dart';
@@ -176,8 +177,8 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Upload Audio Update'),
-          content: Text('Do you want to upload this ${_formatDuration(_recordDuration)} recording?'),
+          title: const Text('Send Audio Update'),
+          content: Text('Do you want to send this ${_formatDuration(_recordDuration)} recording?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -186,7 +187,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
               },
             ),
             ElevatedButton(
-              child: const Text('Upload'),
+              child: const Text('Send'),
               onPressed: () async {
                 Navigator.of(context).pop();
                 List<int> bytes;
@@ -253,15 +254,19 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
                                 itemBuilder: (context, index) {
                                   final note = controller.voiceNotesModel.data![index];
                                   final isCurrent = _playingIndex == index;
+                                  final String currentUserId = Get.find<ApiClient>().sharedPreferences.getString(SharedPreferenceHelper.userIdKey) ?? '';
+                                  final isMe = note.staffId == currentUserId || note.senderId == currentUserId;
+                                  final isAudio = note.messageType == 'voice' || note.messageType == 'audio' || note.message?.endsWith('.wav') == true || note.message?.endsWith('.mp3') == true || note.message?.endsWith('.m4a') == true;
 
                                   return Align(
-                                    alignment: Alignment.centerLeft,
+                                    alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                                     child: Container(
                                       margin: const EdgeInsets.only(bottom: Dimensions.space12),
                                       constraints: BoxConstraints(
                                         maxWidth: MediaQuery.of(context).size.width * 0.85,
                                       ),
                                       child: Card(
+                                        color: isMe ? Theme.of(context).primaryColor.withOpacity(0.12) : Theme.of(context).cardColor,
                                         elevation: 1,
                                         margin: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
@@ -270,7 +275,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(Dimensions.space12),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                             children: [
                                               Row(
                                                 mainAxisSize: MainAxisSize.min,
@@ -303,7 +308,7 @@ class _LeadVoiceNotesState extends State<LeadVoiceNotes> {
                                                 ],
                                               ),
                                               const SizedBox(height: Dimensions.space8),
-                                              if (note.messageType == 'voice')
+                                              if (isAudio)
                                                 Container(
                                                   padding: const EdgeInsets.symmetric(
                                                     horizontal: Dimensions.space8,

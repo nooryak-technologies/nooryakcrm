@@ -330,7 +330,7 @@ class ProposalDetails {
   String? get acceptanceIp => _acceptanceIp;
   String? get signature => _signature;
   String? get shortLink => _shortLink;
-  String? get symbol => _symbol;
+  String? get symbol => _symbol == '\$' ? '₹' : _symbol;
   String? get name => _name;
   String? get decimalSeparator => _decimalSeparator;
   String? get thousandSeparator => _thousandSeparator;

@@ -44,6 +44,27 @@ class Leads extends RestController
         if (isset($status)) {
             $where['status'] = $status;
         }
+
+        $date_filter = $this->get('date_filter');
+        if (isset($date_filter) && !empty($date_filter)) {
+            $today = date('Y-m-d');
+            if ($date_filter === 'today') {
+                $where['DATE(dateadded)'] = $today;
+            } else if ($date_filter === 'yesterday') {
+                $where['DATE(dateadded)'] = date('Y-m-d', strtotime('-1 day'));
+            } else if ($date_filter === 'tomorrow') {
+                $where['DATE(dateadded)'] = date('Y-m-d', strtotime('+1 day'));
+            } else if ($date_filter === 'week') {
+                $where['DATE(dateadded) >='] = date('Y-m-d', strtotime('-7 days'));
+                $where['DATE(dateadded) <='] = $today;
+            }
+        }
+        $start_date = $this->get('start_date');
+        $end_date = $this->get('end_date');
+        if (isset($start_date) && !empty($start_date) && isset($end_date) && !empty($end_date)) {
+            $where['DATE(dateadded) >='] = $start_date;
+            $where['DATE(dateadded) <='] = $end_date;
+        }
         
         $this->load->model('leads_api_model');
         

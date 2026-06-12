@@ -409,7 +409,7 @@ class InvoiceDetails {
   String? get shortLink => _shortLink;
   String? get isDefault => _isDefault;
   String? get currencyId => _currencyId;
-  String? get currencySymbol => _currencySymbol;
+  String? get currencySymbol => _currencySymbol == '\$' ? '₹' : _currencySymbol;
   String? get currencyName => _currencyName;
   String? get currencyplacement => _currencyplacement;
   String? get decimalSeparator => _decimalSeparator;

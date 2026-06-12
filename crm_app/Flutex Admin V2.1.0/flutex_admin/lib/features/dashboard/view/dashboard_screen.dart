@@ -184,7 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               percent: controller.homeModel.overview
                                       ?.invoicesAwaitingPaymentPercent ??
                                   '0',
-                              icon: Icons.attach_money_rounded,
+                              icon: Icons.currency_rupee_rounded,
                               title: LocalStrings.invoicesAwaitingPayment.tr,
                               onTap: () => Get.toNamed(RouteHelper.invoiceScreen),
                             ),
