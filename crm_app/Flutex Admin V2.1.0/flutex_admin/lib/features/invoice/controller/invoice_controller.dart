@@ -201,6 +201,26 @@ class InvoiceController extends GetxController {
       dueDateController.text = invoiceDetailsModel.data?.duedate ?? '';
       billingStreetController.text =
           invoiceDetailsModel.data?.billingStreet ?? '';
+      billingCityController.text =
+          invoiceDetailsModel.data?.billingCity ?? '';
+      billingStateController.text =
+          invoiceDetailsModel.data?.billingState ?? '';
+      billingZipController.text =
+          invoiceDetailsModel.data?.billingZip ?? '';
+      billingCountryController.text =
+          invoiceDetailsModel.data?.billingCountry ?? '';
+      shippingStreetController.text =
+          invoiceDetailsModel.data?.shippingStreet ?? '';
+      shippingCityController.text =
+          invoiceDetailsModel.data?.shippingCity ?? '';
+      shippingStateController.text =
+          invoiceDetailsModel.data?.shippingState ?? '';
+      shippingZipController.text =
+          invoiceDetailsModel.data?.shippingZip ?? '';
+      shippingCountryController.text =
+          invoiceDetailsModel.data?.shippingCountry ?? '';
+      includeShipping = invoiceDetailsModel.data?.includeShipping == '1';
+      showShippingOnInvoice = invoiceDetailsModel.data?.showShippingOnInvoice == '1';
       currencyController.text = invoiceDetailsModel.data?.currency ?? '';
       clientNoteController.text = invoiceDetailsModel.data?.clientNote ?? '';
       termsController.text = invoiceDetailsModel.data?.terms ?? '';
@@ -271,6 +291,15 @@ class InvoiceController extends GetxController {
   TextEditingController dateController = TextEditingController();
   TextEditingController dueDateController = TextEditingController();
   TextEditingController billingStreetController = TextEditingController();
+  TextEditingController billingCityController = TextEditingController();
+  TextEditingController billingStateController = TextEditingController();
+  TextEditingController billingZipController = TextEditingController();
+  TextEditingController billingCountryController = TextEditingController();
+  TextEditingController shippingStreetController = TextEditingController();
+  TextEditingController shippingCityController = TextEditingController();
+  TextEditingController shippingStateController = TextEditingController();
+  TextEditingController shippingZipController = TextEditingController();
+  TextEditingController shippingCountryController = TextEditingController();
   TextEditingController currencyController = TextEditingController();
   MultiSelectController<Object> paymentModeController = MultiSelectController();
   TextEditingController clientNoteController = TextEditingController();
@@ -285,6 +314,8 @@ class InvoiceController extends GetxController {
   TextEditingController adjustmentController = TextEditingController(text: '0');
   TextEditingController advanceController = TextEditingController(text: '0');
   bool cancelOverdueReminders = false;
+  bool includeShipping = false;
+  bool showShippingOnInvoice = false;
 
   TextEditingController itemController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -297,6 +328,15 @@ class InvoiceController extends GetxController {
   FocusNode dateFocusNode = FocusNode();
   FocusNode dueDateFocusNode = FocusNode();
   FocusNode billingStreetFocusNode = FocusNode();
+  FocusNode billingCityFocusNode = FocusNode();
+  FocusNode billingStateFocusNode = FocusNode();
+  FocusNode billingZipFocusNode = FocusNode();
+  FocusNode billingCountryFocusNode = FocusNode();
+  FocusNode shippingStreetFocusNode = FocusNode();
+  FocusNode shippingCityFocusNode = FocusNode();
+  FocusNode shippingStateFocusNode = FocusNode();
+  FocusNode shippingZipFocusNode = FocusNode();
+  FocusNode shippingCountryFocusNode = FocusNode();
   FocusNode currencyFocusNode = FocusNode();
   FocusNode clientNoteFocusNode = FocusNode();
   FocusNode termsFocusNode = FocusNode();
@@ -427,6 +467,17 @@ class InvoiceController extends GetxController {
       subtotal: subtotalInvoiceAmount,
       total: totalInvoiceAmount,
       billingStreet: billingStreet,
+      billingCity: billingCityController.text,
+      billingState: billingStateController.text,
+      billingZip: billingZipController.text,
+      billingCountry: billingCountryController.text,
+      includeShipping: includeShipping ? '1' : '0',
+      showShippingOnInvoice: showShippingOnInvoice ? '1' : '0',
+      shippingStreet: shippingStreetController.text,
+      shippingCity: shippingCityController.text,
+      shippingState: shippingStateController.text,
+      shippingZip: shippingZipController.text,
+      shippingCountry: shippingCountryController.text,
       allowedPaymentModes: allowedPaymentModesList,
       removedItems: removedItemsList,
       projectId: projectId,
@@ -591,6 +642,17 @@ class InvoiceController extends GetxController {
     dateController.text = '';
     dueDateController.text = '';
     billingStreetController.text = '';
+    billingCityController.text = '';
+    billingStateController.text = '';
+    billingZipController.text = '';
+    billingCountryController.text = '';
+    shippingStreetController.text = '';
+    shippingCityController.text = '';
+    shippingStateController.text = '';
+    shippingZipController.text = '';
+    shippingCountryController.text = '';
+    includeShipping = false;
+    showShippingOnInvoice = false;
     currencyController.text = '';
     clientNoteController.text = '';
     termsController.text = '';

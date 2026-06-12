@@ -381,6 +381,140 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                       },
                     ),
 
+                    CustomTextField(
+                      labelText: LocalStrings.billingCity.tr,
+                      controller: controller.billingCityController,
+                      focusNode: controller.billingCityFocusNode,
+                      textInputType: TextInputType.text,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
+
+                    CustomTextField(
+                      labelText: LocalStrings.billingState.tr,
+                      controller: controller.billingStateController,
+                      focusNode: controller.billingStateFocusNode,
+                      textInputType: TextInputType.text,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
+
+                    CustomTextField(
+                      labelText: LocalStrings.billingZip.tr,
+                      controller: controller.billingZipController,
+                      focusNode: controller.billingZipFocusNode,
+                      textInputType: TextInputType.text,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
+
+                    CustomTextField(
+                      labelText: LocalStrings.billingCountry.tr,
+                      controller: controller.billingCountryController,
+                      focusNode: controller.billingCountryFocusNode,
+                      textInputType: TextInputType.text,
+                      onChanged: (value) {
+                        return;
+                      },
+                    ),
+
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: controller.includeShipping,
+                          activeColor: Theme.of(context).primaryColor,
+                          onChanged: (value) {
+                            controller.includeShipping = value ?? false;
+                            controller.update();
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Include Shipping Address',
+                            style: regularDefault.copyWith(
+                              color: Theme.of(context).textTheme.bodyMedium!.color,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (controller.includeShipping) ...[
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: controller.showShippingOnInvoice,
+                            activeColor: Theme.of(context).primaryColor,
+                            onChanged: (value) {
+                              controller.showShippingOnInvoice = value ?? false;
+                              controller.update();
+                            },
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Show Shipping Address on Invoice',
+                              style: regularDefault.copyWith(
+                                color: Theme.of(context).textTheme.bodyMedium!.color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      CustomTextField(
+                        labelText: LocalStrings.shippingStreet.tr,
+                        controller: controller.shippingStreetController,
+                        focusNode: controller.shippingStreetFocusNode,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          return;
+                        },
+                      ),
+
+                      CustomTextField(
+                        labelText: LocalStrings.shippingCity.tr,
+                        controller: controller.shippingCityController,
+                        focusNode: controller.shippingCityFocusNode,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          return;
+                        },
+                      ),
+
+                      CustomTextField(
+                        labelText: LocalStrings.shippingState.tr,
+                        controller: controller.shippingStateController,
+                        focusNode: controller.shippingStateFocusNode,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          return;
+                        },
+                      ),
+
+                      CustomTextField(
+                        labelText: LocalStrings.shippingZip.tr,
+                        controller: controller.shippingZipController,
+                        focusNode: controller.shippingZipFocusNode,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          return;
+                        },
+                      ),
+
+                      CustomTextField(
+                        labelText: LocalStrings.shippingCountry.tr,
+                        controller: controller.shippingCountryController,
+                        focusNode: controller.shippingCountryFocusNode,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          return;
+                        },
+                      ),
+                    ],
+
                     FutureBuilder(
                       future: currenciesMemoizer.runOnce(
                         controller.loadCurrencies,
@@ -397,10 +531,9 @@ class _AddInvoiceScreenState extends State<AddInvoiceScreen> {
                         }
                         return CustomDropDownTextField(
                           hintText: LocalStrings.defaultCurrency.tr,
-                          onChanged: null,
-                          //(value) {
-                          //  controller.currencyController.text = value;
-                          //},
+                          onChanged: (value) {
+                            controller.currencyController.text = value.toString();
+                          },
                           selectedValue:
                               controller.currencyController.text.isEmpty
                               ? controller.settingsModel.data?.currency?.id
