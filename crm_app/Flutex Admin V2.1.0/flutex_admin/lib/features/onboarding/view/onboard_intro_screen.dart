@@ -159,7 +159,7 @@ class _OnBoardIntroScreenState extends State<OnBoardIntroScreen> {
                   await Get.find<ApiClient>().sharedPreferences
                       .setBool(SharedPreferenceHelper.onboardKey, true)
                       .whenComplete(() {
-                        Get.offAllNamed(RouteHelper.loginScreen);
+                        Get.offAllNamed(RouteHelper.roleSelectionScreen);
                       });
                 } else {
                   introKey.currentState!.next();

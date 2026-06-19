@@ -17,12 +17,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
 * environments.
 *
 */
+$is_https = false;
+if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === 1 || $_SERVER['HTTPS'] === '1')) {
+    $is_https = true;
+} elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $is_https = true;
+} elseif (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && $_SERVER['HTTP_FRONT_END_HTTPS'] === 'on') {
+    $is_https = true;
+}
+
 if (isset($_SERVER['HTTP_HOST'])) {
-    $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    $base_url = ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 } else {
     $base_url = 'http://localhost/crm/';
 }
 define('APP_BASE_URL_DEFAULT', $base_url);
+define('APP_COOKIE_SECURE', $is_https);
 
 /*
 * --------------------------------------------------------------------------

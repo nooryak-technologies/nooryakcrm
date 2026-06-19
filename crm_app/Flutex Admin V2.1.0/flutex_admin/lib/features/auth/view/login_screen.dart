@@ -45,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedRole = (Get.arguments is String) ? Get.arguments as String : 'Staff';
     return WillPopWidget(
       nextRoute: '',
       child: Scaffold(
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                LocalStrings.login.tr,
+                                "$selectedRole ${LocalStrings.login.tr}",
                                 style: mediumMegaLarge.copyWith(
                                   color: Colors.white,
                                 ),

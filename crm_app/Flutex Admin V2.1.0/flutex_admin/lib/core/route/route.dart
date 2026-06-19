@@ -1,5 +1,6 @@
 import 'package:flutex_admin/features/auth/view/forget_password.dart';
 import 'package:flutex_admin/features/auth/view/login_screen.dart';
+import 'package:flutex_admin/features/auth/view/role_selection_screen.dart';
 import 'package:flutex_admin/features/contract/view/add_contract_screen.dart';
 import 'package:flutex_admin/features/contract/view/contract_details_screen.dart';
 import 'package:flutex_admin/features/contract/view/contracts_screen.dart';
@@ -62,6 +63,7 @@ import 'package:get/get.dart';
 class RouteHelper {
   static const String splashScreen = "/splash_screen";
   static const String onboardScreen = '/onboard_screen';
+  static const String roleSelectionScreen = '/role_selection_screen';
   static const String loginScreen = "/login_screen";
   static const String forgotPasswordScreen = "/forgot_password_screen";
 
@@ -124,6 +126,7 @@ class RouteHelper {
   List<GetPage> routes = [
     GetPage(name: splashScreen, page: () => const SplashScreen()),
     GetPage(name: onboardScreen, page: () => const OnBoardIntroScreen()),
+    GetPage(name: roleSelectionScreen, page: () => const RoleSelectionScreen()),
     GetPage(name: loginScreen, page: () => const LoginScreen()),
     GetPage(
       name: forgotPasswordScreen,
