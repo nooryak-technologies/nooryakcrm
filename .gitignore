@@ -11,3 +11,6 @@
 *.tar.gz
 *.sql
 *.csv
+.env
+application/config/app-config.php
+
