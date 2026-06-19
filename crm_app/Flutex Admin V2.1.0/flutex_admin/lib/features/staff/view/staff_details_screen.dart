@@ -2,6 +2,7 @@ import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutex_admin/common/components/app-bar/custom_appbar.dart';
 import 'package:flutex_admin/common/components/bottom-sheet/custom_bottom_sheet.dart';
 import 'package:flutex_admin/common/components/custom_loader/custom_loader.dart';
+import 'package:flutex_admin/core/route/route.dart';
 import 'package:flutex_admin/core/service/api_service.dart';
 import 'package:flutex_admin/core/utils/color_resources.dart';
 import 'package:flutex_admin/core/utils/dimensions.dart';

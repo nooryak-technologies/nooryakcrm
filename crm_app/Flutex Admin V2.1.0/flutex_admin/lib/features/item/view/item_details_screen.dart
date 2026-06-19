@@ -38,44 +38,44 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: LocalStrings.itemDetails.tr,
-        isShowActionBtn: !controller.isLoading,
-        actionWidget: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () {
-                Get.toNamed(
-                  RouteHelper.addItemScreen,
-                  arguments: {
-                    'id': controller.itemDetailsModel.data!.itemId,
-                    'isEdit': true,
+    return GetBuilder<ItemController>(
+      builder: (controller) {
+        return Scaffold(
+          appBar: CustomAppBar(
+            title: LocalStrings.itemDetails.tr,
+            isShowActionBtn: !controller.isLoading,
+            actionWidget: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Get.toNamed(
+                      RouteHelper.addItemScreen,
+                      arguments: {
+                        'id': controller.itemDetailsModel.data?.itemId ?? '',
+                        'isEdit': true,
+                      },
+                    );
                   },
-                );
-              },
-              icon: const Icon(Icons.edit, size: 20),
-            ),
-            IconButton(
-              onPressed: () {
-                const WarningAlertDialog().warningAlertDialog(
-                  context,
-                  () {
-                    controller.deleteItem(widget.id);
+                  icon: const Icon(Icons.edit, size: 20),
+                ),
+                IconButton(
+                  onPressed: () {
+                    const WarningAlertDialog().warningAlertDialog(
+                      context,
+                      () {
+                        controller.deleteItem(widget.id);
+                      },
+                      title: 'Delete Item',
+                      subTitle: 'Are you sure you want to delete this item?',
+                    );
                   },
-                  title: 'Delete Item',
-                  subTitle: 'Are you sure you want to delete this item?',
-                );
-              },
-              icon: const Icon(Icons.delete, size: 20),
+                  icon: const Icon(Icons.delete, size: 20),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      body: GetBuilder<ItemController>(
-        builder: (controller) {
-          return controller.isLoading
+          ),
+          body: controller.isLoading
               ? const CustomLoader()
               : RefreshIndicator(
                   color: Theme.of(context).primaryColor,
@@ -112,11 +112,11 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             children: [
                               HeaderText(
                                 text:
-                                    '${controller.itemDetailsModel.data!.description}',
+                                    '${controller.itemDetailsModel.data?.description ?? ""}',
                                 textStyle: mediumExtraLarge,
                               ),
                               Text(
-                                '${controller.itemDetailsModel.data!.groupName}',
+                                '${controller.itemDetailsModel.data?.groupName ?? ""}',
                                 style: lightDefault.copyWith(
                                     color: ColorResources.primaryColor),
                               )
@@ -129,7 +129,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ),
                           const SizedBox(height: Dimensions.space5),
                           Text(
-                            '${controller.itemDetailsModel.data!.longDescription}',
+                            '${controller.itemDetailsModel.data?.longDescription ?? ""}',
                             style: regularDefault,
                           ),
                           const SizedBox(height: Dimensions.space20),
@@ -152,7 +152,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   ),
                                   const SizedBox(height: Dimensions.space5),
                                   Text(
-                                    '${controller.itemDetailsModel.data!.rate} / ${controller.itemDetailsModel.data!.unit}',
+                                    '${controller.itemDetailsModel.data?.rate ?? ""} / ${controller.itemDetailsModel.data?.unit ?? ""}',
                                     style: regularExtraLarge.copyWith(
                                         color: ColorResources.colorWhite),
                                   ),
@@ -164,9 +164,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       ),
                     ),
                   ),
-                );
-        },
-      ),
+                ),
+        );
+      },
     );
   }
 }

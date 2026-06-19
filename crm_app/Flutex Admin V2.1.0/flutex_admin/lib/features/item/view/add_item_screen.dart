@@ -75,6 +75,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           focusNode: controller.descriptionFocusNode,
                           textInputType: TextInputType.text,
                           nextFocus: controller.longDescriptionFocusNode,
+                          onChanged: (value) {},
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Description is required';
@@ -89,6 +90,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           focusNode: controller.longDescriptionFocusNode,
                           textInputType: TextInputType.multiline,
                           maxLines: 3,
+                          onChanged: (value) {},
                           nextFocus: controller.rateFocusNode,
                         ),
                         const SizedBox(height: Dimensions.space15),
@@ -98,6 +100,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           focusNode: controller.rateFocusNode,
                           textInputType: const TextInputType.numberWithOptions(decimal: true),
                           nextFocus: controller.unitFocusNode,
+                          onChanged: (value) {},
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Rate is required';
@@ -114,6 +117,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           controller: controller.unitController,
                           focusNode: controller.unitFocusNode,
                           textInputType: TextInputType.text,
+                          onChanged: (value) {},
                           inputAction: TextInputAction.done,
                         ),
                         const SizedBox(height: Dimensions.space15),

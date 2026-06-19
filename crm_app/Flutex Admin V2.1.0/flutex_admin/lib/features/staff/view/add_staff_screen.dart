@@ -52,7 +52,7 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: isEdit ? LocalStrings.editStaff.tr : LocalStrings.addStaff.tr),
+      appBar: CustomAppBar(title: isEdit ? LocalStrings.updateStaff.tr : LocalStrings.addStaff.tr),
       body: GetBuilder<StaffController>(
         builder: (controller) {
           return ContainedTabBarView(
