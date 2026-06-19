@@ -12,5 +12,5 @@
 *.sql
 *.csv
 .env
-application/config/app-config.php
+# application/config/app-config.php
 
