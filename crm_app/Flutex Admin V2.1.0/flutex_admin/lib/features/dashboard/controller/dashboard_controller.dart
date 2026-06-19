@@ -6,6 +6,7 @@ import 'package:flutex_admin/core/route/route.dart';
 import 'package:flutex_admin/common/models/response_model.dart';
 import 'package:flutex_admin/features/dashboard/model/dashboard_model.dart';
 import 'package:flutex_admin/features/dashboard/repo/dashboard_repo.dart';
+import 'package:flutex_admin/core/utils/url_container.dart';
 import 'package:get/get.dart';
 
 class DashboardController extends GetxController {
@@ -49,6 +50,9 @@ class DashboardController extends GetxController {
           .setString(SharedPreferenceHelper.accessTokenKey, '');
       await dashboardRepo.apiClient.sharedPreferences
           .setBool(SharedPreferenceHelper.rememberMeKey, false);
+      await dashboardRepo.apiClient.sharedPreferences
+          .setString(SharedPreferenceHelper.domainUrlKey, '');
+      UrlContainer.domainUrl = 'http://nooryakcrm.com';
       CustomSnackBar.success(successList: [responseModel.message.tr]);
       Get.offAllNamed(RouteHelper.loginScreen);
     } else {

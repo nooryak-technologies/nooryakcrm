@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutex_admin/core/utils/url_container.dart';
 
 import 'package:flutex_admin/features/auth/model/login_model.dart';
 import 'package:flutex_admin/features/auth/repo/auth_repo.dart';
@@ -56,8 +58,47 @@ class LoginController extends GetxController {
     isSubmitLoading = true;
     update();
 
+    String emailVal = emailController.text.trim();
+    String passwordVal = passwordController.text;
+
+    // Default main domain
+    String defaultDomain = 'http://nooryakcrm.com';
+
+    try {
+      // 1. Perform lookup to find the tenant's domain
+      var lookupResponse = await http.post(
+        Uri.parse('$defaultDomain/flutex_admin_api/auth/lookup'),
+        body: {'email': emailVal},
+      );
+
+      if (lookupResponse.statusCode == 200) {
+        var data = jsonDecode(lookupResponse.body);
+        if (data['status'] == true && data['domain'] != null) {
+          String newDomain = data['domain'].toString();
+          // Remove trailing slash if present
+          if (newDomain.endsWith('/')) {
+            newDomain = newDomain.substring(0, newDomain.length - 1);
+          }
+          UrlContainer.domainUrl = newDomain;
+          await loginRepo.apiClient.sharedPreferences.setString(
+            SharedPreferenceHelper.domainUrlKey,
+            newDomain,
+          );
+        }
+      } else {
+        // If lookup fails (e.g. 404), reset to default main domain
+        UrlContainer.domainUrl = defaultDomain;
+        await loginRepo.apiClient.sharedPreferences.setString(
+          SharedPreferenceHelper.domainUrlKey,
+          defaultDomain,
+        );
+      }
+    } catch (e) {
+      debugPrint('Lookup error: $e');
+    }
+
     ResponseModel responseModel = await loginRepo.loginUser(
-        emailController.text.toString(), passwordController.text.toString());
+        emailVal, passwordVal);
 
     if (responseModel.status) {
       LoginModel loginModel =

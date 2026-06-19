@@ -120,4 +120,63 @@ class Authentication extends RestController
 
         return true;
     }
+
+    public function lookup_post()
+    {
+        $requiredData = [
+            'email' => '',
+        ];
+
+        $postData = $this->post();
+        $postData = array_merge($requiredData, $postData);
+
+        if (empty($postData['email'])) {
+            $this->response(['message' => 'Email is required'], RestController::HTTP_BAD_REQUEST);
+        }
+
+        $email = $postData['email'];
+
+        // 1. Check if the user exists in the master database
+        $this->db->where('email', $email);
+        $master_staff = $this->db->get(db_prefix() . 'staff')->row();
+        if ($master_staff) {
+            $this->response([
+                'status' => true,
+                'domain' => APP_BASE_URL_DEFAULT,
+                'is_tenant' => false
+            ], RestController::HTTP_OK);
+        }
+
+        // 2. Load SaaS model and check all tenants
+        if ($this->db->table_exists(db_prefix() . 'perfex_saas_companies')) {
+            $this->load->model('perfex_saas/perfex_saas_model');
+            $companies = $this->perfex_saas_model->companies();
+            
+            foreach ($companies as $company) {
+                $dsn = $company->dsn;
+                $db_prefix = perfex_saas_tenant_db_prefix($company->slug);
+                $table = $db_prefix . 'staff';
+                
+                $query = "SELECT staffid FROM `$table` WHERE email = :email LIMIT 1";
+                $params = [':email' => $email];
+                
+                try {
+                    $result = perfex_saas_raw_query($query, $dsn, true, false, null, false, false, $params);
+                    if (!empty($result)) {
+                        $tenant_url = perfex_saas_tenant_base_url($company);
+                        $this->response([
+                            'status' => true,
+                            'domain' => $tenant_url,
+                            'is_tenant' => true,
+                            'slug' => $company->slug
+                        ], RestController::HTTP_OK);
+                    }
+                } catch (\Throwable $e) {
+                    // Skip if connection fails or table doesn't exist yet
+                }
+            }
+        }
+
+        $this->response(['message' => 'User not found'], RestController::HTTP_NOT_FOUND);
+    }
 }

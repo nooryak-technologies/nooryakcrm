@@ -13,6 +13,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:flutex_admin/core/route/route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutex_admin/core/helper/shared_preference_helper.dart';
+import 'package:flutex_admin/core/utils/url_container.dart';
 import 'core/service/di_services.dart' as services;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 
@@ -50,6 +52,14 @@ Future<void> main() async {
   }
   final sharedPreferences = await SharedPreferences.getInstance();
   Get.lazyPut(() => sharedPreferences);
+  
+  if (sharedPreferences.containsKey(SharedPreferenceHelper.domainUrlKey)) {
+    String? savedDomain = sharedPreferences.getString(SharedPreferenceHelper.domainUrlKey);
+    if (savedDomain != null && savedDomain.isNotEmpty) {
+      UrlContainer.domainUrl = savedDomain;
+    }
+  }
+
   Map<String, Map<String, String>> languages = await services.init();
 
   if (!kIsWeb) {

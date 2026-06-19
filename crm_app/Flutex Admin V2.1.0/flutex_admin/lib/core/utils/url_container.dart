@@ -1,10 +1,10 @@
 class UrlContainer {
-  static const String domainUrl = 'http://nooryakcrm.com';
-  static const String baseUrl = '$domainUrl/flutex_admin_api/';
-  static const String downloadUrl = '$domainUrl/download/file';
+  static String domainUrl = 'http://nooryakcrm.com';
+  static String get baseUrl => '$domainUrl/flutex_admin_api/';
+  static String get downloadUrl => '$domainUrl/download/file';
   static const String uploadPath = 'uploads';
   static const String limit = '10';
-  static const String ticketAttachmentUrl =
+  static String get ticketAttachmentUrl =>
       '$domainUrl/download/preview_image?path=$uploadPath/ticket_attachments/';
 
   static RegExp emailValidatorRegExp = RegExp(
@@ -41,6 +41,6 @@ class UrlContainer {
   static const String privacyPolicyUrl = 'miscellaneous/privacy';
 
   // Download URLs
-  static const String leadAttachmentUrl = '$downloadUrl/lead_attachment';
-  static const String salesAttachmentUrl = '$downloadUrl/sales_attachment';
+  static String get leadAttachmentUrl => '$downloadUrl/lead_attachment';
+  static String get salesAttachmentUrl => '$downloadUrl/sales_attachment';
 }
