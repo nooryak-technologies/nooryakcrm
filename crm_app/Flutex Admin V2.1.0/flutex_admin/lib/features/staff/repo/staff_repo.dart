@@ -39,7 +39,9 @@ class StaffRepo {
     String? staffId,
     bool isUpdate = false,
   }) async {
-    String url = "${UrlContainer.baseUrl}${UrlContainer.staffsUrl}";
+    String url = isUpdate
+        ? "${UrlContainer.baseUrl}${UrlContainer.staffsUrl}/id/$staffId"
+        : "${UrlContainer.baseUrl}${UrlContainer.staffsUrl}";
 
     Map<String, String> params = {
       "firstname": staffModel.firstName,

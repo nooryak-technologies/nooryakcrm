@@ -50,14 +50,30 @@ class _StaffDetailsScreenState extends State<StaffDetailsScreen> {
           appBar: CustomAppBar(
             title: LocalStrings.staffDetails.tr,
             isShowActionBtn: !controller.isLoading,
-            actionWidget: controller.staffDetailsModel.data?.admin != '1'
-                ? IconButton(
+            actionWidget: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Get.toNamed(
+                      RouteHelper.addStaffScreen,
+                      arguments: {
+                        'id': controller.staffDetailsModel.data!.id,
+                        'isEdit': true,
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.edit, size: 20),
+                ),
+                if (controller.staffDetailsModel.data?.admin != '1')
+                  IconButton(
                     onPressed: () => CustomBottomSheet(
                       child: AssignStaffBottomSheet(),
                     ).customBottomSheet(context),
                     icon: const Icon(Icons.delete, size: 20),
-                  )
-                : SizedBox.shrink(),
+                  ),
+              ],
+            ),
           ),
           body: controller.isLoading
               ? const CustomLoader()

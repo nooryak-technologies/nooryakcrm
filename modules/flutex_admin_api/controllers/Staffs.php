@@ -180,26 +180,47 @@ class Staffs extends RestController
     
     public function staffs_post()
     {
-        if (staff_cant('create', 'staff', $this->staffInfo['data']->staff_id)) {
-            $this->response(['message' => _l('not_permission_to_perform_this_action')], RestController::HTTP_FORBIDDEN);
+        $staffID = $this->get('id') ? $this->get('id') : $this->input->post('id');
+        if ($staffID) {
+            if (staff_cant('edit', 'staff', $this->staffInfo['data']->staff_id)) {
+                $this->response(['message' => _l('not_permission_to_perform_this_action')], RestController::HTTP_FORBIDDEN);
+            }
+        } else {
+            if (staff_cant('create', 'staff', $this->staffInfo['data']->staff_id)) {
+                $this->response(['message' => _l('not_permission_to_perform_this_action')], RestController::HTTP_FORBIDDEN);
+            }
         }
         
         try {
             $this->form_validation->set_rules('firstname', 'First Name', 'required|max_length[600]');
             $this->form_validation->set_rules('lastname', 'Last Name', 'required|max_length[600]');
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-            $this->form_validation->set_rules('password', 'Password', 'required');
+            if (!$staffID) {
+                $this->form_validation->set_rules('password', 'Password', 'required');
+            }
             if (!$this->form_validation->run()) {
                 $this->response(['message' => strip_tags(validation_errors()),'error' => $this->form_validation->error_array()], RestController::HTTP_BAD_REQUEST);
             } else {
                 $data = $this->input->post();
                 $this->load->model('staff_model');
-                $success = $this->staff_model->add($data);
-                if ($success) {
-                    handle_staff_profile_image_upload($success);
-                    $this->response(['message' => _l('staff_added_successfully')], RestController::HTTP_OK);
+                
+                // If password is empty in edit, remove it so we don't overwrite with empty
+                if ($staffID && empty($data['password'])) {
+                    unset($data['password']);
+                }
+                
+                if ($staffID) {
+                    $success = $this->staff_model->update($data, $staffID);
+                    handle_staff_profile_image_upload($staffID);
+                    $this->response(['message' => _l('staff_updated_successfully')], RestController::HTTP_OK);
                 } else {
-                    $this->response(['message' => _l('staff_add_failed')], RestController::HTTP_NOT_FOUND);
+                    $success = $this->staff_model->add($data);
+                    if ($success) {
+                        handle_staff_profile_image_upload($success);
+                        $this->response(['message' => _l('staff_added_successfully')], RestController::HTTP_OK);
+                    } else {
+                        $this->response(['message' => _l('staff_add_failed')], RestController::HTTP_NOT_FOUND);
+                    }
                 }
             }
             
@@ -215,19 +236,24 @@ class Staffs extends RestController
         }
         
         try {
-            
             if (!empty($this->get()) && !in_array('id', array_keys($this->get()))) {
                 $this->response(['message' => _l('something_went_wrong')], RestController::HTTP_BAD_REQUEST);
             }
             
             $staffID = $this->get('id');
-            $this->load->model('staffs_model');
-            $staff = $this->staffs_model->get($staffID);
+            $this->load->model('staff_model');
+            $staff = $this->staff_model->get($staffID);
             
             if (is_object($staff)) {
                 $data = array();
                 parse_str(file_get_contents('php://input'), $data);
-                $success = $this->clients_model->update($data, $staffID);
+                
+                // If password is empty in edit, remove it so we don't overwrite with empty
+                if (empty($data['password'])) {
+                    unset($data['password']);
+                }
+                
+                $success = $this->staff_model->update($data, $staffID);
                 if ($success) {
                     $this->response(['message' => _l('staff_updated_successfully')], RestController::HTTP_OK);
                 } else {

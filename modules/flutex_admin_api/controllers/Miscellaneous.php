@@ -206,4 +206,16 @@ class Miscellaneous extends RestController
             $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
         }
     }
+
+    public function item_groups_get()
+    {
+        $this->load->model('invoice_items_model');
+        $item_groups = $this->invoice_items_model->get_groups();
+        
+        if (!empty($item_groups)) {
+            $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $item_groups], RestController::HTTP_OK);
+        } else {
+            $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
+        }
+    }
 }

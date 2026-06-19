@@ -1,5 +1,7 @@
 import 'package:flutex_admin/common/components/app-bar/custom_appbar.dart';
 import 'package:flutex_admin/common/components/custom_loader/custom_loader.dart';
+import 'package:flutex_admin/common/components/dialog/warning_dialog.dart';
+import 'package:flutex_admin/core/route/route.dart';
 import 'package:flutex_admin/common/components/divider/custom_divider.dart';
 import 'package:flutex_admin/common/components/text/header_text.dart';
 import 'package:flutex_admin/core/service/api_service.dart';
@@ -39,6 +41,37 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         title: LocalStrings.itemDetails.tr,
+        isShowActionBtn: !controller.isLoading,
+        actionWidget: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () {
+                Get.toNamed(
+                  RouteHelper.addItemScreen,
+                  arguments: {
+                    'id': controller.itemDetailsModel.data!.itemId,
+                    'isEdit': true,
+                  },
+                );
+              },
+              icon: const Icon(Icons.edit, size: 20),
+            ),
+            IconButton(
+              onPressed: () {
+                const WarningAlertDialog().warningAlertDialog(
+                  context,
+                  () {
+                    controller.deleteItem(widget.id);
+                  },
+                  title: 'Delete Item',
+                  subTitle: 'Are you sure you want to delete this item?',
+                );
+              },
+              icon: const Icon(Icons.delete, size: 20),
+            ),
+          ],
+        ),
       ),
       body: GetBuilder<ItemController>(
         builder: (controller) {

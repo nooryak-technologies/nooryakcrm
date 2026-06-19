@@ -1,5 +1,7 @@
 import 'package:flutex_admin/common/components/app-bar/custom_appbar.dart';
 import 'package:flutex_admin/common/components/custom_loader/custom_loader.dart';
+import 'package:flutex_admin/common/components/custom_fab.dart';
+import 'package:flutex_admin/core/route/route.dart';
 import 'package:flutex_admin/common/components/no_data.dart';
 import 'package:flutex_admin/common/components/search_field.dart';
 import 'package:flutex_admin/core/service/api_service.dart';
@@ -49,6 +51,13 @@ class _ItemScreenState extends State<ItemScreen> {
               onPressed: () {},
               icon: const Icon(Icons.filter_alt_outlined),
             ),
+          ),
+          floatingActionButton: CustomFAB(
+            isShowIcon: true,
+            isShowText: false,
+            press: () {
+              Get.toNamed(RouteHelper.addItemScreen);
+            },
           ),
           body: controller.isLoading
               ? const CustomLoader()

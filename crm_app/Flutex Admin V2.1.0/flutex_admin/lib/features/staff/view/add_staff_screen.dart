@@ -21,6 +21,28 @@ class AddStaffScreen extends StatefulWidget {
 
 class _AddStaffScreenState extends State<AddStaffScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isEdit = false;
+  String staffId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args != null && args is Map && args['isEdit'] == true) {
+      isEdit = true;
+      staffId = args['id']?.toString() ?? '';
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Get.find<StaffController>().loadStaffUpdateData(staffId);
+      });
+    } else {
+      isEdit = false;
+      staffId = '';
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Get.find<StaffController>().clearStaffData();
+      });
+    }
+  }
+
   @override
   void dispose() {
     Get.find<StaffController>().clearStaffData();
@@ -30,7 +52,7 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: LocalStrings.addStaff.tr),
+      appBar: CustomAppBar(title: isEdit ? LocalStrings.editStaff.tr : LocalStrings.addStaff.tr),
       body: GetBuilder<StaffController>(
         builder: (controller) {
           return ContainedTabBarView(
@@ -235,7 +257,7 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                           textInputType: TextInputType.text,
                           inputAction: TextInputAction.done,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (!isEdit && (value == null || value.isEmpty)) {
                               return '${LocalStrings.password.tr} ${LocalStrings.isRequired.tr}';
                             }
                             return null;
@@ -748,7 +770,11 @@ class _AddStaffScreenState extends State<AddStaffScreen> {
                     text: LocalStrings.submit.tr,
                     press: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        controller.submitStaff();
+                        if (isEdit) {
+                          controller.submitStaff(staffId: staffId, isUpdate: true);
+                        } else {
+                          controller.submitStaff();
+                        }
                       }
                     },
                   );

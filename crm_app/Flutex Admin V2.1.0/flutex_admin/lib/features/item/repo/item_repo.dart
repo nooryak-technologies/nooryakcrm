@@ -28,4 +28,43 @@ class ItemRepo {
         await apiClient.request(url, Method.getMethod, null, passHeader: true);
     return responseModel;
   }
+
+  Future<ResponseModel> createItem(
+    Map<String, dynamic> params, {
+    String? itemId,
+    bool isUpdate = false,
+  }) async {
+    String url = isUpdate
+        ? "${UrlContainer.baseUrl}${UrlContainer.itemsUrl}/id/$itemId"
+        : "${UrlContainer.baseUrl}${UrlContainer.itemsUrl}";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      isUpdate ? Method.putMethod : Method.postMethod,
+      params,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
+  Future<ResponseModel> deleteItem(itemId) async {
+    String url = "${UrlContainer.baseUrl}${UrlContainer.itemsUrl}/id/$itemId";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.deleteMethod,
+      null,
+      passHeader: true,
+    );
+    return responseModel;
+  }
+
+  Future<ResponseModel> getItemGroups() async {
+    String url = "${UrlContainer.baseUrl}${UrlContainer.miscellaneousUrl}/item_groups";
+    ResponseModel responseModel = await apiClient.request(
+      url,
+      Method.getMethod,
+      null,
+      passHeader: true,
+    );
+    return responseModel;
+  }
 }

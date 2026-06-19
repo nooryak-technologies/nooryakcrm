@@ -154,7 +154,7 @@ class StaffController extends GetxController {
       );
       return;
     }
-    if (password.isEmpty) {
+    if (!isUpdate && password.isEmpty) {
       CustomSnackBar.error(
         errorList: [
           '${LocalStrings.password.tr} ${LocalStrings.isRequired.tr}',

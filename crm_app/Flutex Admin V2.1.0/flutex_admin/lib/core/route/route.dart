@@ -28,6 +28,7 @@ import 'package:flutex_admin/features/invoice/view/invoice_screen.dart';
 import 'package:flutex_admin/features/invoice/view/update_invoice_screen.dart';
 import 'package:flutex_admin/features/item/view/item_details_screen.dart';
 import 'package:flutex_admin/features/item/view/item_screen.dart';
+import 'package:flutex_admin/features/item/view/add_item_screen.dart';
 import 'package:flutex_admin/features/lead/view/add_lead_screen.dart';
 import 'package:flutex_admin/features/lead/view/lead_details_screen.dart';
 import 'package:flutex_admin/features/lead/view/lead_screen.dart';
@@ -117,6 +118,7 @@ class RouteHelper {
   static const String paymentDetailsScreen = "/payment_details_screen";
   static const String itemScreen = "/item_screen";
   static const String itemDetailsScreen = "/item_details_screen";
+  static const String addItemScreen = "/add_item_screen";
   static const String notificationsScreen = "/notifications_screen";
   static const String settingsScreen = "/settings_screen";
   static const String profileScreen = "/profile_screen";
@@ -254,6 +256,7 @@ class RouteHelper {
       name: itemDetailsScreen,
       page: () => ItemDetailsScreen(id: Get.arguments),
     ),
+    GetPage(name: addItemScreen, page: () => const AddItemScreen()),
     GetPage(name: notificationsScreen, page: () => const NotificationScreen()),
     GetPage(name: profileScreen, page: () => const ProfileScreen()),
     GetPage(name: editProfileScreen, page: () => const EditProfileScreen()),
