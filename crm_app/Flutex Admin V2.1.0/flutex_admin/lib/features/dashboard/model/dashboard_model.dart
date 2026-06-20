@@ -374,6 +374,20 @@ class MenuItems {
     bool? tickets,
     bool? leads,
     bool? staff,
+    bool? utilities,
+    bool? media,
+    bool? bulkPdfExporter,
+    bool? calendar,
+    bool? announcements,
+    bool? activityLog,
+    bool? ticketPipeLog,
+    bool? reports,
+    bool? timesheetsReports,
+    bool? salesReports,
+    bool? expensesReports,
+    bool? expensesVsIncomeReports,
+    bool? leadsReports,
+    bool? kbReports,
   }) {
     _customers = customers;
     _proposals = proposals;
@@ -390,6 +404,20 @@ class MenuItems {
     _tickets = tickets;
     _leads = leads;
     _staff = staff;
+    _utilities = utilities;
+    _media = media;
+    _bulkPdfExporter = bulkPdfExporter;
+    _calendar = calendar;
+    _announcements = announcements;
+    _activityLog = activityLog;
+    _ticketPipeLog = ticketPipeLog;
+    _reports = reports;
+    _timesheetsReports = timesheetsReports;
+    _salesReports = salesReports;
+    _expensesReports = expensesReports;
+    _expensesVsIncomeReports = expensesVsIncomeReports;
+    _leadsReports = leadsReports;
+    _kbReports = kbReports;
   }
 
   MenuItems.fromJson(dynamic json) {
@@ -408,6 +436,20 @@ class MenuItems {
     _tickets = json['tickets'];
     _leads = json['leads'];
     _staff = json['staff'];
+    _utilities = json['utilities'];
+    _media = json['media'];
+    _bulkPdfExporter = json['bulk_pdf_exporter'];
+    _calendar = json['calendar'];
+    _announcements = json['announcements'];
+    _activityLog = json['activity_log'];
+    _ticketPipeLog = json['ticket_pipe_log'];
+    _reports = json['reports'];
+    _timesheetsReports = json['timesheets_reports'];
+    _salesReports = json['sales_reports'];
+    _expensesReports = json['expenses_reports'];
+    _expensesVsIncomeReports = json['expenses_vs_income_reports'];
+    _leadsReports = json['leads_reports'];
+    _kbReports = json['kb_reports'];
   }
   bool? _customers;
   bool? _proposals;
@@ -424,6 +466,20 @@ class MenuItems {
   bool? _tickets;
   bool? _leads;
   bool? _staff;
+  bool? _utilities;
+  bool? _media;
+  bool? _bulkPdfExporter;
+  bool? _calendar;
+  bool? _announcements;
+  bool? _activityLog;
+  bool? _ticketPipeLog;
+  bool? _reports;
+  bool? _timesheetsReports;
+  bool? _salesReports;
+  bool? _expensesReports;
+  bool? _expensesVsIncomeReports;
+  bool? _leadsReports;
+  bool? _kbReports;
 
   bool? get customers => _customers;
   bool? get proposals => _proposals;
@@ -440,6 +496,20 @@ class MenuItems {
   bool? get tickets => _tickets;
   bool? get leads => _leads;
   bool? get staff => _staff;
+  bool? get utilities => _utilities;
+  bool? get media => _media;
+  bool? get bulkPdfExporter => _bulkPdfExporter;
+  bool? get calendar => _calendar;
+  bool? get announcements => _announcements;
+  bool? get activityLog => _activityLog;
+  bool? get ticketPipeLog => _ticketPipeLog;
+  bool? get reports => _reports;
+  bool? get timesheetsReports => _timesheetsReports;
+  bool? get salesReports => _salesReports;
+  bool? get expensesReports => _expensesReports;
+  bool? get expensesVsIncomeReports => _expensesVsIncomeReports;
+  bool? get leadsReports => _leadsReports;
+  bool? get kbReports => _kbReports;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -458,6 +528,20 @@ class MenuItems {
     map['tickets'] = _tickets;
     map['leads'] = _leads;
     map['staff'] = _staff;
+    map['utilities'] = _utilities;
+    map['media'] = _media;
+    map['bulk_pdf_exporter'] = _bulkPdfExporter;
+    map['calendar'] = _calendar;
+    map['announcements'] = _announcements;
+    map['activity_log'] = _activityLog;
+    map['ticket_pipe_log'] = _ticketPipeLog;
+    map['reports'] = _reports;
+    map['timesheets_reports'] = _timesheetsReports;
+    map['sales_reports'] = _salesReports;
+    map['expenses_reports'] = _expensesReports;
+    map['expenses_vs_income_reports'] = _expensesVsIncomeReports;
+    map['leads_reports'] = _leadsReports;
+    map['kb_reports'] = _kbReports;
     return map;
   }
 }

@@ -100,10 +100,24 @@ class Dashboard extends RestController
             'expenses' => staff_can('view', 'expenses', $staffID) || staff_can('view_own', 'expenses', $staffID),
             'contracts' => staff_can('view', 'contracts', $staffID) || staff_can('view_own', 'contracts', $staffID),
             'projects' => staff_can('view', 'projects', $staffID) || staff_can('view_own', 'projects', $staffID),
-            'tasks' => staff_can('view', 'tasks', $staffID),
+            'tasks' => true,
             'tickets' => (!is_staff_member($staffID) && get_option('access_tickets_to_none_staff_members') == 1) || is_staff_member($staffID),
             'leads' => is_staff_member($staffID),
-            'staff' => staff_can('view', 'staff', $staffID)
+            'staff' => staff_can('view', 'staff', $staffID),
+            'utilities' => true,
+            'media' => true,
+            'bulk_pdf_exporter' => staff_can('view', 'bulk_pdf_exporter', $staffID),
+            'calendar' => true,
+            'announcements' => is_admin($staffID),
+            'activity_log' => is_admin($staffID),
+            'ticket_pipe_log' => is_admin($staffID),
+            'reports' => staff_can('view-timesheets', 'reports', $staffID) || staff_can('view', 'reports', $staffID),
+            'timesheets_reports' => staff_can('view-timesheets', 'reports', $staffID),
+            'sales_reports' => staff_can('view', 'reports', $staffID),
+            'expenses_reports' => staff_can('view', 'reports', $staffID),
+            'expenses_vs_income_reports' => staff_can('view', 'reports', $staffID),
+            'leads_reports' => staff_can('view', 'reports', $staffID),
+            'kb_reports' => staff_can('view', 'reports', $staffID),
         ];
 
         $this->response([

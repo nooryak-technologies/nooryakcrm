@@ -10,10 +10,22 @@ import 'package:get/get.dart';
 import 'package:flutex_admin/core/utils/color_resources.dart';
 import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/style.dart';
+import 'package:flutex_admin/core/utils/url_container.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key, required this.homeModel});
   final DashboardModel homeModel;
+
+  void _openWebUrl(String path) async {
+    final String url = '${UrlContainer.domainUrl}/$path';
+    final Uri uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      // Handle error
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +141,16 @@ class HomeDrawer extends StatelessWidget {
                               },
                             )
                           : const SizedBox.shrink(),
+                      homeModel.menuItems?.creditNotes ?? false
+                          ? buildListTile(
+                              leadingIcon: Icons.receipt_long_outlined,
+                              title: LocalStrings.creditNotes.tr,
+                              onTap: () {
+                                Navigator.pop(context);
+                                _openWebUrl('admin/credit_notes');
+                              },
+                            )
+                          : const SizedBox.shrink(),
                       homeModel.menuItems?.items ?? false
                           ? buildListTile(
                               leadingIcon: Icons.add_box_outlined,
@@ -209,6 +231,170 @@ class HomeDrawer extends StatelessWidget {
                             Navigator.pop(context);
                             Get.toNamed(RouteHelper.staffScreen);
                           },
+                        )
+                      : const SizedBox.shrink(),
+                  homeModel.menuItems?.utilities ?? false
+                      ? ExpansionTile(
+                          title: Text(
+                            LocalStrings.utilities.tr,
+                            style: regularDefault.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                            ),
+                          ),
+                          leading: Icon(
+                            Icons.circle_outlined,
+                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                          ),
+                          iconColor: Theme.of(
+                            Get.context!,
+                          ).textTheme.bodyLarge!.color,
+                          collapsedIconColor: Theme.of(
+                            Get.context!,
+                          ).textTheme.bodyLarge!.color,
+                          children: [
+                            homeModel.menuItems?.media ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.perm_media_outlined,
+                                    title: LocalStrings.media.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/utilities/media');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.bulkPdfExporter ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.picture_as_pdf_outlined,
+                                    title: LocalStrings.bulkPdfExporter.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/utilities/bulk_pdf_exporter');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.calendar ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.calendar_month_outlined,
+                                    title: LocalStrings.calendar.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/utilities/calendar');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.announcements ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.campaign_outlined,
+                                    title: LocalStrings.announcements.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/announcements');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.activityLog ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.history_outlined,
+                                    title: LocalStrings.activityLog.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/utilities/activity_log');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.ticketPipeLog ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.settings_phone_outlined,
+                                    title: LocalStrings.ticketPipeLog.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/utilities/pipe_log');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                  homeModel.menuItems?.reports ?? false
+                      ? ExpansionTile(
+                          title: Text(
+                            LocalStrings.reports.tr,
+                            style: regularDefault.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                            ),
+                          ),
+                          leading: Icon(
+                            Icons.show_chart_rounded,
+                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                          ),
+                          iconColor: Theme.of(
+                            Get.context!,
+                          ).textTheme.bodyLarge!.color,
+                          collapsedIconColor: Theme.of(
+                            Get.context!,
+                          ).textTheme.bodyLarge!.color,
+                          children: [
+                            homeModel.menuItems?.salesReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.trending_up_outlined,
+                                    title: LocalStrings.salesReports.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/reports/sales');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.expensesReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.money_off_outlined,
+                                    title: LocalStrings.expensesReports.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/reports/expenses');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.expensesVsIncomeReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.compare_arrows_outlined,
+                                    title: LocalStrings.expensesVsIncome.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/reports/expenses_vs_income');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.leadsReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.filter_alt_outlined,
+                                    title: LocalStrings.leadsReports.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/reports/leads');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.kbReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.menu_book_outlined,
+                                    title: LocalStrings.kbArticlesReports.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/reports/knowledge_base_articles');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                            homeModel.menuItems?.timesheetsReports ?? false
+                                ? buildListTile(
+                                    leadingIcon: Icons.timer_outlined,
+                                    title: LocalStrings.timesheets.tr,
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _openWebUrl('admin/staff/timesheets?view=all');
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
                         )
                       : const SizedBox.shrink(),
                   buildListTile(
