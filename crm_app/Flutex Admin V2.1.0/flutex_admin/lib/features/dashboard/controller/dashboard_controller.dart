@@ -30,6 +30,7 @@ class DashboardController extends GetxController {
   Future<dynamic> loadData() async {
     ResponseModel responseModel = await dashboardRepo.getData();
     if (responseModel.status) {
+      print('Dashboard API JSON: ${responseModel.responseJson}');
       homeModel =
           DashboardModel.fromJson(jsonDecode(responseModel.responseJson));
     } else {
