@@ -164,6 +164,7 @@ class Authentication extends RestController
                     $result = perfex_saas_raw_query($query, $dsn, true, false, null, false, false, $params);
                     if (!empty($result) && reset($result) !== false) {
                         $tenant_url = perfex_saas_tenant_base_url($company);
+                        $tenant_url = str_ireplace('.www.', '.', $tenant_url);
                         $this->response([
                             'status' => true,
                             'domain' => $tenant_url,
