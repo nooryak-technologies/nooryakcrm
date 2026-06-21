@@ -150,57 +150,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 },
                               ),
-                              const SizedBox(height: Dimensions.space20),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 25,
-                                        height: 25,
-                                        child: Checkbox(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              Dimensions.defaultRadius,
-                                            ),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Checkbox(
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.defaultRadius)),
+                                            activeColor: ColorResources.primaryColor,
+                                            checkColor: ColorResources.colorWhite,
+                                            value: controller.remember,
+                                            side: WidgetStateBorderSide.resolveWith((states) => BorderSide(width: 1.0, color: controller.remember ? ColorResources.getTextFieldEnableBorder() : ColorResources.getTextFieldDisableBorder())),
+                                            onChanged: (value) { controller.changeRememberMe(); },
                                           ),
-                                          activeColor:
-                                              ColorResources.primaryColor,
-                                          checkColor: ColorResources.colorWhite,
-                                          value: controller.remember,
-                                          side: WidgetStateBorderSide.resolveWith(
-                                            (states) => BorderSide(
-                                              width: 1.0,
-                                              color: controller.remember
-                                                  ? ColorResources.getTextFieldEnableBorder()
-                                                  : ColorResources.getTextFieldDisableBorder(),
-                                            ),
-                                          ),
-                                          onChanged: (value) {
-                                            controller.changeRememberMe();
-                                          },
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      DefaultText(
-                                        text: LocalStrings.rememberMe.tr,
-                                        textColor: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .color!
-                                            .withValues(alpha: 0.5),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: DefaultText(
+                                            text: LocalStrings.rememberMe.tr,
+                                            textColor: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  const SizedBox(width: Dimensions.space10),
                                   InkWell(
-                                    onTap: () {
-                                      //controller.clearTextField();
-                                      Get.toNamed(
-                                        RouteHelper.forgotPasswordScreen,
-                                      );
-                                    },
+                                    onTap: () { Get.toNamed(RouteHelper.forgotPasswordScreen); },
                                     child: DefaultText(
                                       text: LocalStrings.forgotPassword.tr,
                                       textColor: ColorResources.secondaryColor,
@@ -209,6 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                               const SizedBox(height: Dimensions.space20),
+
                               controller.isSubmitLoading
                                   ? const RoundedLoadingBtn()
                                   : RoundedButton(
