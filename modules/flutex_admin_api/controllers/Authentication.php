@@ -174,11 +174,11 @@ class Authentication extends RestController
                         ], RestController::HTTP_OK);
                     }
                 } catch (\Throwable $e) {
-                    $this->response(['message' => 'Error on company ' . $company->slug . ': ' . $e->getMessage()], RestController::HTTP_INTERNAL_ERROR);
+                    // Skip if connection fails or table doesn't exist yet
                 }
             }
         }
 
-        $this->response(['message' => 'User not found: (' . $email . ')'], RestController::HTTP_NOT_FOUND);
+        $this->response(['message' => 'User not found'], RestController::HTTP_NOT_FOUND);
     }
 }
