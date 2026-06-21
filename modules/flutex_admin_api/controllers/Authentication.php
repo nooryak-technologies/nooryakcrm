@@ -178,6 +178,6 @@ class Authentication extends RestController
             }
         }
 
-        $this->response(['message' => 'User not found'], RestController::HTTP_NOT_FOUND);
+        $this->response(['message' => 'User not found: (' . $email . ')'], RestController::HTTP_NOT_FOUND);
     }
 }
