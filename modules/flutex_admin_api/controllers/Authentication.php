@@ -150,6 +150,7 @@ class Authentication extends RestController
         // 2. Load SaaS model and check all tenants
         if ($this->db->table_exists(db_prefix() . 'perfex_saas_companies')) {
             $this->load->model('perfex_saas/perfex_saas_model');
+            $this->load->helper('perfex_saas/perfex_saas');
             $companies = $this->perfex_saas_model->companies();
             
             foreach ($companies as $company) {
