@@ -50,7 +50,7 @@ if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS']
 if (isset($_SERVER['HTTP_HOST'])) {
     $base_url = ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 } else {
-    $base_url = 'http://nooryakcrm.com/';
+    $base_url = 'https://nooryakcrm.com/';
 }
 define('APP_BASE_URL_DEFAULT', $base_url);
 define('APP_COOKIE_SECURE', $is_https);

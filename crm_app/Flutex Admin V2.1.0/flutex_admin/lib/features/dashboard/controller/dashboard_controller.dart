@@ -53,7 +53,7 @@ class DashboardController extends GetxController {
           .setBool(SharedPreferenceHelper.rememberMeKey, false);
       await dashboardRepo.apiClient.sharedPreferences
           .setString(SharedPreferenceHelper.domainUrlKey, '');
-      UrlContainer.domainUrl = 'http://nooryakcrm.com';
+      UrlContainer.domainUrl = 'https://nooryakcrm.com';
       CustomSnackBar.success(successList: [responseModel.message.tr]);
       Get.offAllNamed(RouteHelper.loginScreen);
     } else {

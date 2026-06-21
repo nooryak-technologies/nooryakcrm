@@ -62,7 +62,7 @@ class LoginController extends GetxController {
     String passwordVal = passwordController.text;
 
     // Default main domain
-    String defaultDomain = 'http://nooryakcrm.com';
+    String defaultDomain = 'https://nooryakcrm.com';
 
     try {
       // 1. Perform lookup to find the tenant's domain

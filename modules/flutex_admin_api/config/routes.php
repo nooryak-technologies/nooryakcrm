@@ -7,6 +7,7 @@ $route['flutex_admin_api/auth/login'] = 'authentication/login';                 
 $route['flutex_admin_api/auth/firebase-token']  = 'profile/firebase_token';         // POST: Staff Update FCM Token
 $route['flutex_admin_api/auth/logout']  = 'profile/logout';                         // POST: Staff Logout Request
 $route['flutex_admin_api/auth/forgot-password'] = 'authentication/forgotPassword';  // POST: Request to Reset Staff Password
+$route['flutex_admin_api/auth/lookup'] = 'authentication/lookup';                    // POST: Lookup tenant domain by email
 
 // Dashboard
 $route['flutex_admin_api/dashboard'] = 'dashboard/dashboard';                       // GET: Request Dashboard Information
