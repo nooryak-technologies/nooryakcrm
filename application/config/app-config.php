@@ -47,7 +47,7 @@ if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS']
     $is_https = true;
 }
 
-if (isset($_SERVER['HTTP_HOST'])) {
+if (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || $_SERVER['HTTP_HOST'] === '127.0.0.1' || $_SERVER['HTTP_HOST'] === '::1')) {
     $base_url = ($is_https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 } else {
     $base_url = 'https://nooryakcrm.com/';

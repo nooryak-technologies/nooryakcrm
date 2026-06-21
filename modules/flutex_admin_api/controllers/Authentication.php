@@ -49,24 +49,12 @@ class Authentication extends RestController
         try {
             $this->load->model('Authentication_model');
 
-            $this->load->database();
-            $debug_info = [
-                'db' => $this->db->database,
-                'email' => $postData['email'],
-                'password_length' => strlen($postData['password']),
-                'has_user' => $this->db->where('email', $postData['email'])->get(db_prefix().'staff')->num_rows(),
-                'tenant_slug' => defined('PERFEX_SAAS_TENANT_SLUG') ? PERFEX_SAAS_TENANT_SLUG : 'not defined',
-                'app_db_name' => defined('APP_DB_NAME') ? APP_DB_NAME : 'not defined',
-                'db_prefix_const' => defined('APP_DB_PREFIX') ? APP_DB_PREFIX : 'not defined',
-                'db_prefix_func' => db_prefix()
-            ];
-
             $success = $this->Authentication_model->login($postData['email'], $postData['password'], true, true);
     
             if (is_array($success) && isset($success['memberinactive'])) {
-                $this->response(['message' => _l('admin_auth_inactive_account'), 'debug' => $debug_info], RestController::HTTP_FORBIDDEN);
+                $this->response(['message' => _l('admin_auth_inactive_account')], RestController::HTTP_FORBIDDEN);
             } elseif (false == $success) {
-                $this->response(['message' => _l('admin_auth_invalid_email_or_password'), 'debug' => $debug_info], RestController::HTTP_UNAUTHORIZED);
+                $this->response(['message' => _l('admin_auth_invalid_email_or_password')], RestController::HTTP_UNAUTHORIZED);
             }
     
             $table = db_prefix().'staff';
