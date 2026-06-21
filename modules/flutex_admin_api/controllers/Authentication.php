@@ -173,7 +173,7 @@ class Authentication extends RestController
                         ], RestController::HTTP_OK);
                     }
                 } catch (\Throwable $e) {
-                    // Skip if connection fails or table doesn't exist yet
+                    $this->response(['message' => 'Error on company ' . $company->slug . ': ' . $e->getMessage()], RestController::HTTP_INTERNAL_ERROR);
                 }
             }
         }
