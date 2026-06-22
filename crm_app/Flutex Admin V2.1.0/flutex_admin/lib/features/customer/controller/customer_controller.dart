@@ -289,6 +289,7 @@ class CustomerController extends GetxController {
   }
 
   bool isSearch = false;
+  String? activeFilter; // null = all, '1' = active, '0' = inactive
   void changeSearchIcon() {
     isSearch = !isSearch;
     update();

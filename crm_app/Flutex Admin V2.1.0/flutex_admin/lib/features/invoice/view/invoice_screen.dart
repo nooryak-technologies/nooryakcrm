@@ -14,9 +14,19 @@ import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/invoice/controller/invoice_controller.dart';
 import 'package:flutex_admin/features/invoice/repo/invoice_repo.dart';
 import 'package:flutex_admin/features/invoice/widget/invoice_card.dart';
+import 'package:flutex_admin/features/invoice/model/invoice_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+
+/// Map invoice status display name → numeric code used in Invoice.status
+const Map<String, String> _invoiceStatusCodes = {
+  'Unpaid': '1',
+  'Paid': '2',
+  'Partial': '3',
+  'Overdue': '4',
+  'Cancelled': '5',
+};
 
 class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});
@@ -65,6 +75,27 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InvoiceController>(builder: (controller) {
+      // Apply status filter client-side
+      final allInvoices = controller.invoicesModel.data ?? [];
+      final filteredInvoices = controller.statusFilter == null
+          ? allInvoices
+          : allInvoices
+              .where((inv) => inv.status == controller.statusFilter)
+              .toList();
+
+      // Build filtered model for card rendering
+      final filteredModel = InvoicesModel(
+        status: controller.invoicesModel.status,
+        message: controller.invoicesModel.message,
+        overview: controller.invoicesModel.overview,
+        data: filteredInvoices,
+        advancePaidTotal: controller.invoicesModel.advancePaidTotal,
+        advancePaidCount: controller.invoicesModel.advancePaidCount,
+        pendingPaymentTotal: controller.invoicesModel.pendingPaymentTotal,
+        pendingPaymentCount: controller.invoicesModel.pendingPaymentCount,
+        currencySymbol: controller.invoicesModel.currencySymbol,
+      );
+
       return Scaffold(
         appBar: CustomAppBar(
           title: LocalStrings.invoices.tr,
@@ -93,6 +124,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                 color: Theme.of(context).primaryColor,
                 backgroundColor: Theme.of(context).cardColor,
                 onRefresh: () async {
+                  controller.statusFilter = null;
                   await controller.initialData(shouldLoad: false);
                 },
                 child: SingleChildScrollView(
@@ -108,7 +140,9 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                           onTap: () => controller.searchInvoice(),
                         ),
                       ),
-                      if (controller.invoicesModel.overview != null)
+                      // Overview status filter cards (like Leads)
+                      if (controller.invoicesModel.overview != null &&
+                          controller.invoicesModel.overview!.isNotEmpty)
                         ExpansionTile(
                           title: Row(
                             children: [
@@ -132,28 +166,48 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                           initiallyExpanded: true,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  left: Dimensions.space15,
-                                  right: Dimensions.space15,
-                                  bottom: Dimensions.space15),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: OverviewCard(
-                                      name: '${LocalStrings.advancePaid.tr} (${controller.invoicesModel.advancePaidCount ?? '0'})',
-                                      number: '${controller.invoicesModel.currencySymbol ?? ''}${controller.invoicesModel.advancePaidTotal ?? '0'}',
-                                      color: ColorResources.blueColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: Dimensions.space10),
-                                  Expanded(
-                                    child: OverviewCard(
-                                      name: '${LocalStrings.pendingPayment.tr} (${controller.invoicesModel.pendingPaymentCount ?? '0'})',
-                                      number: '${controller.invoicesModel.currencySymbol ?? ''}${controller.invoicesModel.pendingPaymentTotal ?? '0'}',
-                                      color: ColorResources.redColor,
-                                    ),
-                                  ),
-                                ],
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimensions.space15),
+                              child: SizedBox(
+                                height: 85,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: controller
+                                      .invoicesModel.overview!.length,
+                                  separatorBuilder: (_, __) => const SizedBox(
+                                      width: Dimensions.space5),
+                                  itemBuilder: (context, index) {
+                                    final item = controller
+                                        .invoicesModel.overview![index];
+                                    final statusName = item.status ?? '';
+                                    final statusCode =
+                                        _invoiceStatusCodes[statusName];
+                                    final isSelected =
+                                        controller.statusFilter != null &&
+                                            controller.statusFilter ==
+                                                statusCode;
+                                    return InkWell(
+                                      onTap: () {
+                                        if (statusCode != null) {
+                                          if (controller.statusFilter ==
+                                              statusCode) {
+                                            controller.statusFilter = null;
+                                          } else {
+                                            controller.statusFilter =
+                                                statusCode;
+                                          }
+                                          controller.update();
+                                        }
+                                      },
+                                      child: OverviewCard(
+                                        name: statusName.tr,
+                                        number: item.total ?? '0',
+                                        color: ColorResources.blueColor,
+                                        isSelected: isSelected,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ],
@@ -172,15 +226,22 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                                       .color),
                             ),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                if (controller.statusFilter != null) {
+                                  controller.statusFilter = null;
+                                  controller.update();
+                                }
+                              },
                               child: TextIcon(
                                   text: LocalStrings.filter.tr,
-                                  icon: Icons.sort_outlined),
+                                  icon: controller.statusFilter != null
+                                      ? Icons.filter_alt
+                                      : Icons.sort_outlined),
                             ),
                           ],
                         ),
                       ),
-                      controller.invoicesModel.data?.isNotEmpty ?? false
+                      filteredInvoices.isNotEmpty
                           ? ListView.separated(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: Dimensions.space15),
@@ -189,12 +250,12 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                               itemBuilder: (context, index) {
                                 return InvoiceCard(
                                   index: index,
-                                  invoiceModel: controller.invoicesModel,
+                                  invoiceModel: filteredModel,
                                 );
                               },
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: Dimensions.space10),
-                              itemCount: controller.invoicesModel.data!.length)
+                              itemCount: filteredInvoices.length)
                           : const NoDataWidget(),
                     ],
                   ),

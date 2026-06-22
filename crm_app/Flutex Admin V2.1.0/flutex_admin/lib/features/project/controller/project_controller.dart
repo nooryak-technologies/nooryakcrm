@@ -333,6 +333,7 @@ class ProjectController extends GetxController {
   }
 
   bool isSearch = false;
+  String? statusFilter; // null = all, status name string for filtering
   void changeSearchIcon() {
     isSearch = !isSearch;
     update();

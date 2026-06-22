@@ -78,6 +78,11 @@ if (!function_exists('isAuthorized')) {
 if (!function_exists('checkModuleStatus')) {
     function checkModuleStatus()
     {
+        // Skip module status check for tenant subdomains — the module is registered
+        // on the master app and tenants inherit its availability.
+        if (function_exists('perfex_saas_is_tenant') && perfex_saas_is_tenant()) {
+            return null;
+        }
         get_instance()->load->library('app_modules');
         if (get_instance()->app_modules->is_inactive('flutex_admin_api')) {
             return [

@@ -624,6 +624,7 @@ class InvoiceController extends GetxController {
   }
 
   bool isSearch = false;
+  String? statusFilter; // null = all, numeric string = filter by that status
   void changeSearchIcon() {
     isSearch = !isSearch;
     update();

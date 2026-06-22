@@ -181,4 +181,40 @@ class Authentication extends RestController
 
         $this->response(['message' => 'User not found'], RestController::HTTP_NOT_FOUND);
     }
+
+    public function auto_login_get()
+    {
+        $token = $this->get('token');
+        $redirect = $this->get('redirect');
+
+        if (empty($token)) {
+            show_error('Invalid token', 400);
+        }
+
+        // Search the staff table for the token
+        $this->db->where('flutex_api_key', $token);
+        $staff = $this->db->get(db_prefix() . 'staff')->row();
+
+        if (!$staff) {
+            show_error('Invalid token or staff not found', 401);
+        }
+
+        if ($staff->active == 0) {
+            show_error('Account is inactive', 403);
+        }
+
+        // Set CI session userdata to log them in
+        $this->session->set_userdata([
+            'staff_logged_in' => true,
+            'staff_user_id'   => $staff->staffid,
+        ]);
+
+        // Redirect to the target URL
+        if (empty($redirect)) {
+            $redirect = 'admin/';
+        }
+
+        $this->load->helper('url');
+        redirect(site_url($redirect));
+    }
 }

@@ -114,20 +114,41 @@ class _TaskScreenState extends State<TaskScreen> {
                                 child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
-                                    return OverviewCard(
-                                      name:
-                                          controller
-                                              .tasksModel
-                                              .overview![index]
-                                              .status
-                                              ?.tr ??
-                                          '',
-                                      number: controller
-                                          .tasksModel
-                                          .overview![index]
-                                          .total
-                                          .toString(),
-                                      color: ColorResources.blueColor,
+                                    final overviewItem =
+                                        controller.tasksModel.overview![index];
+                                    // Map overview status name to TaskController status map key
+                                    final statusEntry =
+                                        controller.taskStatus.entries
+                                            .firstWhereOrNull(
+                                      (e) =>
+                                          e.value.toLowerCase().trim() ==
+                                          (overviewItem.status ?? '')
+                                              .toLowerCase()
+                                              .trim(),
+                                    );
+                                    final isSelected =
+                                        statusEntry != null &&
+                                            controller.status ==
+                                                statusEntry.key;
+                                    return InkWell(
+                                      onTap: () {
+                                        if (statusEntry != null) {
+                                          if (controller.status ==
+                                              statusEntry.key) {
+                                            controller.status = null;
+                                          } else {
+                                            controller.status =
+                                                statusEntry.key;
+                                          }
+                                          controller.initialData();
+                                        }
+                                      },
+                                      child: OverviewCard(
+                                        name: overviewItem.status?.tr ?? '',
+                                        number: overviewItem.total.toString(),
+                                        color: ColorResources.blueColor,
+                                        isSelected: isSelected,
+                                      ),
                                     );
                                   },
                                   separatorBuilder: (context, index) =>

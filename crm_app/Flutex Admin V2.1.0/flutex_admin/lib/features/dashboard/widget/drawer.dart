@@ -12,16 +12,28 @@ import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/core/utils/url_container.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutex_admin/core/service/api_service.dart';
+import 'package:flutex_admin/core/helper/shared_preference_helper.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key, required this.homeModel});
   final DashboardModel homeModel;
 
   void _openWebUrl(String path) async {
-    final String url = '${UrlContainer.domainUrl}/$path';
+    String url = '${UrlContainer.domainUrl}/$path';
+    try {
+      final apiClient = Get.find<ApiClient>();
+      final String? token = apiClient.sharedPreferences.getString(SharedPreferenceHelper.accessTokenKey);
+      if (token != null && token.isNotEmpty) {
+        url = '${UrlContainer.domainUrl}/flutex_admin_api/auth/auto_login?token=$token&redirect=$path';
+      }
+    } catch (e) {
+      // Fallback if ApiClient is not registered
+    }
+
     final Uri uri = Uri.parse(url);
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     } catch (e) {
       // Handle error
     }
@@ -252,26 +264,6 @@ class HomeDrawer extends StatelessWidget {
                             Get.context!,
                           ).textTheme.bodyLarge!.color,
                           children: [
-                            homeModel.menuItems?.media ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.perm_media_outlined,
-                                    title: LocalStrings.media.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/utilities/media');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.bulkPdfExporter ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.picture_as_pdf_outlined,
-                                    title: LocalStrings.bulkPdfExporter.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/utilities/bulk_pdf_exporter');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
                             homeModel.menuItems?.calendar ?? false
                                 ? buildListTile(
                                     leadingIcon: Icons.calendar_month_outlined,
@@ -289,26 +281,6 @@ class HomeDrawer extends StatelessWidget {
                                     onTap: () {
                                       Navigator.pop(context);
                                       _openWebUrl('admin/announcements');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.activityLog ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.history_outlined,
-                                    title: LocalStrings.activityLog.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/utilities/activity_log');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.ticketPipeLog ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.settings_phone_outlined,
-                                    title: LocalStrings.ticketPipeLog.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/utilities/pipe_log');
                                     },
                                   )
                                 : const SizedBox.shrink(),
@@ -334,36 +306,6 @@ class HomeDrawer extends StatelessWidget {
                             Get.context!,
                           ).textTheme.bodyLarge!.color,
                           children: [
-                            homeModel.menuItems?.salesReports ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.trending_up_outlined,
-                                    title: LocalStrings.salesReports.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/reports/sales');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.expensesReports ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.money_off_outlined,
-                                    title: LocalStrings.expensesReports.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/reports/expenses');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.expensesVsIncomeReports ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.compare_arrows_outlined,
-                                    title: LocalStrings.expensesVsIncome.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/reports/expenses_vs_income');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
                             homeModel.menuItems?.leadsReports ?? false
                                 ? buildListTile(
                                     leadingIcon: Icons.filter_alt_outlined,
@@ -371,26 +313,6 @@ class HomeDrawer extends StatelessWidget {
                                     onTap: () {
                                       Navigator.pop(context);
                                       _openWebUrl('admin/reports/leads');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.kbReports ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.menu_book_outlined,
-                                    title: LocalStrings.kbArticlesReports.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/reports/knowledge_base_articles');
-                                    },
-                                  )
-                                : const SizedBox.shrink(),
-                            homeModel.menuItems?.timesheetsReports ?? false
-                                ? buildListTile(
-                                    leadingIcon: Icons.timer_outlined,
-                                    title: LocalStrings.timesheets.tr,
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      _openWebUrl('admin/staff/timesheets?view=all');
                                     },
                                   )
                                 : const SizedBox.shrink(),

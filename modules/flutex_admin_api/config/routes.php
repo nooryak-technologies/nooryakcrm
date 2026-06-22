@@ -8,6 +8,7 @@ $route['flutex_admin_api/auth/firebase-token']  = 'profile/firebase_token';     
 $route['flutex_admin_api/auth/logout']  = 'profile/logout';                         // POST: Staff Logout Request
 $route['flutex_admin_api/auth/forgot-password'] = 'authentication/forgotPassword';  // POST: Request to Reset Staff Password
 $route['flutex_admin_api/auth/lookup'] = 'authentication/lookup';                    // POST: Lookup tenant domain by email
+$route['flutex_admin_api/auth/auto_login'] = 'authentication/auto_login';            // GET: Auto-login to session using API token
 
 // Dashboard
 $route['flutex_admin_api/dashboard'] = 'dashboard/dashboard';                       // GET: Request Dashboard Information

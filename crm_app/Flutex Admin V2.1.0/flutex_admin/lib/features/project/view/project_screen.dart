@@ -12,11 +12,21 @@ import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/local_strings.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/project/controller/project_controller.dart';
+import 'package:flutex_admin/features/project/model/project_model.dart';
 import 'package:flutex_admin/features/project/repo/project_repo.dart';
 import 'package:flutex_admin/features/project/widget/project_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+
+/// Map overview status name → Project.status numeric code
+const Map<String, String> _projectStatusCodes = {
+  'Not Started': '1',
+  'In Progress': '2',
+  'On Hold': '3',
+  'Finished': '4',
+  'Cancelled': '5',
+};
 
 class ProjectsScreen extends StatefulWidget {
   const ProjectsScreen({super.key});
@@ -66,6 +76,22 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<ProjectController>(
       builder: (controller) {
+        // Apply status filter client-side using numeric status code
+        final allProjects = controller.projectsModel.data ?? [];
+        final filteredProjects = controller.statusFilter == null
+            ? allProjects
+            : allProjects
+                .where((p) => p.status == controller.statusFilter)
+                .toList();
+
+        // Build filtered model for card display
+        final filteredModel = ProjectsModel(
+          status: controller.projectsModel.status,
+          message: controller.projectsModel.message,
+          overview: controller.projectsModel.overview,
+          data: filteredProjects,
+        );
+
         return Scaffold(
           appBar: CustomAppBar(
             title: LocalStrings.projects.tr,
@@ -96,11 +122,13 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   color: Theme.of(context).primaryColor,
                   backgroundColor: Theme.of(context).cardColor,
                   onRefresh: () async {
+                    controller.statusFilter = null;
                     await controller.initialData(shouldLoad: false);
                   },
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    padding: const EdgeInsets.only(bottom: Dimensions.space30),
+                    padding:
+                        const EdgeInsets.only(bottom: Dimensions.space30),
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
                       children: [
@@ -112,7 +140,9 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                             onTap: () => controller.searchProject(),
                           ),
                         ),
-                        if (controller.projectsModel.overview != null)
+                        // Tappable overview filter cards (like Leads)
+                        if (controller.projectsModel.overview != null &&
+                            controller.projectsModel.overview!.isNotEmpty)
                           ExpansionTile(
                             title: Row(
                               children: [
@@ -143,29 +173,42 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                                   height: 80,
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
+                                    itemCount: controller
+                                        .projectsModel.overview!.length,
+                                    separatorBuilder: (_, __) =>
+                                        const SizedBox(
+                                            width: Dimensions.space5),
                                     itemBuilder: (context, index) {
-                                      return OverviewCard(
-                                        name: controller
-                                            .projectsModel
-                                            .overview![index]
-                                            .status!
-                                            .tr,
-                                        number: controller
-                                            .projectsModel
-                                            .overview![index]
-                                            .total
-                                            .toString(),
-                                        color: ColorResources.blueColor,
+                                      final item = controller
+                                          .projectsModel.overview![index];
+                                      final statusName = item.status ?? '';
+                                      final statusCode =
+                                          _projectStatusCodes[statusName];
+                                      final isSelected =
+                                          controller.statusFilter != null &&
+                                              controller.statusFilter ==
+                                                  statusCode;
+                                      return InkWell(
+                                        onTap: () {
+                                          if (statusCode != null) {
+                                            if (controller.statusFilter ==
+                                                statusCode) {
+                                              controller.statusFilter = null;
+                                            } else {
+                                              controller.statusFilter =
+                                                  statusCode;
+                                            }
+                                            controller.update();
+                                          }
+                                        },
+                                        child: OverviewCard(
+                                          name: statusName.tr,
+                                          number: item.total.toString(),
+                                          color: ColorResources.blueColor,
+                                          isSelected: isSelected,
+                                        ),
                                       );
                                     },
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(
-                                          width: Dimensions.space5,
-                                        ),
-                                    itemCount: controller
-                                        .projectsModel
-                                        .overview!
-                                        .length,
                                   ),
                                 ),
                               ),
@@ -185,32 +228,40 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                                 ),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  if (controller.statusFilter != null) {
+                                    controller.statusFilter = null;
+                                    controller.update();
+                                  }
+                                },
                                 child: TextIcon(
                                   text: LocalStrings.filter.tr,
-                                  icon: Icons.sort_outlined,
+                                  icon: controller.statusFilter != null
+                                      ? Icons.filter_alt
+                                      : Icons.sort_outlined,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        controller.projectsModel.data?.isNotEmpty ?? false
+                        filteredProjects.isNotEmpty
                             ? ListView.separated(
                                 shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
+                                physics:
+                                    const NeverScrollableScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: Dimensions.space15,
                                 ),
                                 itemBuilder: (context, index) {
                                   return ProjectCard(
                                     index: index,
-                                    projectModel: controller.projectsModel,
+                                    projectModel: filteredModel,
                                   );
                                 },
                                 separatorBuilder: (context, index) =>
-                                    const SizedBox(height: Dimensions.space10),
-                                itemCount:
-                                    controller.projectsModel.data!.length,
+                                    const SizedBox(
+                                        height: Dimensions.space10),
+                                itemCount: filteredProjects.length,
                               )
                             : const NoDataWidget(),
                       ],

@@ -2,6 +2,7 @@ import 'package:flutex_admin/common/components/app-bar/custom_appbar.dart';
 import 'package:flutex_admin/common/components/custom_fab.dart';
 import 'package:flutex_admin/common/components/custom_loader/custom_loader.dart';
 import 'package:flutex_admin/common/components/no_data.dart';
+import 'package:flutex_admin/common/components/overview_card.dart';
 import 'package:flutex_admin/common/components/search_field.dart';
 import 'package:flutex_admin/common/components/text/text_icon.dart';
 import 'package:flutex_admin/core/route/route.dart';
@@ -11,9 +12,9 @@ import 'package:flutex_admin/core/utils/dimensions.dart';
 import 'package:flutex_admin/core/utils/local_strings.dart';
 import 'package:flutex_admin/core/utils/style.dart';
 import 'package:flutex_admin/features/customer/controller/customer_controller.dart';
+import 'package:flutex_admin/features/customer/model/customer_model.dart';
 import 'package:flutex_admin/features/customer/repo/customer_repo.dart';
 import 'package:flutex_admin/features/customer/widget/customers_card.dart';
-import 'package:flutex_admin/features/dashboard/widget/custom_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
@@ -66,6 +67,22 @@ class _CustomersScreenState extends State<CustomersScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<CustomerController>(
       builder: (controller) {
+        // Apply active filter client-side
+        final allCustomers = controller.customersModel.data ?? [];
+        final filteredCustomers = controller.activeFilter == null
+            ? allCustomers
+            : allCustomers
+                .where((c) => c.active == controller.activeFilter)
+                .toList();
+
+        // Build a filtered model for card display
+        final filteredModel = CustomersModel(
+          status: controller.customersModel.status,
+          message: controller.customersModel.message,
+          overview: controller.customersModel.overview,
+          data: filteredCustomers,
+        );
+
         return Scaffold(
           appBar: CustomAppBar(
             title: LocalStrings.customers.tr,
@@ -96,6 +113,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   color: Theme.of(context).primaryColor,
                   backgroundColor: Theme.of(context).cardColor,
                   onRefresh: () async {
+                    controller.activeFilter = null;
                     await controller.initialData(shouldLoad: false);
                   },
                   child: SingleChildScrollView(
@@ -114,13 +132,24 @@ class _CustomersScreenState extends State<CustomersScreen> {
                         ),
                         if (controller.customersModel.overview != null)
                           ExpansionTile(
-                            title: Text(
-                              LocalStrings.customerSummery,
-                              style: regularLarge.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium!.color,
-                              ),
+                            title: Row(
+                              children: [
+                                Container(
+                                  width: Dimensions.space3,
+                                  height: Dimensions.space15,
+                                  color: Colors.blue,
+                                ),
+                                const SizedBox(width: Dimensions.space5),
+                                Text(
+                                  LocalStrings.customerSummery,
+                                  style: regularLarge.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .color,
+                                  ),
+                                ),
+                              ],
                             ),
                             shape: const Border(),
                             initiallyExpanded: true,
@@ -129,101 +158,86 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: Dimensions.space15,
                                 ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CustomContainer(
-                                          name: LocalStrings.totalCustomers.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.customersTotal ??
-                                              '',
-                                          icon: Icons.group,
-                                          color: ColorResources.blueColor,
+                                child: SizedBox(
+                                  height: 85,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      // Total — click resets filter
+                                      InkWell(
+                                        onTap: () {
+                                          controller.activeFilter = null;
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name:
+                                                LocalStrings.totalCustomers.tr,
+                                            number: controller.customersModel
+                                                    .overview?.customersTotal ??
+                                                '0',
+                                            color: ColorResources.blueColor,
+                                            isSelected:
+                                                controller.activeFilter == null,
+                                          ),
                                         ),
-                                        const SizedBox(
-                                          width: Dimensions.space10,
+                                      ),
+                                      // Active — toggle
+                                      InkWell(
+                                        onTap: () {
+                                          if (controller.activeFilter == '1') {
+                                            controller.activeFilter = null;
+                                          } else {
+                                            controller.activeFilter = '1';
+                                          }
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name:
+                                                LocalStrings.activeCustomers.tr,
+                                            number: controller.customersModel
+                                                    .overview
+                                                    ?.customersActive ??
+                                                '0',
+                                            color: ColorResources.greenColor,
+                                            isSelected:
+                                                controller.activeFilter == '1',
+                                          ),
                                         ),
-                                        CustomContainer(
-                                          name: LocalStrings.activeCustomers.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.customersActive ??
-                                              '',
-                                          icon: Icons.group_add,
-                                          color: ColorResources.greenColor,
+                                      ),
+                                      // Inactive — toggle
+                                      InkWell(
+                                        onTap: () {
+                                          if (controller.activeFilter == '0') {
+                                            controller.activeFilter = null;
+                                          } else {
+                                            controller.activeFilter = '0';
+                                          }
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name: LocalStrings
+                                                .inactiveCustomers.tr,
+                                            number: controller.customersModel
+                                                    .overview
+                                                    ?.customersInactive ??
+                                                '0',
+                                            color: ColorResources.redColor,
+                                            isSelected:
+                                                controller.activeFilter == '0',
+                                          ),
                                         ),
-                                        const SizedBox(
-                                          width: Dimensions.space10,
-                                        ),
-                                        CustomContainer(
-                                          name:
-                                              LocalStrings.inactiveCustomers.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.customersInactive ??
-                                              '',
-                                          icon: Icons.group_remove,
-                                          color: ColorResources.redColor,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: Dimensions.space10),
-                                    Row(
-                                      children: [
-                                        CustomContainer(
-                                          name: LocalStrings.activeContacts.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.contactsActive ??
-                                              '',
-                                          icon:
-                                              Icons.add_circle_outline_outlined,
-                                          color: ColorResources.greenColor,
-                                        ),
-                                        const SizedBox(
-                                          width: Dimensions.space10,
-                                        ),
-                                        CustomContainer(
-                                          name:
-                                              LocalStrings.inactiveContacts.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.contactsInactive ??
-                                              '',
-                                          icon: Icons
-                                              .remove_circle_outline_outlined,
-                                          color: ColorResources.redColor,
-                                        ),
-                                        const SizedBox(
-                                          width: Dimensions.space10,
-                                        ),
-                                        CustomContainer(
-                                          name:
-                                              LocalStrings.lastLoginContacts.tr,
-                                          number:
-                                              controller
-                                                  .customersModel
-                                                  .overview
-                                                  ?.contactsLastLogin ??
-                                              '',
-                                          icon: Icons.login_rounded,
-                                          color: ColorResources.yellowColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -236,37 +250,46 @@ class _CustomersScreenState extends State<CustomersScreen> {
                               Text(
                                 LocalStrings.customers.tr,
                                 style: regularLarge.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium!.color,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .color,
                                 ),
                               ),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  // Reset filter when tapping the filter icon
+                                  if (controller.activeFilter != null) {
+                                    controller.activeFilter = null;
+                                    controller.update();
+                                  }
+                                },
                                 child: TextIcon(
                                   text: LocalStrings.filter.tr,
-                                  icon: Icons.sort_outlined,
+                                  icon: controller.activeFilter != null
+                                      ? Icons.filter_alt
+                                      : Icons.sort_outlined,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        controller.customersModel.data?.isNotEmpty ?? false
+                        filteredCustomers.isNotEmpty
                             ? Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: Dimensions.space15,
                                 ),
                                 child: ListView.builder(
                                   shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
+                                  physics:
+                                      const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     return CustomersCard(
                                       index: index,
-                                      customerModel: controller.customersModel,
+                                      customerModel: filteredModel,
                                     );
                                   },
-                                  itemCount:
-                                      controller.customersModel.data!.length,
+                                  itemCount: filteredCustomers.length,
                                 ),
                               )
                             : const NoDataWidget(),
