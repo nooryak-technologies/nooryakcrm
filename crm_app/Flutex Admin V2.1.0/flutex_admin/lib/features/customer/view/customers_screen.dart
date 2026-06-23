@@ -141,7 +141,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                 ),
                                 const SizedBox(width: Dimensions.space5),
                                 Text(
-                                  LocalStrings.customerSummery,
+                                  LocalStrings.customerSummery.tr,
                                   style: regularLarge.copyWith(
                                     color: Theme.of(context)
                                         .textTheme

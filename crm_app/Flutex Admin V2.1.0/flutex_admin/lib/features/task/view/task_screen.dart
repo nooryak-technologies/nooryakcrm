@@ -117,15 +117,14 @@ class _TaskScreenState extends State<TaskScreen> {
                                     final overviewItem =
                                         controller.tasksModel.overview![index];
                                     // Map overview status name to TaskController status map key
-                                    final statusEntry =
-                                        controller.taskStatus.entries
-                                            .firstWhereOrNull(
-                                      (e) =>
-                                          e.value.toLowerCase().trim() ==
-                                          (overviewItem.status ?? '')
-                                              .toLowerCase()
-                                              .trim(),
-                                    );
+                                    MapEntry<String, String>? statusEntry;
+                                    for (final e in controller.taskStatus.entries) {
+                                      if (e.value.toLowerCase().trim() ==
+                                          (overviewItem.status ?? '').toLowerCase().trim()) {
+                                        statusEntry = e;
+                                        break;
+                                      }
+                                    }
                                     final isSelected =
                                         statusEntry != null &&
                                             controller.status ==

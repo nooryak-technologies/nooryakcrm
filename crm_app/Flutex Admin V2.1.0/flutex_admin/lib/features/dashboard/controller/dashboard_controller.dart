@@ -55,7 +55,7 @@ class DashboardController extends GetxController {
           .setString(SharedPreferenceHelper.domainUrlKey, '');
       UrlContainer.domainUrl = 'https://nooryakcrm.com';
       CustomSnackBar.success(successList: [responseModel.message.tr]);
-      Get.offAllNamed(RouteHelper.loginScreen);
+      Get.offAllNamed(RouteHelper.roleSelectionScreen);
     } else {
       CustomSnackBar.error(errorList: [responseModel.message.tr]);
     }

@@ -66,10 +66,12 @@ class ApiClient extends GetxService {
       if (response.statusCode == 200) {
         try {
           if (!model.status!) {
-            sharedPreferences.setBool(
-                SharedPreferenceHelper.rememberMeKey, false);
-            sharedPreferences.remove(SharedPreferenceHelper.token);
-            Get.offAllNamed(RouteHelper.loginScreen);
+            if (!uri.contains('login') && !Get.currentRoute.contains('login')) {
+              sharedPreferences.setBool(
+                  SharedPreferenceHelper.rememberMeKey, false);
+              sharedPreferences.remove(SharedPreferenceHelper.token);
+              Get.offAllNamed(RouteHelper.roleSelectionScreen);
+            }
           }
         } catch (e) {
           e.toString();
@@ -77,8 +79,10 @@ class ApiClient extends GetxService {
 
         return ResponseModel(true, model.message!.tr, response.body);
       } else if (response.statusCode == 401) {
-        sharedPreferences.setBool(SharedPreferenceHelper.rememberMeKey, false);
-        Get.offAllNamed(RouteHelper.loginScreen);
+        if (!uri.contains('login') && !Get.currentRoute.contains('login')) {
+          sharedPreferences.setBool(SharedPreferenceHelper.rememberMeKey, false);
+          Get.offAllNamed(RouteHelper.roleSelectionScreen);
+        }
         return ResponseModel(false, model.message!.tr, response.body);
       } else if (response.statusCode == 404) {
         return ResponseModel(false, model.message!.tr, response.body);
@@ -92,8 +96,10 @@ class ApiClient extends GetxService {
     } on SocketException {
       return ResponseModel(false, LocalStrings.somethingWentWrong.tr, '');
     } on FormatException {
-      sharedPreferences.setBool(SharedPreferenceHelper.rememberMeKey, false);
-      Get.offAllNamed(RouteHelper.loginScreen);
+      if (!uri.contains('login') && !Get.currentRoute.contains('login')) {
+        sharedPreferences.setBool(SharedPreferenceHelper.rememberMeKey, false);
+        Get.offAllNamed(RouteHelper.roleSelectionScreen);
+      }
       return ResponseModel(false, LocalStrings.badResponseMsg.tr, '');
     } catch (e) {
       return ResponseModel(false, e.toString(), '');
