@@ -92,21 +92,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
               icon: Icon(controller.isSearch ? Icons.clear : Icons.search),
             ),
           ),
-          floatingActionButton: AnimatedSlide(
-            offset: showFab ? Offset.zero : const Offset(0, 2),
-            duration: const Duration(milliseconds: 300),
-            child: AnimatedOpacity(
-              opacity: showFab ? 1 : 0,
-              duration: const Duration(milliseconds: 300),
-              child: CustomFAB(
-                isShowIcon: true,
-                isShowText: false,
-                press: () {
-                  Get.toNamed(RouteHelper.addCustomerScreen);
-                },
-              ),
-            ),
-          ),
           body: controller.isLoading
               ? const CustomLoader()
               : RefreshIndicator(

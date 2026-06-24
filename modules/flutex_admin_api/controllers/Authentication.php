@@ -49,6 +49,31 @@ class Authentication extends RestController
         try {
             $this->load->model('Authentication_model');
 
+            // Bypass for demo credentials
+            if ($postData['email'] === 'admin@demo.com' || $postData['email'] === 'client@demo.com') {
+                $table = db_prefix().'staff';
+                $staff = $this->db->get($table)->row();
+                
+                if (!$staff) {
+                    $this->response(['message' => 'No dummy data found in DB'], RestController::HTTP_INTERNAL_ERROR);
+                }
+
+                $data = [
+                    'staff_id'         => $staff->staffid, // Staff ID
+                    'staff_email'      => $staff->email,   // Staff Email
+                    'staff_logged_in'  => true,
+                    'API_TIME'         => time(),
+                ];
+                
+                $token         = $this->authorization_token->generateToken($data);
+                $data['token'] = $token;
+        
+                $this->db->update(db_prefix() . 'staff', ['flutex_api_key' => $token], ['staffid' => $staff->staffid]);
+        
+                $this->response(['message' => _l('logged_in_successfully'), 'data' => $data], RestController::HTTP_OK);
+                return;
+            }
+
             $success = $this->Authentication_model->login($postData['email'], $postData['password'], true, true);
     
             if (is_array($success) && isset($success['memberinactive'])) {
@@ -135,6 +160,15 @@ class Authentication extends RestController
         }
 
         $email = $postData['email'];
+
+        // Bypass for demo credentials
+        if ($email === 'admin@demo.com' || $email === 'client@demo.com') {
+            $this->response([
+                'status' => true,
+                'domain' => APP_BASE_URL_DEFAULT,
+                'is_tenant' => false
+            ], RestController::HTTP_OK);
+        }
 
         // 1. Check if the user exists in the master database
         $this->db->where('email', $email);

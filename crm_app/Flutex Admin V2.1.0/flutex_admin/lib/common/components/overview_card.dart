@@ -39,9 +39,13 @@ class OverviewCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            number,
-            style: mediumExtraLarge.copyWith(color: color),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              number,
+              style: mediumExtraLarge.copyWith(color: color),
+            ),
           ),
           const SizedBox(height: Dimensions.space5),
           Text(

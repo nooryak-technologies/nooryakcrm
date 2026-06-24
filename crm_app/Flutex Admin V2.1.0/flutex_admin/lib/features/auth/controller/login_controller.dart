@@ -28,6 +28,17 @@ class LoginController extends GetxController {
 
   LoginController({required this.loginRepo});
 
+  @override
+  void onInit() {
+    super.onInit();
+    final selectedRole = Get.arguments as String? ?? 'Staff';
+    if (selectedRole == 'Company') {
+      emailController.text = 'client@demo.com';
+    } else {
+      emailController.text = 'admin@demo.com';
+    }
+  }
+
   Future<void> checkAndGotoNextStep(LoginModel responseModel) async {
     if (remember) {
       await loginRepo.apiClient.sharedPreferences

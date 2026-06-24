@@ -24,8 +24,11 @@ const Map<String, String> _invoiceStatusCodes = {
   'Unpaid': '1',
   'Paid': '2',
   'Partial': '3',
+  'Partially paid': '3',
+  'Partially Paid': '3',
   'Overdue': '4',
   'Cancelled': '5',
+  'Draft': '6',
 };
 
 class InvoicesScreen extends StatefulWidget {
