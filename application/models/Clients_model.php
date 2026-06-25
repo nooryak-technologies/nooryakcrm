@@ -1555,7 +1555,12 @@ class Clients_model extends App_Model
         $this->db->update(db_prefix() . 'clients', ['active' => 1, 'registration_confirmed' => 1]);
 
         $this->db->where('id', $contact_id);
-        $this->db->update(db_prefix() . 'contacts', ['active' => 1]);
+        $this->db->update(db_prefix() . 'contacts', [
+            'active' => 1,
+            'email_verified_at' => date('Y-m-d H:i:s'),
+            'email_verification_key' => null,
+            'email_verification_sent_at' => null,
+        ]);
 
         $contact = $this->get_contact($contact_id);
 
