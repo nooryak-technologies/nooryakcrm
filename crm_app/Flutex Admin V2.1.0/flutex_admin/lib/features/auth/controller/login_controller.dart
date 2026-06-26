@@ -18,9 +18,9 @@ class LoginController extends GetxController {
   final FocusNode passwordFocusNode = FocusNode();
 
   TextEditingController emailController =
-      TextEditingController(text: 'admin@demo.com');
+      TextEditingController();
   TextEditingController passwordController =
-      TextEditingController(text: '123456');
+      TextEditingController(text: '12345678');
 
   String? email;
   String? password;
@@ -33,9 +33,9 @@ class LoginController extends GetxController {
     super.onInit();
     final selectedRole = Get.arguments as String? ?? 'Staff';
     if (selectedRole == 'Company') {
-      emailController.text = 'client@demo.com';
+      emailController.text = 'demo-company@gmail.com';
     } else {
-      emailController.text = 'admin@demo.com';
+      emailController.text = 'demo-staff@gmail.com';
     }
   }
 
