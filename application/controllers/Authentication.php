@@ -412,6 +412,17 @@ class Authentication extends ClientsController
             return;
         }
 
+        // Check if phone number already exists in contacts
+        $this->db->group_start();
+        $this->db->where('phonenumber', $phone);
+        $this->db->or_where('contact_phonenumber', $phone);
+        $this->db->group_end();
+        $total_rows = $this->db->count_all_results(db_prefix() . 'contacts');
+        if ($total_rows > 0) {
+            echo json_encode(['success' => false, 'message' => 'This phone number is already registered.']);
+            return;
+        }
+
         // Generate 6 digit OTP
         $otp = (string)mt_rand(100000, 999999);
 

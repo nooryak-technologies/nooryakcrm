@@ -2960,6 +2960,16 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
         contactPhoneInput.addEventListener('input', function () {
             splitFullName();
             syncPhoneInputs();
+            
+            // Reset verification state if they edit the phone number
+            otpVerified = false;
+            if (btnSendOtp) btnSendOtp.style.display = 'inline-block';
+            if (phoneVerifiedBadge) phoneVerifiedBadge.style.display = 'none';
+            if (btnRegisterSubmit) btnRegisterSubmit.disabled = true;
+            if (inlineOtpContainer) inlineOtpContainer.style.display = 'none';
+            
+            var errorEl = document.getElementById('inline-otp-error');
+            if (errorEl) errorEl.style.display = 'none';
         });
     }
 
@@ -2968,6 +2978,8 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
     var otpCooldownTimer = null;
     var siteUrl = '<?= site_url(); ?>';
     var isSendingOtp = false;
+    var csrfName = '<?= $this->security->get_csrf_token_name(); ?>';
+    var csrfHash = '<?= $this->security->get_csrf_hash(); ?>';
 
     var btnSendOtp = document.getElementById('btn-send-otp-inline');
     var btnVerifyOtp = document.getElementById('btn-verify-otp-inline');
@@ -2995,6 +3007,7 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
         if (isSendingOtp) return;
         var phoneInput = document.getElementById('phonenumber');
         var phoneVal = phoneInput ? phoneInput.value : '';
+        var errorEl = document.getElementById('inline-otp-error');
         
         if (!phoneVal || phoneVal.replace(/[^\d]/g, '').length < 7) {
             alert('Please enter a valid phone number first.');
@@ -3004,6 +3017,7 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
         isSendingOtp = true;
         btnSendOtp.disabled = true;
         btnSendOtp.textContent = 'Sending...';
+        if (errorEl) errorEl.style.display = 'none';
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', siteUrl + 'authentication/send_otp', true);
@@ -3023,7 +3037,12 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
                     }
                     startOtpCooldownInline();
                 } else {
-                    alert(res.message || 'Failed to send OTP. Please try again.');
+                    if (errorEl) {
+                        errorEl.textContent = res.message || 'Failed to send OTP.';
+                        errorEl.style.display = 'block';
+                    } else {
+                        alert(res.message || 'Failed to send OTP. Please try again.');
+                    }
                 }
             } catch (e) {
                 console.error(e);
@@ -3036,7 +3055,12 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
             btnSendOtp.textContent = 'Verify';
             alert('An error occurred. Please try again.');
         };
-        xhr.send('phone=' + encodeURIComponent(phoneVal));
+
+        var params = 'phone=' + encodeURIComponent(phoneVal);
+        if (csrfName && csrfHash) {
+            params += '&' + csrfName + '=' + encodeURIComponent(csrfHash);
+        }
+        xhr.send(params);
     }
 
     function startOtpCooldownInline() {
@@ -3126,7 +3150,12 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
                     errorEl.style.display = 'block';
                 }
             };
-            xhr.send('phone=' + encodeURIComponent(phoneVal) + '&otp=' + encodeURIComponent(code));
+
+            var params = 'phone=' + encodeURIComponent(phoneVal) + '&otp=' + encodeURIComponent(code);
+            if (csrfName && csrfHash) {
+                params += '&' + csrfName + '=' + encodeURIComponent(csrfHash);
+            }
+            xhr.send(params);
         });
     }
 
