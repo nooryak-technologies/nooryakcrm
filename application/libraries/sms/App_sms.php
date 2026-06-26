@@ -229,6 +229,10 @@ class App_sms
 
     public function get_active_gateway()
     {
+        if (isset(self::$gateways['msg91'])) {
+            return self::$gateways['msg91'];
+        }
+
         $active = false;
 
         foreach (self::$gateways as $gateway) {
