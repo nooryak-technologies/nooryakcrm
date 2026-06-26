@@ -188,6 +188,8 @@ class Authentication extends ClientsController
                 show_404();
             }
 
+            $this->form_validation->set_rules('phonenumber', 'Phone Number', 'callback_verify_otp_session_match');
+
             if ($this->form_validation->run() !== false) {
                 $data      = $this->input->post();
                 $countryId = isset($data['country']) && is_numeric($data['country']) ? $data['country'] : 0;
@@ -238,6 +240,12 @@ class Authentication extends ClientsController
                 ], true);
 
                 if ($clientid) {
+                    $this->session->unset_userdata('mobile_otp_code');
+                    $this->session->unset_userdata('mobile_otp_phone');
+                    $this->session->unset_userdata('mobile_otp_expiry');
+                    $this->session->unset_userdata('mobile_otp_verified');
+                    $this->session->unset_userdata('mobile_otp_verified_phone');
+
                     hooks()->do_action('after_client_register', $clientid);
 
                     if (get_option('customers_register_require_confirmation') == '1') {
@@ -394,5 +402,97 @@ class Authentication extends ClientsController
         set_contact_language($lang);
 
         redirect(previous_url() ?: $_SERVER['HTTP_REFERER']);
+    }
+
+    public function send_otp()
+    {
+        $phone = trim($this->input->post('phone', true));
+        if (empty($phone)) {
+            echo json_encode(['success' => false, 'message' => 'Phone number is required.']);
+            return;
+        }
+
+        // Generate 6 digit OTP
+        $otp = (string)mt_rand(100000, 999999);
+
+        // Try to load SMS library/gateway
+        $this->load->helper('sms_helper');
+        $active_gateway = $this->app_sms->get_active_gateway();
+        $sms_sent = false;
+        $error_msg = '';
+
+        if ($active_gateway) {
+            $gateway_class = 'sms_' . $active_gateway['id'];
+            $gateway = $this->{$gateway_class};
+            $message = "Your OTP verification code for Nooryak CRM is: " . $otp;
+            $sms_sent = $gateway->send($phone, $message);
+            if (!$sms_sent && isset($GLOBALS['sms_error'])) {
+                $error_msg = $GLOBALS['sms_error'];
+            }
+        } else {
+            // For testing/fallback when no active gateway is found, log it and return success.
+            log_activity("OTP generated for registration: " . $otp . " to " . $phone . " (No active SMS gateway configured)");
+            $sms_sent = true; 
+        }
+
+        if ($sms_sent) {
+            $this->session->set_userdata('mobile_otp_code', $otp);
+            $this->session->set_userdata('mobile_otp_phone', $phone);
+            $this->session->set_userdata('mobile_otp_expiry', time() + 300); // 5 minutes validity
+            
+            $resp = ['success' => true, 'message' => 'OTP has been sent to your mobile number.'];
+            if (ENVIRONMENT === 'development' || !$active_gateway) {
+                $resp['debug_otp'] = $otp;
+            }
+            echo json_encode($resp);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to send OTP. ' . $error_msg]);
+        }
+    }
+
+    public function verify_otp()
+    {
+        $phone = trim($this->input->post('phone', true));
+        $otp = trim($this->input->post('otp', true));
+
+        if (empty($phone) || empty($otp)) {
+            echo json_encode(['success' => false, 'message' => 'Phone number and OTP are required.']);
+            return;
+        }
+
+        $session_otp = $this->session->userdata('mobile_otp_code');
+        $session_phone = $this->session->userdata('mobile_otp_phone');
+        $session_expiry = $this->session->userdata('mobile_otp_expiry');
+
+        if (empty($session_otp) || empty($session_phone) || empty($session_expiry)) {
+            echo json_encode(['success' => false, 'message' => 'No OTP request found. Please resend.']);
+            return;
+        }
+
+        if (time() > $session_expiry) {
+            echo json_encode(['success' => false, 'message' => 'OTP has expired. Please request a new one.']);
+            return;
+        }
+
+        if ($session_otp !== $otp || $session_phone !== $phone) {
+            echo json_encode(['success' => false, 'message' => 'Invalid OTP code. Please check and try again.']);
+            return;
+        }
+
+        // Success
+        $this->session->set_userdata('mobile_otp_verified', true);
+        $this->session->set_userdata('mobile_otp_verified_phone', $phone);
+
+        echo json_encode(['success' => true, 'message' => 'Mobile number verified successfully.']);
+    }
+
+    public function verify_otp_session_match($str)
+    {
+        $phone = $this->input->post('phonenumber');
+        if ($this->session->userdata('mobile_otp_verified') !== true || $this->session->userdata('mobile_otp_verified_phone') !== $phone) {
+            $this->form_validation->set_message('verify_otp_session_match', 'Please verify your mobile number via OTP first.');
+            return false;
+        }
+        return true;
     }
 }

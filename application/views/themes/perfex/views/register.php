@@ -1874,6 +1874,159 @@ footer.footer {
     }
 }
 
+/* =====================================================
+   OTP MODAL STYLING
+===================================================== */
+.otp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.otp-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.otp-modal-card {
+    background: #fff;
+    width: 90%;
+    max-width: 440px;
+    border-radius: 24px;
+    padding: 36px 30px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+    text-align: center;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+.otp-modal-overlay.active .otp-modal-card {
+    transform: translateY(0);
+}
+.otp-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+.otp-modal-close:hover {
+    color: #0f172a;
+}
+.otp-modal-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff4ef;
+    color: #ff6b35;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 16px rgba(255, 107, 53, 0.1);
+}
+.otp-modal-card h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+.otp-modal-lead {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+.otp-modal-lead strong {
+    color: #0f172a;
+}
+.otp-input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.otp-digit-input {
+    width: 50px;
+    height: 56px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.otp-digit-input:focus {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+}
+.otp-error-alert {
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #ef4444;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.btn-otp-verify {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: #ff6b35;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(255, 107, 53, 0.2);
+    transition: background 0.2s, transform 0.1s;
+}
+.btn-otp-verify:hover {
+    background: #f45b24;
+}
+.btn-otp-verify:active {
+    transform: translateY(1px);
+}
+.otp-resend-row {
+    margin-top: 18px;
+    font-size: 13.5px;
+    color: #64748b;
+}
+.btn-otp-resend-link {
+    background: none;
+    border: none;
+    color: #ff6b35;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    font-size: 13.5px;
+    text-decoration: none;
+}
+.btn-otp-resend-link:hover {
+    text-decoration: underline;
+}
+
 </style>
 
 <?php
@@ -2436,6 +2589,39 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
     </div>
 </div><!-- /crm-register-wrap -->
 
+<!-- OTP Verification Modal -->
+<div id="otp-verification-modal" class="otp-modal-overlay">
+    <div class="otp-modal-card">
+        <button type="button" class="otp-modal-close" id="otp-modal-close-btn" aria-label="Close">&times;</button>
+        <div class="otp-modal-icon">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        </div>
+        <h2>Verify Your Mobile</h2>
+        <p class="otp-modal-lead">We have sent a 6-digit verification code to <strong id="otp-modal-phone-display">+91 XXXXX XXXXX</strong>.</p>
+        
+        <div class="otp-input-container">
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="0" autocomplete="off" aria-label="Digit 1" />
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="1" autocomplete="off" aria-label="Digit 2" />
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="2" autocomplete="off" aria-label="Digit 3" />
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="3" autocomplete="off" aria-label="Digit 4" />
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="4" autocomplete="off" aria-label="Digit 5" />
+            <input type="text" maxlength="1" class="otp-digit-input" data-index="5" autocomplete="off" aria-label="Digit 6" />
+        </div>
+        <input type="hidden" id="otp-code-compiled" name="otp_code_compiled" />
+        
+        <div id="otp-error-message" class="otp-error-alert" style="display: none;">Invalid verification code. Please try again.</div>
+        
+        <button type="button" class="btn-otp-verify" id="btn-otp-verify-submit">
+            Verify &amp; Continue
+        </button>
+        
+        <div class="otp-resend-row">
+            <span id="otp-timer-text">Resend code in <strong id="otp-cooldown-timer">60</strong>s</span>
+            <button type="button" id="btn-otp-resend" class="btn-otp-resend-link" style="display: none;">Resend OTP</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     'use strict';
@@ -2869,10 +3055,211 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
         });
     }
 
+    /* ---- OTP Verification Flow ---- */
+    var otpVerified = false;
+    var otpCooldownTimer = null;
+    var otpCooldownSeconds = 60;
+    var siteUrl = '<?= site_url(); ?>';
+    var isSendingOtp = false;
+
+    function sendOtpCode() {
+        if (isSendingOtp) return;
+        var phoneInput = document.getElementById('phonenumber');
+        var phoneDisplay = document.getElementById('contact_phonenumber');
+        var phoneVal = phoneInput ? phoneInput.value : '';
+        
+        if (!phoneVal || phoneVal.replace(/[^\d]/g, '').length < 7) {
+            alert('Please enter a valid phone number first.');
+            return;
+        }
+
+        isSendingOtp = true;
+        var submitBtn = document.querySelector('.btn-crm-submit');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending OTP...';
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', siteUrl + 'authentication/send_otp', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            isSendingOtp = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Your Account';
+            }
+            try {
+                var res = JSON.parse(xhr.responseText);
+                if (res.success) {
+                    var displayEl = document.getElementById('otp-modal-phone-display');
+                    if (displayEl) displayEl.textContent = phoneDisplay ? phoneDisplay.value : phoneVal;
+                    
+                    var modal = document.getElementById('otp-verification-modal');
+                    if (modal) modal.classList.add('active');
+                    
+                    var firstInput = document.querySelector('.otp-digit-input[data-index="0"]');
+                    if (firstInput) setTimeout(function() { firstInput.focus(); }, 100);
+                    
+                    startOtpCooldown();
+                } else {
+                    alert(res.message || 'Failed to send OTP. Please try again.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('An error occurred. Please try again.');
+            }
+        };
+        xhr.onerror = function() {
+            isSendingOtp = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Your Account';
+            }
+            alert('An error occurred. Please try again.');
+        };
+        xhr.send('phone=' + encodeURIComponent(phoneVal));
+    }
+
+    function startOtpCooldown() {
+        var timerText = document.getElementById('otp-timer-text');
+        var resendBtn = document.getElementById('btn-otp-resend');
+        var cooldownEl = document.getElementById('otp-cooldown-timer');
+        
+        if (timerText) timerText.style.display = 'inline';
+        if (resendBtn) resendBtn.style.display = 'none';
+        
+        var seconds = 60;
+        if (cooldownEl) cooldownEl.textContent = seconds;
+        
+        if (otpCooldownTimer) clearInterval(otpCooldownTimer);
+        otpCooldownTimer = setInterval(function() {
+            seconds--;
+            if (cooldownEl) cooldownEl.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(otpCooldownTimer);
+                if (timerText) timerText.style.display = 'none';
+                if (resendBtn) resendBtn.style.display = 'inline-block';
+            }
+        }, 1000);
+    }
+
+    var digitInputs = document.querySelectorAll('.otp-digit-input');
+    digitInputs.forEach(function(input) {
+        input.addEventListener('input', function(e) {
+            var val = input.value.replace(/[^\d]/g, '');
+            input.value = val;
+            if (val.length === 1) {
+                var nextIndex = parseInt(input.getAttribute('data-index')) + 1;
+                var nextInput = document.querySelector('.otp-digit-input[data-index="' + nextIndex + '"]');
+                if (nextInput) nextInput.focus();
+            }
+            compileOtpCode();
+        });
+        
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && input.value.length === 0) {
+                var prevIndex = parseInt(input.getAttribute('data-index')) - 1;
+                var prevInput = document.querySelector('.otp-digit-input[data-index="' + prevIndex + '"]');
+                if (prevInput) {
+                    prevInput.focus();
+                    prevInput.value = '';
+                }
+            }
+            compileOtpCode();
+        });
+    });
+
+    function compileOtpCode() {
+        var code = '';
+        digitInputs.forEach(function(input) {
+            code += input.value;
+        });
+        var compiledInput = document.getElementById('otp-code-compiled');
+        if (compiledInput) compiledInput.value = code;
+    }
+
+    var closeBtn = document.getElementById('otp-modal-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            var modal = document.getElementById('otp-verification-modal');
+            if (modal) modal.classList.remove('active');
+        });
+    }
+
+    var resendBtn = document.getElementById('btn-otp-resend');
+    if (resendBtn) {
+        resendBtn.addEventListener('click', function() {
+            sendOtpCode();
+        });
+    }
+
+    var verifyBtn = document.getElementById('btn-otp-verify-submit');
+    if (verifyBtn) {
+        verifyBtn.addEventListener('click', function() {
+            var code = document.getElementById('otp-code-compiled').value;
+            var phoneVal = document.getElementById('phonenumber').value;
+            var errorEl = document.getElementById('otp-error-message');
+            
+            if (code.length !== 6) {
+                if (errorEl) {
+                    errorEl.textContent = 'Please enter all 6 digits of the OTP code.';
+                    errorEl.style.display = 'block';
+                }
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+            if (errorEl) errorEl.style.display = 'none';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', siteUrl + 'authentication/verify_otp', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify & Continue';
+                try {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.success) {
+                        otpVerified = true;
+                        var modal = document.getElementById('otp-verification-modal');
+                        if (modal) modal.classList.remove('active');
+                        if (form) form.submit();
+                    } else {
+                        if (errorEl) {
+                            errorEl.textContent = res.message || 'Invalid OTP code. Please try again.';
+                            errorEl.style.display = 'block';
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                    if (errorEl) {
+                        errorEl.textContent = 'An error occurred. Please try again.';
+                        errorEl.style.display = 'block';
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify & Continue';
+                if (errorEl) {
+                    errorEl.textContent = 'An error occurred. Please try again.';
+                    errorEl.style.display = 'block';
+                }
+            };
+            xhr.send('phone=' + encodeURIComponent(phoneVal) + '&otp=' + encodeURIComponent(code));
+        });
+    }
+
     if (form) {
-        form.addEventListener('submit', function () {
+        form.addEventListener('submit', function (e) {
             splitFullName();
             syncPhoneInputs();
+            if (!otpVerified) {
+                e.preventDefault();
+                sendOtpCode();
+            }
         });
     }
 
