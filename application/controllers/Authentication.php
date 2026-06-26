@@ -509,20 +509,4 @@ class Authentication extends ClientsController
         }
         return true;
     }
-
-    public function test_sms()
-    {
-        $this->load->helper('sms_helper');
-        $active_gateway = $this->app_sms->get_active_gateway();
-        echo "ACTIVE GATEWAY: ";
-        var_dump($active_gateway);
-        
-        $this->db->limit(10);
-        $contacts = $this->db->get(db_prefix() . 'contacts')->result_array();
-        echo "CONTACTS:\n";
-        foreach ($contacts as $c) {
-            echo $c['id'] . " | " . $c['phonenumber'] . "\n";
-        }
-        exit;
-    }
 }
