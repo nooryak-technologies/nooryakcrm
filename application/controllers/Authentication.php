@@ -412,8 +412,14 @@ class Authentication extends ClientsController
             return;
         }
 
-        // Check if phone number already exists in contacts
-        $this->db->where('phonenumber', $phone);
+        // Check if phone number already exists in contacts (match last 10 digits to handle formatting differences)
+        $phone_digits = preg_replace('/[^\d]/', '', $phone);
+        if (strlen($phone_digits) >= 10) {
+            $last_10 = substr($phone_digits, -10);
+            $this->db->like('phonenumber', $last_10);
+        } else {
+            $this->db->where('phonenumber', $phone);
+        }
         $total_rows = $this->db->count_all_results(db_prefix() . 'contacts');
         if ($total_rows > 0) {
             echo json_encode(['success' => false, 'message' => 'This phone number is already registered.']);
@@ -502,5 +508,21 @@ class Authentication extends ClientsController
             return false;
         }
         return true;
+    }
+
+    public function test_sms()
+    {
+        $this->load->helper('sms_helper');
+        $active_gateway = $this->app_sms->get_active_gateway();
+        echo "ACTIVE GATEWAY: ";
+        var_dump($active_gateway);
+        
+        $this->db->limit(10);
+        $contacts = $this->db->get(db_prefix() . 'contacts')->result_array();
+        echo "CONTACTS:\n";
+        foreach ($contacts as $c) {
+            echo $c['id'] . " | " . $c['phonenumber'] . "\n";
+        }
+        exit;
     }
 }

@@ -3005,6 +3005,7 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
 
     function sendOtpCodeInline() {
         if (isSendingOtp) return;
+        syncPhoneInputs();
         var phoneInput = document.getElementById('phonenumber');
         var phoneVal = phoneInput ? phoneInput.value : '';
         var errorEl = document.getElementById('inline-otp-error');
