@@ -32,7 +32,7 @@
                 <label for="email" class="control-label !tw-mb-3">
                     <?= _l('admin_auth_login_email'); ?>
                 </label>
-                <input type="email" id="email" name="email" class="form-control" autofocus="1">
+                <input type="email" id="email" name="email" class="form-control" autofocus="1" value="<?= set_value('email', 'demo-staff@gmail.com'); ?>">
             </div>
 
             <div class="form-group tw-mt-8">
@@ -46,7 +46,7 @@
                     </a>
                 </span>
 
-                <input type="password" id="password" name="password" class="form-control">
+                <input type="password" id="password" name="password" class="form-control" value="12345678">
             </div>
 
             <?php if (show_recaptcha()) { ?>

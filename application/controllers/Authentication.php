@@ -429,6 +429,29 @@ class Authentication extends ClientsController
         // Generate 6 digit OTP
         $otp = (string)mt_rand(100000, 999999);
 
+        // Send OTP via SMTP Email
+        $email = trim($this->input->post('email', true));
+        $email_sent = false;
+        $email_error = '';
+
+        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                $this->load->library('email');
+                $this->email->clear(true);
+                $from_email = get_option('smtp_email');
+                if (empty($from_email)) {
+                    $from_email = 'noreply@nooryakcrm.com';
+                }
+                $this->email->from($from_email, get_option('companyname'));
+                $this->email->to($email);
+                $this->email->subject("Nooryak CRM OTP Verification Code");
+                $this->email->message("Your OTP verification code is: " . $otp . "\n\nThis code is valid for 5 minutes.");
+                $email_sent = $this->email->send(true); // send synchronously
+            } catch (Exception $e) {
+                $email_error = $e->getMessage();
+            }
+        }
+
         // Try to load SMS library/gateway
         $this->load->helper('sms_helper');
         $active_gateway = $this->app_sms->get_active_gateway();
@@ -444,23 +467,32 @@ class Authentication extends ClientsController
                 $error_msg = $GLOBALS['sms_error'];
             }
         } else {
-            // For testing/fallback when no active gateway is found, log it and return success.
             log_activity("OTP generated for registration: " . $otp . " to " . $phone . " (No active SMS gateway configured)");
-            $sms_sent = true; 
+            $sms_sent = false; 
+            $error_msg = 'No active SMS gateway is configured in the CRM settings.';
         }
 
-        if ($sms_sent) {
+        if ($sms_sent || $email_sent) {
             $this->session->set_userdata('mobile_otp_code', $otp);
             $this->session->set_userdata('mobile_otp_phone', $phone);
             $this->session->set_userdata('mobile_otp_expiry', time() + 300); // 5 minutes validity
             
-            $resp = ['success' => true, 'message' => 'OTP has been sent to your mobile number.'];
-            if (ENVIRONMENT === 'development' || !$active_gateway) {
+            $msg = 'OTP has been sent successfully.';
+            if ($sms_sent && $email_sent) {
+                $msg = 'OTP has been sent to your mobile number and email.';
+            } elseif ($email_sent) {
+                $msg = 'OTP has been sent to your email.';
+            } elseif ($sms_sent) {
+                $msg = 'OTP has been sent to your mobile number.';
+            }
+
+            $resp = ['success' => true, 'message' => $msg];
+            if (ENVIRONMENT === 'development' || (!$active_gateway && !$email_sent)) {
                 $resp['debug_otp'] = $otp;
             }
             echo json_encode($resp);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to send OTP. ' . $error_msg]);
+            echo json_encode(['success' => false, 'message' => 'Failed to send OTP. SMS error: ' . $error_msg . ' Email error: ' . $email_error]);
         }
     }
 

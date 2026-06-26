@@ -3015,6 +3015,13 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
             return;
         }
 
+        var emailInput = document.getElementById('<?= e($fields['email']); ?>');
+        var emailVal = emailInput ? emailInput.value.trim() : '';
+        if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+            alert('Please enter a valid email address first.');
+            return;
+        }
+
         isSendingOtp = true;
         btnSendOtp.disabled = true;
         btnSendOtp.textContent = 'Sending...';
@@ -3057,7 +3064,7 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
             alert('An error occurred. Please try again.');
         };
 
-        var params = 'phone=' + encodeURIComponent(phoneVal);
+        var params = 'phone=' + encodeURIComponent(phoneVal) + '&email=' + encodeURIComponent(emailVal);
         if (csrfName && csrfHash) {
             params += '&' + csrfName + '=' + encodeURIComponent(csrfHash);
         }
