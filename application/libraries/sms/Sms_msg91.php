@@ -15,8 +15,8 @@ class Sms_msg91 extends App_sms
         parent::__construct();
 
         $this->sender_id = $this->get_option('msg91', 'sender_id') ?: 'NOORYA';
-        $this->auth_key  = '545107AuKSm3s8aLTi6a3eaad5P1';
-        $this->api_type  = 'api';
+        $this->auth_key  = $this->get_option('msg91', 'auth_key') ?: '545107AuKSm3s8aLTi6a3eaad5P1';
+        $this->api_type  = $this->get_option('msg91', 'api_type') ?: 'api';
 
         $this->add_gateway('msg91', [
             'deprecated' => true,
@@ -44,6 +44,11 @@ class Sms_msg91 extends App_sms
                 [
                     'name'  => 'auth_key',
                     'label' => 'Auth Key',
+                ],
+                [
+                    'name'  => 'otp_dlt_template_id',
+                    'label' => 'OTP DLT Template ID (India only)',
+                    'info'  => '<p>Specify the DLT Template ID used for direct custom SMS messages like OTP verification.</p>',
                 ],
             ],
         ]);
@@ -194,6 +199,8 @@ class Sms_msg91 extends App_sms
 
         if (static::$trigger_being_sent) {
             $dltTemplateId = get_option($this->dltTemplmateIdOptionName(static::$trigger_being_sent)) ?: null;
+        } else {
+            $dltTemplateId = $this->get_option('msg91', 'otp_dlt_template_id') ?: null;
         }
 
         return hooks()->apply_filters('msg91_common_options', array_filter([
