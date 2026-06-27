@@ -611,6 +611,9 @@ class LocalStrings {
   static const String staff = "Staff";
   static const String staffs = "Staffs";
   static const String staffSummery = "Staff Summery";
+  static const String totalStaff = "Total Staff";
+  static const String activeStaff = "Active Staff";
+  static const String inactiveStaff = "Inactive Staff";
   static const String addStaff = "Add Staff";
   static const String updateStaff = "Update Staff";
   static const String deleteStaff = "Delete Staff Member";

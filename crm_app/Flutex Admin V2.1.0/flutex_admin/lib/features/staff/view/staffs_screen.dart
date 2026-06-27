@@ -13,6 +13,11 @@ import 'package:flutex_admin/features/staff/widget/staffs_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:flutex_admin/common/components/overview_card.dart';
+import 'package:flutex_admin/common/components/text/text_icon.dart';
+import 'package:flutex_admin/core/utils/color_resources.dart';
+import 'package:flutex_admin/core/utils/style.dart';
+import 'package:flutex_admin/features/staff/model/staff_model.dart';
 
 class StaffsScreen extends StatefulWidget {
   const StaffsScreen({super.key});
@@ -62,6 +67,13 @@ class _StaffsScreenState extends State<StaffsScreen> {
   Widget build(BuildContext context) {
     return GetBuilder<StaffController>(
       builder: (controller) {
+        final allStaff = controller.staffsModel.data ?? [];
+        final filteredStaff = controller.activeFilter == null
+            ? allStaff
+            : allStaff
+                .where((s) => s.active == controller.activeFilter)
+                .toList();
+
         return Scaffold(
           appBar: CustomAppBar(
             title: LocalStrings.staffs.tr,
@@ -92,6 +104,7 @@ class _StaffsScreenState extends State<StaffsScreen> {
                   color: Theme.of(context).primaryColor,
                   backgroundColor: Theme.of(context).cardColor,
                   onRefresh: () async {
+                    controller.activeFilter = null;
                     await controller.initialData(shouldLoad: false);
                   },
                   child: SingleChildScrollView(
@@ -108,22 +121,157 @@ class _StaffsScreenState extends State<StaffsScreen> {
                             onTap: () => controller.searchStaff(),
                           ),
                         ),
-                        controller.staffsModel.data?.isNotEmpty ?? false
+                        if (controller.staffsModel.overview != null)
+                          ExpansionTile(
+                            title: Row(
+                              children: [
+                                Container(
+                                  width: Dimensions.space3,
+                                  height: Dimensions.space15,
+                                  color: Colors.blue,
+                                ),
+                                const SizedBox(width: Dimensions.space5),
+                                Text(
+                                  LocalStrings.staffSummery.tr,
+                                  style: regularLarge.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .color,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            shape: const Border(),
+                            initiallyExpanded: true,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimensions.space15,
+                                ),
+                                child: SizedBox(
+                                  height: 85,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          controller.activeFilter = null;
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name: LocalStrings.totalStaff.tr,
+                                            number: controller.staffsModel
+                                                    .overview?.staffTotal ??
+                                                '0',
+                                            color: ColorResources.blueColor,
+                                            isSelected:
+                                                controller.activeFilter == null,
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          if (controller.activeFilter == '1') {
+                                            controller.activeFilter = null;
+                                          } else {
+                                            controller.activeFilter = '1';
+                                          }
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name: LocalStrings.activeStaff.tr,
+                                            number: controller.staffsModel
+                                                    .overview
+                                                    ?.staffActive ??
+                                                '0',
+                                            color: ColorResources.greenColor,
+                                            isSelected:
+                                                controller.activeFilter == '1',
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          if (controller.activeFilter == '0') {
+                                            controller.activeFilter = null;
+                                          } else {
+                                            controller.activeFilter = '0';
+                                          }
+                                          controller.update();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: Dimensions.space5),
+                                          child: OverviewCard(
+                                            name: LocalStrings.inactiveStaff.tr,
+                                            number: controller.staffsModel
+                                                    .overview
+                                                    ?.staffInactive ??
+                                                '0',
+                                            color: ColorResources.redColor,
+                                            isSelected:
+                                                controller.activeFilter == '0',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(Dimensions.space15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                LocalStrings.staffs.tr,
+                                style: regularLarge.copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .color,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (controller.activeFilter != null) {
+                                    controller.activeFilter = null;
+                                    controller.update();
+                                  }
+                                },
+                                child: TextIcon(
+                                  text: LocalStrings.filter.tr,
+                                  icon: controller.activeFilter != null
+                                      ? Icons.filter_alt
+                                      : Icons.sort_outlined,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        filteredStaff.isNotEmpty
                             ? Padding(
-                                padding: const EdgeInsets.all(
-                                  Dimensions.space15,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimensions.space15,
                                 ),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     return StaffsCard(
-                                      staffModel:
-                                          controller.staffsModel.data![index],
+                                      staffModel: filteredStaff[index],
                                     );
                                   },
-                                  itemCount:
-                                      controller.staffsModel.data!.length,
+                                  itemCount: filteredStaff.length,
                                 ),
                               )
                             : const NoDataWidget(),

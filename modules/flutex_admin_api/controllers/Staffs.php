@@ -105,7 +105,8 @@ class Staffs extends RestController
             }
             
             if (!empty($staffData)) {
-                $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $staffData], RestController::HTTP_OK);
+                $staffSummery = $this->staffs_summary();
+                $this->response(['message' => _l('data_retrieved_successfully'), 'overview' => $staffSummery, 'data' => $staffData], RestController::HTTP_OK);
             } else {
                 $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
             }
@@ -289,5 +290,14 @@ class Staffs extends RestController
         } else {
             $this->response(['message' => _l('invalid_staff_id')], RestController::HTTP_NOT_FOUND);
         }
+    }
+
+    public function staffs_summary()
+    {
+        return [
+            'staff_total' => strval(total_rows(db_prefix() . 'staff')),
+            'staff_active' => strval(total_rows(db_prefix() . 'staff', 'active=1')),
+            'staff_inactive' => strval(total_rows(db_prefix() . 'staff', 'active=0')),
+        ];
     }
 }

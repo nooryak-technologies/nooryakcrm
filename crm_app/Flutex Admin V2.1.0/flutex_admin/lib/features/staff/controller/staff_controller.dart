@@ -22,11 +22,13 @@ class StaffController extends GetxController {
   StaffDetailsModel staffDetailsModel = StaffDetailsModel();
   String currentStaffId = '';
   String transferDataTo = '';
+  String? activeFilter;
 
   Future<void> initialData({bool shouldLoad = true}) async {
     isLoading = shouldLoad ? true : false;
     update();
     transferDataTo = '';
+    activeFilter = null;
     await loadStaff();
     isLoading = false;
     update();

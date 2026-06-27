@@ -1,13 +1,15 @@
 class StaffsModel {
-  StaffsModel({bool? status, String? message, List<Staff>? data}) {
+  StaffsModel({bool? status, String? message, StaffSummery? overview, List<Staff>? data}) {
     _status = status;
     _message = message;
+    _overview = overview;
     _data = data;
   }
 
   StaffsModel.fromJson(dynamic json) {
     _status = json['status'];
     _message = json['message'];
+    _overview = json['overview'] != null ? StaffSummery.fromJson(json['overview']) : null;
     if (json['data'] != null) {
       _data = [];
       json['data'].forEach((v) {
@@ -18,16 +20,21 @@ class StaffsModel {
 
   bool? _status;
   String? _message;
+  StaffSummery? _overview;
   List<Staff>? _data;
 
   bool? get status => _status;
   String? get message => _message;
+  StaffSummery? get overview => _overview;
   List<Staff>? get data => _data;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['status'] = _status;
     map['message'] = _message;
+    if (_overview != null) {
+      map['overview'] = _overview?.toJson();
+    }
     if (_data != null) {
       map['data'] = _data?.map((v) => v.toJson()).toList();
     }
@@ -190,6 +197,39 @@ class Staff {
     map['hourly_rate'] = _hourlyRate;
     map['email_signature'] = _emailSignature;
     map['full_name'] = _fullName;
+    return map;
+  }
+}
+
+class StaffSummery {
+  StaffSummery({
+    String? staffTotal,
+    String? staffActive,
+    String? staffInactive,
+  }) {
+    _staffTotal = staffTotal;
+    _staffActive = staffActive;
+    _staffInactive = staffInactive;
+  }
+
+  StaffSummery.fromJson(dynamic json) {
+    _staffTotal = json['staff_total'];
+    _staffActive = json['staff_active'];
+    _staffInactive = json['staff_inactive'];
+  }
+  String? _staffTotal;
+  String? _staffActive;
+  String? _staffInactive;
+
+  String? get staffTotal => _staffTotal;
+  String? get staffActive => _staffActive;
+  String? get staffInactive => _staffInactive;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['staff_total'] = _staffTotal;
+    map['staff_active'] = _staffActive;
+    map['staff_inactive'] = _staffInactive;
     return map;
   }
 }
