@@ -17,10 +17,10 @@ class LoginController extends GetxController {
   final FocusNode emailFocusNode = FocusNode();
   final FocusNode passwordFocusNode = FocusNode();
 
-  TextEditingController emailController =
-      TextEditingController();
-  TextEditingController passwordController =
-      TextEditingController(text: '12345678');
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController(
+    text: '12345678',
+  );
 
   String? email;
   String? password;
@@ -41,19 +41,25 @@ class LoginController extends GetxController {
 
   Future<void> checkAndGotoNextStep(LoginModel responseModel) async {
     if (remember) {
-      await loginRepo.apiClient.sharedPreferences
-          .setBool(SharedPreferenceHelper.rememberMeKey, true);
+      await loginRepo.apiClient.sharedPreferences.setBool(
+        SharedPreferenceHelper.rememberMeKey,
+        true,
+      );
     } else {
-      await loginRepo.apiClient.sharedPreferences
-          .setBool(SharedPreferenceHelper.rememberMeKey, false);
+      await loginRepo.apiClient.sharedPreferences.setBool(
+        SharedPreferenceHelper.rememberMeKey,
+        false,
+      );
     }
 
     await loginRepo.apiClient.sharedPreferences.setString(
-        SharedPreferenceHelper.userIdKey,
-        responseModel.data?.staffId.toString() ?? '-1');
+      SharedPreferenceHelper.userIdKey,
+      responseModel.data?.staffId.toString() ?? '-1',
+    );
     await loginRepo.apiClient.sharedPreferences.setString(
-        SharedPreferenceHelper.accessTokenKey,
-        responseModel.data?.accessToken.toString() ?? '');
+      SharedPreferenceHelper.accessTokenKey,
+      responseModel.data?.accessToken.toString() ?? '',
+    );
 
     await loginRepo.updateToken();
     Get.offAllNamed(RouteHelper.dashboardScreen);
@@ -109,11 +115,14 @@ class LoginController extends GetxController {
     }
 
     ResponseModel responseModel = await loginRepo.loginUser(
-        emailVal, passwordVal);
+      emailVal,
+      passwordVal,
+    );
 
     if (responseModel.status) {
-      LoginModel loginModel =
-          LoginModel.fromJson(jsonDecode(responseModel.responseJson));
+      LoginModel loginModel = LoginModel.fromJson(
+        jsonDecode(responseModel.responseJson),
+      );
       checkAndGotoNextStep(loginModel);
     } else {
       CustomSnackBar.error(errorList: [responseModel.message.tr]);
