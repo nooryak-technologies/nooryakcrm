@@ -72,7 +72,7 @@ class Staffs extends RestController
                     'profile_image' => base_url('uploads/staff_profile_images/' . $data->staffid . '/small_' . $data->profile_image),
                     'permissions' => $data->permissions
                 );
-                $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $staffData], RestController::HTTP_OK);
+                $this->response(['status' => true, 'message' => _l('data_retrieved_successfully'), 'data' => $staffData], RestController::HTTP_OK);
             }
             
             foreach ($data as $staff) {
@@ -106,7 +106,7 @@ class Staffs extends RestController
             
             if (!empty($staffData)) {
                 $staffSummery = $this->staffs_summary();
-                $this->response(['message' => _l('data_retrieved_successfully'), 'overview' => $staffSummery, 'data' => $staffData], RestController::HTTP_OK);
+                $this->response(['status' => true, 'message' => _l('data_retrieved_successfully'), 'overview' => $staffSummery, 'data' => $staffData], RestController::HTTP_OK);
             } else {
                 $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
             }
@@ -169,7 +169,7 @@ class Staffs extends RestController
             }
             
             if (!empty($staffData)) {
-                $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $staffData], RestController::HTTP_OK);
+                $this->response(['status' => true, 'message' => _l('data_retrieved_successfully'), 'data' => $staffData], RestController::HTTP_OK);
             } else {
                 $this->response(['message' => _l('data_not_found')], RestController::HTTP_NOT_FOUND);
             }
