@@ -52,19 +52,30 @@ class Dashboard extends RestController
             $where .= '(addedfrom = ' . $staffID . ' OR assigned = ' . $staffID . ')';
         }
         
-        $total_leads = total_rows(db_prefix() . 'leads', ($where == '' ? 'junk=0' : $where . ' AND junk =0'));
+        $total_leads_where = 'junk = 0 AND status != 0';
+        $demo_status_row = $this->db->where('name', 'demo lead')->get(db_prefix() . 'leads_status')->row();
+        if ($demo_status_row) {
+            $total_leads_where .= ' AND status != ' . $demo_status_row->id;
+        }
+        if ($where != '') {
+            $total_leads_where .= ' AND ' . $where;
+        }
+        $total_leads = total_rows(db_prefix() . 'leads', $total_leads_where);
 
-        $default_status_row = $this->db->where('isdefault', 1)->get(db_prefix() . 'leads_status')->row();
-        $default_status_id = $default_status_row ? $default_status_row->id : 1;
+        $converted_status_id = 4; // Fallback
+        $status_row = $this->db->group_start()
+                               ->where('name', 'converted')
+                               ->or_where('name', 'Converted')
+                               ->group_end()
+                               ->get(db_prefix() . 'leads_status')->row();
+        if ($status_row) {
+            $converted_status_id = $status_row->id;
+        }
 
         $convertedLeadQuery = 'SELECT COUNT(DISTINCT ' . db_prefix() . 'leads.id) AS total'
             . ' FROM ' . db_prefix() . 'leads'
             . ' WHERE ' . db_prefix() . 'leads.junk = 0'
-            . ' AND (' . db_prefix() . 'leads.status = ' . $default_status_id
-            . ' OR ' . db_prefix() . 'leads.date_converted IS NOT NULL'
-            . ' OR ' . db_prefix() . 'leads.client_id > 0'
-            . ' OR EXISTS (SELECT 1 FROM ' . db_prefix() . 'clients WHERE ' . db_prefix() . 'clients.leadid = ' . db_prefix() . 'leads.id)'
-            . ')';
+            . ' AND ' . db_prefix() . 'leads.status = ' . $converted_status_id;
 
         if ($where != '') {
             $convertedLeadQuery .= ' AND ' . $where;

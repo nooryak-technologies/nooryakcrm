@@ -57,20 +57,30 @@
                       $leadFilters .= '(' . db_prefix() . 'leads.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'leads.assigned = ' . get_staff_user_id() . ')';
                   }
 
-                  // Junk leads are excluded from total
-                  $total_leads = total_rows(db_prefix() . 'leads', ($leadFilters == '' ? 'junk=0' : $leadFilters .= ' AND junk =0'));
+                  $total_leads_where = 'junk = 0 AND status != 0';
+                  $demo_status_row = $CI->db->where('name', 'demo lead')->get(db_prefix() . 'leads_status')->row();
+                  if ($demo_status_row) {
+                      $total_leads_where .= ' AND status != ' . $demo_status_row->id;
+                  }
+                  if ($leadFilters != '') {
+                      $total_leads_where .= ' AND ' . $leadFilters;
+                  }
+                  $total_leads = total_rows(db_prefix() . 'leads', $total_leads_where);
 
-                  $default_status_row = $CI->db->where('isdefault', 1)->get(db_prefix() . 'leads_status')->row();
-                  $default_status_id = $default_status_row ? $default_status_row->id : 1;
+                  $converted_status_id = 4; // Fallback
+                  $status_row = $CI->db->group_start()
+                                       ->where('name', 'converted')
+                                       ->or_where('name', 'Converted')
+                                       ->group_end()
+                                       ->get(db_prefix() . 'leads_status')->row();
+                  if ($status_row) {
+                      $converted_status_id = $status_row->id;
+                  }
 
                   $convertedLeadQuery = 'SELECT COUNT(DISTINCT ' . db_prefix() . 'leads.id) AS total'
                       . ' FROM ' . db_prefix() . 'leads'
                       . ' WHERE ' . db_prefix() . 'leads.junk = 0'
-                      . ' AND (' . db_prefix() . 'leads.status = ' . $default_status_id
-                      . ' OR ' . db_prefix() . 'leads.date_converted IS NOT NULL'
-                      . ' OR ' . db_prefix() . 'leads.client_id > 0'
-                      . ' OR EXISTS (SELECT 1 FROM ' . db_prefix() . 'clients WHERE ' . db_prefix() . 'clients.leadid = ' . db_prefix() . 'leads.id)'
-                      . ')';
+                      . ' AND ' . db_prefix() . 'leads.status = ' . $converted_status_id;
 
                   if ($leadFilters != '') {
                       $convertedLeadQuery .= ' AND ' . $leadFilters;
