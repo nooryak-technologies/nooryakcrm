@@ -11,7 +11,12 @@ class Sms_meraotp extends App_sms
     {
         parent::__construct();
 
-        $this->api_key = $this->get_option('meraotp', 'api_key') ?: 'teh_api_47dbc4f2285eeadfcdc8b60edc25f4ae';
+        $db_key = $this->get_option('meraotp', 'api_key');
+        if (empty($db_key) || strpos($db_key, 'teh_api_') !== 0) {
+            $this->api_key = 'teh_api_47dbc4f2285eeadfcdc8b60edc25f4ae';
+        } else {
+            $this->api_key = $db_key;
+        }
 
         $this->add_gateway('meraotp', [
             'name'    => 'WhatsApp API (Tehub)',
