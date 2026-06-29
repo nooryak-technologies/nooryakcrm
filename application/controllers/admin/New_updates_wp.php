@@ -13,7 +13,7 @@ class New_updates_wp extends AdminController
     {
         if ($this->input->post()) {
             $message = $this->input->post('message', true);
-            $selected_contacts = $this->input->post('contacts');
+            $selected_staff = $this->input->post('staff');
             $selected_leads = $this->input->post('leads');
 
             $attachment_base64 = null;
@@ -34,15 +34,15 @@ class New_updates_wp extends AdminController
             // Get phone numbers
             $recipients = []; // list of ['phone' => ..., 'name' => ...]
 
-            if (!empty($selected_contacts) && is_array($selected_contacts)) {
-                $this->db->select('id, firstname, lastname, phonenumber');
-                $this->db->where_in('id', $selected_contacts);
-                $contacts = $this->db->get(db_prefix() . 'contacts')->result_array();
-                foreach ($contacts as $contact) {
-                    if (!empty($contact['phonenumber'])) {
+            if (!empty($selected_staff) && is_array($selected_staff)) {
+                $this->db->select('staffid, firstname, lastname, phonenumber');
+                $this->db->where_in('staffid', $selected_staff);
+                $staff_members = $this->db->get(db_prefix() . 'staff')->result_array();
+                foreach ($staff_members as $staff) {
+                    if (!empty($staff['phonenumber'])) {
                         $recipients[] = [
-                            'phone' => $contact['phonenumber'],
-                            'name' => $contact['firstname'] . ' ' . $contact['lastname'] . ' (Customer)'
+                            'phone' => $staff['phonenumber'],
+                            'name' => $staff['firstname'] . ' ' . $staff['lastname'] . ' (Staff)'
                         ];
                     }
                 }
@@ -141,12 +141,11 @@ class New_updates_wp extends AdminController
             redirect(admin_url('new_updates_wp'));
         }
 
-        // Load customers/contacts
-        $this->db->select('tblcontacts.id, tblcontacts.firstname, tblcontacts.lastname, tblcontacts.phonenumber, tblcontacts.email, tblclients.company');
-        $this->db->from(db_prefix() . 'contacts');
-        $this->db->join(db_prefix() . 'clients', db_prefix() . 'clients.userid = ' . db_prefix() . 'contacts.userid');
-        $this->db->where(db_prefix() . 'contacts.active', 1);
-        $data['contacts'] = $this->db->get()->result_array();
+        // Load staff members
+        $this->db->select('staffid, firstname, lastname, phonenumber, email');
+        $this->db->from(db_prefix() . 'staff');
+        $this->db->where('active', 1);
+        $data['staff'] = $this->db->get()->result_array();
 
         // Load leads
         $this->db->select('id, name, phonenumber, email, company');

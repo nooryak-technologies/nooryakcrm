@@ -180,11 +180,11 @@
                                 <span class="badge-count selected" id="total_selected_badge">0 Selected</span>
                             </div>
                             <div class="wp-body">
-                                <!-- Tabs for Customer / Leads -->
+                                <!-- Tabs for Staff / Leads -->
                                 <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
                                     <li role="presentation" class="active">
-                                        <a href="#tab_customers" aria-controls="tab_customers" role="tab" data-toggle="tab">
-                                            Customers <span class="badge-count" id="customers_count"><?= count($contacts); ?></span>
+                                        <a href="#tab_staff" aria-controls="tab_staff" role="tab" data-toggle="tab">
+                                            Staff <span class="badge-count" id="staff_count"><?= count($staff); ?></span>
                                         </a>
                                     </li>
                                     <li role="presentation">
@@ -196,24 +196,24 @@
 
                                 <!-- Tab Content -->
                                 <div class="tab-content">
-                                    <!-- Customers Tab -->
-                                    <div role="tabpanel" class="tab-pane active" id="tab_customers">
+                                    <!-- Staff Tab -->
+                                    <div role="tabpanel" class="tab-pane active" id="tab_staff">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <input type="text" id="search_customers" class="form-control search-input" placeholder="Search customers...">
+                                                <input type="text" id="search_staff" class="form-control search-input" placeholder="Search staff...">
                                             </div>
                                             <div class="col-md-4 tw-text-right">
-                                                <button type="button" class="btn btn-default btn-xs" onclick="toggleSelectAll('contacts')">Toggle All</button>
+                                                <button type="button" class="btn btn-default btn-xs" onclick="toggleSelectAll('staff')">Toggle All</button>
                                             </div>
                                         </div>
-                                        <div class="recipient-box" id="contacts_list">
-                                            <?php foreach ($contacts as $contact): ?>
-                                                <?php if (!empty($contact['phonenumber'])): ?>
-                                                    <div class="recipient-item" data-search="<?= strtolower(e($contact['firstname'] . ' ' . $contact['lastname'] . ' ' . $contact['company'] . ' ' . $contact['phonenumber'])); ?>">
-                                                        <input type="checkbox" name="contacts[]" value="<?= $contact['id']; ?>" class="contact-checkbox" onchange="updateSelectedCount()">
+                                        <div class="recipient-box" id="staff_list">
+                                            <?php foreach ($staff as $s): ?>
+                                                <?php if (!empty($s['phonenumber'])): ?>
+                                                    <div class="recipient-item" data-search="<?= strtolower(e($s['firstname'] . ' ' . $s['lastname'] . ' ' . $s['email'] . ' ' . $s['phonenumber'])); ?>">
+                                                        <input type="checkbox" name="staff[]" value="<?= $s['staffid']; ?>" class="staff-checkbox" onchange="updateSelectedCount()">
                                                         <div>
-                                                            <div class="tw-font-semibold tw-text-neutral-700"><?= e($contact['firstname'] . ' ' . $contact['lastname']); ?></div>
-                                                            <div class="text-muted tw-text-xs"><?= e($contact['company']); ?> &bull; <?= e($contact['phonenumber']); ?></div>
+                                                            <div class="tw-font-semibold tw-text-neutral-700"><?= e($s['firstname'] . ' ' . $s['lastname']); ?></div>
+                                                            <div class="text-muted tw-text-xs"><?= e($s['email']); ?> &bull; <?= e($s['phonenumber']); ?></div>
                                                         </div>
                                                     </div>
                                                 <?php endif; ?>
@@ -266,10 +266,10 @@
 <?php init_tail(); ?>
 
 <script>
-    // Search filter for Customers
-    document.getElementById('search_customers').addEventListener('input', function(e) {
+    // Search filter for Staff
+    document.getElementById('search_staff').addEventListener('input', function(e) {
         var query = e.target.value.toLowerCase();
-        var items = document.querySelectorAll('#contacts_list .recipient-item');
+        var items = document.querySelectorAll('#staff_list .recipient-item');
         items.forEach(function(item) {
             var searchData = item.getAttribute('data-search');
             if (searchData.indexOf(query) > -1) {
@@ -296,7 +296,7 @@
 
     // Toggle All checkboxes for a category
     function toggleSelectAll(type) {
-        var checkboxes = document.querySelectorAll('.' + (type === 'contacts' ? 'contact' : 'lead') + '-checkbox');
+        var checkboxes = document.querySelectorAll('.' + (type === 'staff' ? 'staff' : 'lead') + '-checkbox');
         var allChecked = true;
         
         // Check if all visible checkboxes are checked
@@ -315,9 +315,9 @@
 
     // Update the counter showing selected items
     function updateSelectedCount() {
-        var selectedContacts = document.querySelectorAll('.contact-checkbox:checked').length;
+        var selectedStaff = document.querySelectorAll('.staff-checkbox:checked').length;
         var selectedLeads = document.querySelectorAll('.lead-checkbox:checked').length;
-        var total = selectedContacts + selectedLeads;
+        var total = selectedStaff + selectedLeads;
         
         document.getElementById('total_selected_badge').innerText = total + ' Selected';
     }
@@ -359,12 +359,12 @@
 
     // Form submission validation
     document.getElementById('wp_send_form').addEventListener('submit', function(e) {
-        var selectedContacts = document.querySelectorAll('.contact-checkbox:checked').length;
+        var selectedStaff = document.querySelectorAll('.staff-checkbox:checked').length;
         var selectedLeads = document.querySelectorAll('.lead-checkbox:checked').length;
         
-        if (selectedContacts + selectedLeads === 0) {
+        if (selectedStaff + selectedLeads === 0) {
             e.preventDefault();
-            alert_float('warning', 'Please select at least one customer or lead to send the update to.');
+            alert_float('warning', 'Please select at least one staff member or lead to send the update to.');
             return;
         }
 
