@@ -2301,8 +2301,8 @@ if (stripos($crm_brand_secondary, 'crm') === false && stripos($crm_company_label
                                 Resend code in <strong id="inline-cooldown-timer">60</strong>s
                             </div>
                             <button type="button" id="btn-inline-resend" class="btn-otp-resend-link" style="display: none; margin-top: 6px;">Resend OTP</button>
-                            <div id="inline-otp-error" class="otp-error-alert" style="display: none; margin-top: 8px; margin-bottom: 0;"></div>
                         </div>
+                        <div id="inline-otp-error" class="otp-error-alert" style="display: none; margin-top: 8px; margin-bottom: 0;"></div>
                         <?= form_error('contact_phonenumber'); ?>
                         <?= form_error('phonenumber'); ?>
                     </div>
