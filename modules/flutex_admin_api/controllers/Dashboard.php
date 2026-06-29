@@ -48,17 +48,29 @@ class Dashboard extends RestController
         $percent_total_invoices_awaiting_payment = ($total_invoices > 0 ? number_format(($total_invoices_awaiting_payment * 100) / $total_invoices, 2) : 0);
 
         $where = '';
-        if (!is_admin()) {
+        if (!staff_can('view', 'leads', $staffID)) {
             $where .= '(addedfrom = ' . $staffID . ' OR assigned = ' . $staffID . ')';
         }
         
-        $total_leads = total_rows(db_prefix() . 'leads', ($where == '' ? 'junk=0' : $where .= ' AND junk =0'));
-        if ($where == '') {
-            $where .= 'status=1';
-        } else {
-            $where .= ' AND status =1';
+        $total_leads = total_rows(db_prefix() . 'leads', ($where == '' ? 'junk=0' : $where . ' AND junk =0'));
+
+        $default_status_row = $this->db->where('isdefault', 1)->get(db_prefix() . 'leads_status')->row();
+        $default_status_id = $default_status_row ? $default_status_row->id : 1;
+
+        $convertedLeadQuery = 'SELECT COUNT(DISTINCT ' . db_prefix() . 'leads.id) AS total'
+            . ' FROM ' . db_prefix() . 'leads'
+            . ' WHERE ' . db_prefix() . 'leads.junk = 0'
+            . ' AND (' . db_prefix() . 'leads.status = ' . $default_status_id
+            . ' OR ' . db_prefix() . 'leads.date_converted IS NOT NULL'
+            . ' OR ' . db_prefix() . 'leads.client_id > 0'
+            . ' OR EXISTS (SELECT 1 FROM ' . db_prefix() . 'clients WHERE ' . db_prefix() . 'clients.leadid = ' . db_prefix() . 'leads.id)'
+            . ')';
+
+        if ($where != '') {
+            $convertedLeadQuery .= ' AND ' . $where;
         }
-        $total_leads_converted = total_rows(db_prefix() . 'leads', $where);
+
+        $total_leads_converted = (int) $this->db->query($convertedLeadQuery)->row()->total;
         $percent_total_leads_converted = ($total_leads > 0 ? number_format(($total_leads_converted * 100) / $total_leads, 2) : 0);
 
         $_where = '';
