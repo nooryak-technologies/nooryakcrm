@@ -191,6 +191,14 @@ function app_init_admin_sidebar_menu_items()
         ]);
     }
 
+    $CI->app_menu->add_sidebar_menu_item('new-updates-wp', [
+        'name'     => 'New updates WP',
+        'href'     => admin_url('new_updates_wp'),
+        'icon'     => 'fa-brands fa-whatsapp',
+        'position' => 48,
+        'badge'    => [],
+    ]);
+
     if ((staff_can('view',  'estimate_request') || staff_can('view_own',  'estimate_request'))) {
         $CI->app_menu->add_sidebar_menu_item('estimate_request', [
             'name'     => _l('estimate_request'),
