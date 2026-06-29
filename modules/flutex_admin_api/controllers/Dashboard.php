@@ -374,13 +374,23 @@ class Dashboard extends RestController
             $leads = [];
             $this->load->model('leads_model');
             $leads_statuses = $this->leads_model->get_status();
+            
+            $total_leads_where = 'junk = 0 AND status != 0';
+            $demo_status_row = $this->db->where('name', 'demo lead')->get(db_prefix() . 'leads_status')->row();
+            if ($demo_status_row) {
+                $total_leads_where .= ' AND status != ' . $demo_status_row->id;
+            }
+            $total_leads = total_rows(db_prefix() . 'leads', $total_leads_where);
     
             foreach ($leads_statuses as $key => $status) {
-                $where = 'status = ' . $status['id'];
+                if ($status['name'] === 'demo lead' || $status['id'] == 12) {
+                    continue;
+                }
+                $where = 'status = ' . $status['id'] . ' AND junk = 0';
                 array_push($leads, [
                     'status' => $status['name'],
                     'total' => strval(total_rows(db_prefix() . 'leads', $where)),
-                    'percent' => total_rows(db_prefix() . 'leads', $where) == 0 ? '0' : strval(total_rows(db_prefix() . 'leads', $where) / total_rows(db_prefix() . 'leads') * 100)
+                    'percent' => $total_leads == 0 ? '0' : strval(total_rows(db_prefix() . 'leads', $where) / $total_leads * 100)
                 ]);
             }
             return $leads;
