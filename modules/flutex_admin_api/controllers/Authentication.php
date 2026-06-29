@@ -170,18 +170,7 @@ class Authentication extends RestController
             ], RestController::HTTP_OK);
         }
 
-        // 1. Check if the user exists in the master database
-        $this->db->where('email', $email);
-        $master_staff = $this->db->get(db_prefix() . 'staff')->row();
-        if ($master_staff) {
-            $this->response([
-                'status' => true,
-                'domain' => APP_BASE_URL_DEFAULT,
-                'is_tenant' => false
-            ], RestController::HTTP_OK);
-        }
-
-        // 2. Load SaaS model and check all tenants
+        // 1. Load SaaS model and check all tenants first
         if ($this->db->table_exists(db_prefix() . 'perfex_saas_companies')) {
             $this->load->model('perfex_saas/perfex_saas_model');
             $this->load->helper('perfex_saas/perfex_saas');
@@ -211,6 +200,17 @@ class Authentication extends RestController
                     // Skip if connection fails or table doesn't exist yet
                 }
             }
+        }
+
+        // 2. Check if the user exists in the master database (as fallback)
+        $this->db->where('email', $email);
+        $master_staff = $this->db->get(db_prefix() . 'staff')->row();
+        if ($master_staff) {
+            $this->response([
+                'status' => true,
+                'domain' => APP_BASE_URL_DEFAULT,
+                'is_tenant' => false
+            ], RestController::HTTP_OK);
         }
 
         $this->response(['message' => 'User not found'], RestController::HTTP_NOT_FOUND);
