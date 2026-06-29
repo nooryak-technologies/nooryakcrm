@@ -53,20 +53,24 @@
                 <?php
                   $CI = &get_instance();
                   $leadFilters = '';
-                  if (!is_admin()) {
+                  if (!staff_can('view', 'leads')) {
                       $leadFilters .= '(' . db_prefix() . 'leads.addedfrom = ' . get_staff_user_id() . ' OR ' . db_prefix() . 'leads.assigned = ' . get_staff_user_id() . ')';
                   }
 
                   // Junk leads are excluded from total
                   $total_leads = total_rows(db_prefix() . 'leads', ($leadFilters == '' ? 'junk=0' : $leadFilters .= ' AND junk =0'));
 
+                  $default_status_row = $CI->db->where('isdefault', 1)->get(db_prefix() . 'leads_status')->row();
+                  $default_status_id = $default_status_row ? $default_status_row->id : 1;
+
                   $convertedLeadQuery = 'SELECT COUNT(DISTINCT ' . db_prefix() . 'leads.id) AS total'
                       . ' FROM ' . db_prefix() . 'leads'
-                      . ' INNER JOIN ' . db_prefix() . 'clients ON ' . db_prefix() . 'clients.leadid = ' . db_prefix() . 'leads.id'
-                      . ' INNER JOIN ' . db_prefix() . 'invoices ON ' . db_prefix() . 'invoices.clientid = ' . db_prefix() . 'clients.userid'
                       . ' WHERE ' . db_prefix() . 'leads.junk = 0'
-                      . ' AND ' . db_prefix() . 'invoices.status NOT IN (5,6)'
-                      . ' AND COALESCE(' . db_prefix() . 'invoices.advance, 0) > 0';
+                      . ' AND (' . db_prefix() . 'leads.status = ' . $default_status_id
+                      . ' OR ' . db_prefix() . 'leads.date_converted IS NOT NULL'
+                      . ' OR ' . db_prefix() . 'leads.client_id > 0'
+                      . ' OR EXISTS (SELECT 1 FROM ' . db_prefix() . 'clients WHERE ' . db_prefix() . 'clients.leadid = ' . db_prefix() . 'leads.id)'
+                      . ')';
 
                   if ($leadFilters != '') {
                       $convertedLeadQuery .= ' AND ' . $leadFilters;
