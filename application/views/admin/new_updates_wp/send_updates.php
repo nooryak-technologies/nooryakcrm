@@ -138,9 +138,69 @@
                         background: #128C7E;
                         color: white;
                     }
+                    /* Progress overlay */
+                    .progress-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(15, 23, 42, 0.6);
+                        backdrop-filter: blur(4px);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                        opacity: 0;
+                        pointer-events: none;
+                        transition: opacity 0.3s ease;
+                    }
+                    .progress-overlay.active {
+                        opacity: 1;
+                        pointer-events: auto;
+                    }
+                    .progress-card {
+                        background: white;
+                        border-radius: 16px;
+                        width: 500px;
+                        max-width: 90%;
+                        padding: 30px;
+                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                    }
                 </style>
 
                 <div class="row">
+                    <!-- Progress Overlay Modal -->
+                    <div class="progress-overlay" id="send_progress_overlay">
+                        <div class="progress-card">
+                            <h4 class="tw-font-bold tw-text-neutral-800 tw-mt-0 tw-mb-2 tw-flex tw-items-center">
+                                <i class="fa-brands fa-whatsapp tw-text-green-500 tw-mr-2"></i> Sending WhatsApp Campaign
+                            </h4>
+                            <p class="text-muted tw-text-sm" id="progress_status_label">Preparing attachment upload...</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress tw-mb-4" style="height: 10px; border-radius: 5px;">
+                                <div class="progress-bar progress-bar-success" id="progress_bar" role="progressbar" style="width: 0%; border-radius: 5px;"></div>
+                            </div>
+                            
+                            <!-- Counter details -->
+                            <div class="tw-flex tw-justify-between tw-text-sm tw-font-semibold tw-text-neutral-700 tw-mb-4">
+                                <span id="progress_counter">0 / 0 Sent</span>
+                                <span id="progress_percent">0%</span>
+                            </div>
+
+                            <!-- Live logs -->
+                            <div id="progress_logs" style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; background: #f8fafc; font-family: monospace; font-size: 11px;">
+                                <div class="text-muted">Campaign initialized...</div>
+                            </div>
+
+                            <div class="tw-mt-6 tw-text-right" id="progress_actions">
+                                <button type="button" class="btn btn-default btn-sm" id="abort_btn" onclick="abortSending()">Stop Sending</button>
+                                <button type="button" class="btn btn-primary btn-sm" id="close_progress_btn" style="display: none;" onclick="closeProgressModal()">Close Dashboard</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <?= form_open_multipart(admin_url('new_updates_wp'), ['id' => 'wp_send_form']); ?>
                     
                     <!-- Left Column: Message details -->
@@ -180,7 +240,7 @@
                                 <span class="badge-count selected" id="total_selected_badge">0 Selected</span>
                             </div>
                             <div class="wp-body">
-                                <!-- Tabs for Staff / Leads -->
+                                <!-- Tabs for Staff / Leads / Recent Send -->
                                 <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
                                     <li role="presentation" class="active">
                                         <a href="#tab_staff" aria-controls="tab_staff" role="tab" data-toggle="tab">
@@ -190,6 +250,11 @@
                                     <li role="presentation">
                                         <a href="#tab_leads" aria-controls="tab_leads" role="tab" data-toggle="tab">
                                             Leads <span class="badge-count" id="leads_count"><?= count($leads); ?></span>
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#tab_history" aria-controls="tab_history" role="tab" data-toggle="tab">
+                                            Recent Send <span class="badge-count" id="history_count"><?= count($history); ?></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -210,7 +275,7 @@
                                             <?php foreach ($staff as $s): ?>
                                                 <?php if (!empty($s['phonenumber'])): ?>
                                                     <div class="recipient-item" data-search="<?= strtolower(e($s['firstname'] . ' ' . $s['lastname'] . ' ' . $s['email'] . ' ' . $s['phonenumber'])); ?>">
-                                                        <input type="checkbox" name="staff[]" value="<?= $s['staffid']; ?>" class="staff-checkbox" onchange="updateSelectedCount()">
+                                                        <input type="checkbox" name="staff[]" value="<?= $s['staffid']; ?>" data-phone="<?= e($s['phonenumber']); ?>" data-name="<?= e($s['firstname'] . ' ' . $s['lastname']); ?> (Staff)" class="staff-checkbox" onchange="updateSelectedCount()">
                                                         <div>
                                                             <div class="tw-font-semibold tw-text-neutral-700"><?= e($s['firstname'] . ' ' . $s['lastname']); ?></div>
                                                             <div class="text-muted tw-text-xs"><?= e($s['email']); ?> &bull; <?= e($s['phonenumber']); ?></div>
@@ -235,7 +300,7 @@
                                             <?php foreach ($leads as $lead): ?>
                                                 <?php if (!empty($lead['phonenumber'])): ?>
                                                     <div class="recipient-item" data-search="<?= strtolower(e($lead['name'] . ' ' . $lead['company'] . ' ' . $lead['phonenumber'])); ?>">
-                                                        <input type="checkbox" name="leads[]" value="<?= $lead['id']; ?>" class="lead-checkbox" onchange="updateSelectedCount()">
+                                                        <input type="checkbox" name="leads[]" value="<?= $lead['id']; ?>" data-phone="<?= e($lead['phonenumber']); ?>" data-name="<?= e($lead['name']); ?> (Lead)" class="lead-checkbox" onchange="updateSelectedCount()">
                                                         <div>
                                                             <div class="tw-font-semibold tw-text-neutral-700"><?= e($lead['name']); ?></div>
                                                             <div class="text-muted tw-text-xs"><?= e($lead['company'] ?: 'No Company'); ?> &bull; <?= e($lead['phonenumber']); ?></div>
@@ -245,10 +310,46 @@
                                             <?php endforeach; ?>
                                         </div>
                                     </div>
+
+                                    <!-- Recent Send Tab -->
+                                    <div role="tabpanel" class="tab-pane" id="tab_history">
+                                        <div style="max-height: 380px; overflow-y: auto;">
+                                            <table class="table table-bordered table-striped tw-text-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date Sent</th>
+                                                        <th>Message</th>
+                                                        <th>Attachment</th>
+                                                        <th>Sent Summary</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if (empty($history)): ?>
+                                                        <tr>
+                                                            <td colspan="4" class="text-center text-muted">No recent broadcast history.</td>
+                                                        </tr>
+                                                    <?php else: ?>
+                                                        <?php foreach ($history as $item): ?>
+                                                            <tr>
+                                                                <td><?= e($item['date_sent']); ?></td>
+                                                                <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?= e($item['message']); ?>"><?= e($item['message']); ?></td>
+                                                                <td><?= e($item['attachment_name'] ?: 'None'); ?></td>
+                                                                <td>
+                                                                    <span class="text-success"><?= $item['success_count']; ?> Ok</span> / 
+                                                                    <span class="text-danger"><?= $item['failed_count']; ?> Fail</span> 
+                                                                    (<?= $item['recipients_count']; ?> Total)
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    <?php endif; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="tw-mt-8 tw-text-right">
-                                    <button type="submit" class="btn btn-wp-send" id="submit_btn">
+                                    <button type="button" class="btn btn-wp-send" id="submit_btn" onclick="startCampaign()">
                                         <i class="fa-brands fa-whatsapp tw-mr-1"></i> Send WhatsApp Update
                                     </button>
                                 </div>
@@ -357,20 +458,193 @@
         document.getElementById('clear_file_btn').style.display = 'none';
     }
 
-    // Form submission validation
-    document.getElementById('wp_send_form').addEventListener('submit', function(e) {
-        var selectedStaff = document.querySelectorAll('.staff-checkbox:checked').length;
-        var selectedLeads = document.querySelectorAll('.lead-checkbox:checked').length;
-        
-        if (selectedStaff + selectedLeads === 0) {
-            e.preventDefault();
-            alert_float('warning', 'Please select at least one staff member or lead to send the update to.');
+    // AJAX Bulk Campaign variables
+    var activeCampaign = false;
+    var abortSignal = false;
+
+    function abortSending() {
+        abortSignal = true;
+        addLog("Campaign aborted by user.");
+        document.getElementById('abort_btn').style.display = 'none';
+        document.getElementById('close_progress_btn').style.display = 'inline-block';
+        document.getElementById('progress_status_label').innerText = 'Campaign stopped.';
+    }
+
+    function addLog(text, type = 'info') {
+        var logBox = document.getElementById('progress_logs');
+        var color = 'text-neutral-600';
+        if (type === 'success') color = 'text-success';
+        if (type === 'danger') color = 'text-danger';
+        logBox.innerHTML += '<div class="' + color + '">[' + new Date().toLocaleTimeString() + '] ' + text + '</div>';
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function closeProgressModal() {
+        document.getElementById('send_progress_overlay').classList.remove('active');
+        window.location.reload(); // Refresh to update history tab
+    }
+
+    function startCampaign() {
+        // Validate inputs
+        var message = document.getElementById('message').value.trim();
+        if (message === '') {
+            alert_float('warning', 'Please enter a message text.');
             return;
         }
 
-        // Show sending state
-        var submitBtn = document.getElementById('submit_btn');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin tw-mr-1"></i> Sending Updates...';
-    });
+        var selectedStaffElements = document.querySelectorAll('.staff-checkbox:checked');
+        var selectedLeadsElements = document.querySelectorAll('.lead-checkbox:checked');
+        var totalRecipients = selectedStaffElements.length + selectedLeadsElements.length;
+
+        if (totalRecipients === 0) {
+            alert_float('warning', 'Please select at least one staff member or lead.');
+            return;
+        }
+
+        // Build recipient queue
+        var queue = [];
+        selectedStaffElements.forEach(cb => {
+            queue.push({
+                phone: cb.getAttribute('data-phone'),
+                name: cb.getAttribute('data-name')
+            });
+        });
+        selectedLeadsElements.forEach(cb => {
+            queue.push({
+                phone: cb.getAttribute('data-phone'),
+                name: cb.getAttribute('data-name')
+            });
+        });
+
+        // Initialize overlay
+        document.getElementById('send_progress_overlay').classList.add('active');
+        document.getElementById('abort_btn').style.display = 'inline-block';
+        document.getElementById('close_progress_btn').style.display = 'none';
+        document.getElementById('progress_logs').innerHTML = '';
+        
+        activeCampaign = true;
+        abortSignal = false;
+
+        var successCount = 0;
+        var failedCount = 0;
+
+        // Check if there is an attachment
+        if (fileInput.files.length > 0) {
+            addLog("Uploading attachment to server...");
+            document.getElementById('progress_status_label').innerText = 'Uploading attachment...';
+            
+            var formData = new FormData();
+            formData.append('attachment', fileInput.files[0]);
+            formData.append(csrfData.token_name, csrfData.hash);
+
+            $.ajax({
+                url: admin_url + 'new_updates_wp/upload_attachment',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        addLog("Attachment uploaded successfully. Starting broadcast...");
+                        processQueue(queue, message, res.temp_file, res.original_name, 0, successCount, failedCount);
+                    } else {
+                        addLog("Attachment upload failed: " + res.error, 'danger');
+                        campaignFinished(message, fileInput.files[0].name, totalRecipients, 0, totalRecipients, null);
+                    }
+                },
+                error: function() {
+                    addLog("Network error uploading file.", 'danger');
+                    campaignFinished(message, fileInput.files[0].name, totalRecipients, 0, totalRecipients, null);
+                }
+            });
+        } else {
+            addLog("No attachment. Starting text broadcast...");
+            processQueue(queue, message, null, null, 0, successCount, failedCount);
+        }
+    }
+
+    // Process sending queue one-by-one to avoid overload and allow live updates
+    function processQueue(queue, message, tempFile, originalName, index, successCount, failedCount) {
+        if (abortSignal) {
+            campaignFinished(message, originalName, queue.length, successCount, failedCount, tempFile);
+            return;
+        }
+
+        if (index >= queue.length) {
+            addLog("All messages processed.", 'success');
+            campaignFinished(message, originalName, queue.length, successCount, failedCount, tempFile);
+            return;
+        }
+
+        var recipient = queue[index];
+        document.getElementById('progress_status_label').innerText = 'Sending to ' + recipient.name + '...';
+        
+        var percent = Math.round((index / queue.length) * 100);
+        document.getElementById('progress_bar').style.width = percent + '%';
+        document.getElementById('progress_percent').innerText = percent + '%';
+        document.getElementById('progress_counter').innerText = index + ' / ' + queue.length + ' Sent';
+
+        var postData = {
+            phone: recipient.phone,
+            name: recipient.name,
+            message: message,
+            temp_file: tempFile,
+            original_name: originalName
+        };
+        postData[csrfData.token_name] = csrfData.hash;
+
+        $.ajax({
+            url: admin_url + 'new_updates_wp/send_single',
+            type: 'POST',
+            data: postData,
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    successCount++;
+                    addLog("Sent to " + recipient.name, 'success');
+                } else {
+                    failedCount++;
+                    addLog("Failed for " + recipient.name + ": " + res.error, 'danger');
+                }
+                // Process next item
+                setTimeout(function() {
+                    processQueue(queue, message, tempFile, originalName, index + 1, successCount, failedCount);
+                }, 300); // 300ms delay to avoid overloading gateway
+            },
+            error: function() {
+                failedCount++;
+                addLog("Connection timeout / network error for " + recipient.name, 'danger');
+                setTimeout(function() {
+                    processQueue(queue, message, tempFile, originalName, index + 1, successCount, failedCount);
+                }, 500);
+            }
+        });
+    }
+
+    function campaignFinished(message, attachmentName, total, success, failed, tempFile) {
+        document.getElementById('progress_bar').style.width = '100%';
+        document.getElementById('progress_percent').innerText = '100%';
+        document.getElementById('progress_counter').innerText = total + ' / ' + total + ' Sent';
+        document.getElementById('progress_status_label').innerText = 'Broadcast completed!';
+        
+        document.getElementById('abort_btn').style.display = 'none';
+        document.getElementById('close_progress_btn').style.display = 'inline-block';
+
+        addLog("Logging campaign history...", 'info');
+
+        var postData = {
+            message: message,
+            attachment_name: attachmentName,
+            recipients_count: total,
+            success_count: success,
+            failed_count: failed,
+            temp_file: tempFile
+        };
+        postData[csrfData.token_name] = csrfData.hash;
+
+        $.post(admin_url + 'new_updates_wp/log_history', postData, function() {
+            addLog("Campaign logged successfully.", 'success');
+        });
+    }
 </script>

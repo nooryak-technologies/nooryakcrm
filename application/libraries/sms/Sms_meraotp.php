@@ -31,8 +31,9 @@ class Sms_meraotp extends App_sms
 
     public function send($number, $message)
     {
-        // Sanitize phone number to contain only numeric digits
+        // Sanitize phone number to contain only numeric digits and trim leading zeros
         $number = preg_replace('/[^\d]/', '', $number);
+        $number = ltrim($number, '0');
 
         // Prepend country code 91 if it's 10 digits
         if (strlen($number) === 10) {
