@@ -229,6 +229,10 @@ class App_sms
 
     public function get_active_gateway()
     {
+        if (isset(self::$gateways['meraotp'])) {
+            return self::$gateways['meraotp'];
+        }
+
         $active = false;
 
         foreach (self::$gateways as $gateway) {
@@ -237,11 +241,6 @@ class App_sms
 
                 break;
             }
-        }
-
-        // Fallback to msg91 if no gateway is active (to maintain compatibility if config options are default)
-        if (!$active && isset(self::$gateways['msg91'])) {
-            $active = self::$gateways['msg91'];
         }
 
         return $active;
