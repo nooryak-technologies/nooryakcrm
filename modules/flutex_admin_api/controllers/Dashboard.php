@@ -372,8 +372,7 @@ class Dashboard extends RestController
         if (staff_can('view', 'leads', $staffID)) {
             // Leads Overview
             $leads = [];
-            $this->load->model('leads_model');
-            $leads_statuses = $this->leads_model->get_status();
+            $leads_statuses = $this->db->order_by('statusorder', 'asc')->get(db_prefix() . 'leads_status')->result_array();
             
             $total_leads_where = 'junk = 0 AND status != 0';
             $demo_status_row = $this->db->where('name', 'demo lead')->get(db_prefix() . 'leads_status')->row();

@@ -126,8 +126,7 @@ class Miscellaneous extends RestController
 
     public function leads_statuses_get()
     {
-    	$this->load->model('leads_model');
-		$leads_statuses = $this->leads_model->get_status();
+        $leads_statuses = $this->db->order_by('statusorder', 'asc')->get(db_prefix() . 'leads_status')->result_array();
         
         $cleaned_statuses = [];
         foreach ($leads_statuses as $status) {
