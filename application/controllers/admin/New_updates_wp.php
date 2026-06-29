@@ -21,8 +21,8 @@ class New_updates_wp extends AdminController
 
             if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
                 $file_size = $_FILES['attachment']['size'];
-                if ($file_size > 100 * 1024 * 1024) {
-                    set_alert('danger', 'Attachment exceeds the 100MB limit.');
+                if ($file_size > 30 * 1024 * 1024) {
+                    set_alert('danger', 'Attachment exceeds the 30MB limit.');
                     redirect(admin_url('new_updates_wp'));
                 }
 
@@ -72,7 +72,7 @@ class New_updates_wp extends AdminController
             $errors = [];
 
             $promises = [];
-            $client = new \GuzzleHttp\Client(['verify' => false, 'timeout' => 20]);
+            $client = new \GuzzleHttp\Client(['verify' => false, 'timeout' => 120]);
 
             foreach ($recipients as $index => $recipient) {
                 // Sanitize phone number

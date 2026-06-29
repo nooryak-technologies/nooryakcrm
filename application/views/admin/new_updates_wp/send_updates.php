@@ -156,11 +156,11 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label tw-font-semibold tw-text-neutral-700">Attachment (Image, Video, Audio - Max 100MB)</label>
+                                    <label class="control-label tw-font-semibold tw-text-neutral-700">Attachment (Image, Video, Audio - Max 30MB)</label>
                                     <div class="file-dropzone" id="dropzone_trigger" onclick="document.getElementById('attachment').click()">
                                         <i class="fa-solid fa-cloud-arrow-up"></i>
                                         <h5 class="tw-font-semibold tw-mb-1" id="file_status_title">Drag & Drop or Click to Upload</h5>
-                                        <p class="text-muted tw-text-xs tw-mb-0">Supports images, video, and audio files up to 100MB</p>
+                                        <p class="text-muted tw-text-xs tw-mb-0">Supports images, video, and audio files up to 30MB</p>
                                         <input type="file" name="attachment" id="attachment" style="display: none;" accept="image/*,video/*,audio/*">
                                     </div>
                                     <div class="tw-mt-2 tw-flex tw-justify-between tw-items-center">
@@ -330,9 +330,9 @@
         if (fileInput.files.length > 0) {
             var file = fileInput.files[0];
             
-            // Check size limit: 100MB
-            if (file.size > 100 * 1024 * 1024) {
-                alert_float('danger', 'File size exceeds the 100MB limit.');
+            // Check size limit: 30MB
+            if (file.size > 30 * 1024 * 1024) {
+                alert_float('danger', 'File size exceeds the 30MB limit.');
                 fileInput.value = '';
                 clearFileDisplay();
                 return;
