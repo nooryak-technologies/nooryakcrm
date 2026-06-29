@@ -129,6 +129,15 @@ class Miscellaneous extends RestController
     	$this->load->model('leads_model');
 		$leads_statuses = $this->leads_model->get_status();
         
+        $cleaned_statuses = [];
+        foreach ($leads_statuses as $status) {
+            if ($status['name'] === 'demo lead' || $status['id'] == 12) {
+                continue;
+            }
+            $cleaned_statuses[] = $status;
+        }
+        $leads_statuses = $cleaned_statuses;
+        
         if (!empty($leads_statuses)) {
             $this->response(['message' => _l('data_retrieved_successfully'), 'data' => $leads_statuses], RestController::HTTP_OK);
         } else {
