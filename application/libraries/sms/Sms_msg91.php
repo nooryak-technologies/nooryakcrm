@@ -66,6 +66,9 @@ class Sms_msg91 extends App_sms
      */
     public function send($number, $message)
     {
+        // Sanitize phone number to contain only numeric digits (remove +, spaces, hyphens)
+        $number = preg_replace('/[^\d]/', '', $number);
+
         if ($this->api_type == 'world') {
             return $this->sendViaWorldRoute($number, $message);
         }
