@@ -345,6 +345,26 @@ class Invoices_model extends App_Model
         $result['currency']     = $currency;
         $result['currencyid']   = $currencyid;
 
+        // --- KPI counts: paid invoices vs total active invoices ---
+        $base_where = 'status NOT IN (' . self::STATUS_CANCELLED . ',' . self::STATUS_DRAFT . ')';
+        if (isset($data['years']) && count($data['years']) > 0) {
+            $years = implode(',', array_map('intval', $data['years']));
+            $base_where .= ' AND YEAR(date) IN (' . $years . ')';
+        } else {
+            $base_where .= ' AND YEAR(date) = ' . date('Y');
+        }
+        if (isset($data['project_id']) && $data['project_id'] != '') {
+            $base_where .= ' AND project_id = ' . (int) $data['project_id'];
+        } elseif (isset($data['customer_id']) && $data['customer_id'] != '') {
+            $base_where .= ' AND clientid = ' . (int) $data['customer_id'];
+        }
+        if (!$has_permission_view) {
+            $base_where .= ' AND (' . $noPermissionsQuery . ')';
+        }
+        $result['paid_invoices_count'] = (int) total_rows(db_prefix() . 'invoices',
+            $base_where . ' AND status = ' . self::STATUS_PAID);
+        $result['total_invoices_count'] = (int) total_rows(db_prefix() . 'invoices', $base_where);
+
         return $result;
     }
 

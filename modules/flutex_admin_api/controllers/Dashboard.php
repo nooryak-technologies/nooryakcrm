@@ -160,10 +160,10 @@ class Dashboard extends RestController
                 'total_tasks' => strval($total_tasks),
                 'tasks_not_finished_total' => strval($total_not_finished_tasks),
                 'tasks_not_finished_percent' => strval($percent_not_finished_tasks),
-                'advance_paid_total' => strval($invoices_total['advance_paid']),
-                'advance_paid_count' => strval($invoices_total['advance_paid_count']),
-                'pending_payment_total' => strval($invoices_total['pending_payment']),
-                'pending_payment_count' => strval($invoices_total['pending_payment_count']),
+                'advance_paid_total' => strval($invoices_total['paid_invoices_count']),
+                'advance_paid_count' => strval($invoices_total['total_invoices_count']),
+                'pending_payment_total' => strval($invoices_total['total_invoices_count'] - $invoices_total['paid_invoices_count']),
+                'pending_payment_count' => strval($invoices_total['total_invoices_count']),
                 'currency_symbol' => strval($currency_symbol)
             ],
             'data' => [
@@ -215,22 +215,23 @@ class Dashboard extends RestController
                 ]);
             }
 
-            // Add Paid Payment and Pending Payment KPI
+            // Add Paid Payment and Pending Payment KPI — show invoice counts not amounts
             $invoices_total = $this->invoices_model->get_invoices_total([]);
-            $total_amount = floatval($invoices_total['due']) + floatval($invoices_total['paid']);
-            $this->load->model('currencies_model');
-            $base_currency = $this->currencies_model->get_base_currency();
-            $currency_symbol = $base_currency ? $base_currency->symbol : '$';
+            $paid_count    = $invoices_total['paid_invoices_count'];
+            $total_count   = $invoices_total['total_invoices_count'];
+            $unpaid_count  = $total_count - $paid_count;
 
             array_push($invoices, [
-                'status' => 'Paid Payment',
-                'total' => $currency_symbol . number_format($invoices_total['advance_paid'], 2),
-                'percent' => strval($total_amount > 0 ? number_format(($invoices_total['advance_paid'] * 100) / $total_amount, 2) : 0)
+                'status'  => 'Paid Payment',
+                'total'   => strval($paid_count),
+                'percent' => strval($total_count > 0 ? number_format(($paid_count * 100) / $total_count, 2) : 0),
+                'of'      => strval($total_count),
             ]);
             array_push($invoices, [
-                'status' => 'Pending Payment',
-                'total' => $currency_symbol . number_format($invoices_total['pending_payment'], 2),
-                'percent' => strval($total_amount > 0 ? number_format(($invoices_total['pending_payment'] * 100) / $total_amount, 2) : 0)
+                'status'  => 'Pending Payment',
+                'total'   => strval($unpaid_count),
+                'percent' => strval($total_count > 0 ? number_format(($unpaid_count * 100) / $total_count, 2) : 0),
+                'of'      => strval($total_count),
             ]);
 
             return $invoices;
