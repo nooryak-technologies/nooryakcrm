@@ -51,8 +51,20 @@ function _inv_money($amount, $symbol) {
 }
 
 // Logo
-$logo_path = 'C:/xampp/htdocs/crm/assets/images/nooryak_logo.jpeg';
-if (!file_exists($logo_path)) $logo_path = FCPATH . 'assets/images/nooryak_logo.jpeg';
+$companyUploadPath = get_upload_path_by_type('company');
+$logo_path = '';
+if (get_option('company_logo_dark') != '' && file_exists($companyUploadPath . get_option('company_logo_dark'))) {
+    $logo_path = $companyUploadPath . get_option('company_logo_dark');
+} elseif (get_option('company_logo') != '' && file_exists($companyUploadPath . get_option('company_logo'))) {
+    $logo_path = $companyUploadPath . get_option('company_logo');
+}
+
+if ($logo_path == '' || !file_exists($logo_path)) {
+    $logo_path = 'C:/xampp/htdocs/crm/assets/images/nooryak_logo.jpeg';
+    if (!file_exists($logo_path)) {
+        $logo_path = FCPATH . 'assets/images/nooryak_logo.jpeg';
+    }
+}
 $logo_html = file_exists($logo_path) ? '<img src="' . $logo_path . '" style="height:80px;" />' : '';
 
 // ── Build items HTML ──────────────────────────────────────────────────────────
