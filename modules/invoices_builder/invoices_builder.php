@@ -28,6 +28,10 @@ hooks()->add_action('pre_activate_module', INVOICES_BUILDER_MODULE_NAME.'_preact
 hooks()->add_action('pre_deactivate_module', INVOICES_BUILDER_MODULE_NAME.'_predeactivate');
 register_merge_fields('invoices_builder/merge_fields/invoice_built_merge_fields');
 
+// Intercept the standard invoice PDF generation and use the Invoice Builder
+// template whenever a built invoice exists for that invoice ID.
+hooks()->add_filter('invoice_pdf_class_path', 'ib_maybe_use_builder_pdf', 10, 2);
+
 define('INVOICES_BUILDER_PATH', 'modules/invoices_builder/uploads/');
 /**
  * Register activation module hook
@@ -206,4 +210,50 @@ function invoices_builder_predeactivate($module_name){
         $invoices_builder_api->deactivate_license();
 				*/
     }
+}
+
+/**
+ * Filter: invoice_pdf_class_path
+ *
+ * When invoice_pdf($invoice) is called anywhere in the system (admin PDF
+ * download, client portal download, email attachment), this filter checks
+ * whether a built invoice exists for that invoice and, if so, swaps the
+ * PDF class path to the Invoice Builder bridge so the selected template
+ * is rendered instead of my_invoicepdf.php.
+ *
+ * @param  string $path    Current PDF class file path
+ * @param  object $invoice The invoice object passed to invoice_pdf()
+ * @return string          Modified path pointing to the bridge class
+ */
+function ib_maybe_use_builder_pdf($path, $invoice)
+{
+    if (!isset($invoice->id)) {
+        return $path;
+    }
+
+    $CI = &get_instance();
+
+    // Check if a built invoice exists for this invoice ID
+    $CI->db->where('invoice_id', (int) $invoice->id);
+    $CI->db->order_by('id', 'desc');
+    $CI->db->limit(1);
+    $built = $CI->db->get(db_prefix() . 'ib_invoices_built')->row();
+
+    if (!$built) {
+        // No built invoice — keep the original PDF (my_invoicepdf.php)
+        return $path;
+    }
+
+    // Verify the template actually exists and has settings
+    $CI->db->where('id', (int) $built->template_id);
+    $template = $CI->db->get(db_prefix() . 'ib_templates')->row();
+
+    if (!$template || empty($template->setting)) {
+        // Template missing or broken — keep the original PDF
+        return $path;
+    }
+
+    // Swap to the bridge class path
+    $bridge_path = APP_MODULES_PATH . 'invoices_builder/libraries/pdf/Ib_invoice_pdf_bridge.php';
+    return $bridge_path;
 }

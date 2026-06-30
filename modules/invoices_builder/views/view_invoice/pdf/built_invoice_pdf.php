@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 $template_setting = json_decode($template->setting);
 
+$updated_data = null;
 if($built_invoice->updated_data != '' && $built_invoice->updated_data != null){
     $updated_data = json_decode($built_invoice->updated_data);
 }
@@ -143,47 +144,47 @@ for($i = 1; $i <= $sender_receiver_setting->col_number; $i++){
 
                     if( isset($sender_receiver_setting->$sr->name->active) ){
                         $sender_name = isset($updated_data->sender_receiver->sender_infor->name) ? $updated_data->sender_receiver->sender_infor->name : get_option('invoice_company_name');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->name->font_size.'px font-style:'.$sender_receiver_setting->$sr->name->font_style.'; color:'.$sender_receiver_setting->$sr->name->text_color.';">'. _l('ib_name').': '.$sender_name.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->name->font_size.'px; font-style:'.$sender_receiver_setting->$sr->name->font_style.'; color:'.$sender_receiver_setting->$sr->name->text_color.';">'. _l('ib_name').': '.$sender_name.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->phone->active)) {
                         $sender_phone = isset($updated_data->sender_receiver->sender_infor->phone) ? $updated_data->sender_receiver->sender_infor->phone : get_option('invoice_company_phonenumber');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->phone->font_size.'px font-style:'.$sender_receiver_setting->$sr->phone->font_style.'; color:'.$sender_receiver_setting->$sr->phone->text_color.';">'. _l('ib_phonenumber').': '.$sender_phone.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->phone->font_size.'px; font-style:'.$sender_receiver_setting->$sr->phone->font_style.'; color:'.$sender_receiver_setting->$sr->phone->text_color.';">'. _l('ib_phonenumber').': '.$sender_phone.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->email->active) ){
                         $sender_email = isset($updated_data->sender_receiver->sender_infor->email) ? $updated_data->sender_receiver->sender_infor->email : get_option('smtp_email');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->email->font_size.'px font-style:'.$sender_receiver_setting->$sr->email->font_style.'; color:'.$sender_receiver_setting->$sr->email->text_color.';">'. _l('ib_email').': '.$sender_email.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->email->font_size.'px; font-style:'.$sender_receiver_setting->$sr->email->font_style.'; color:'.$sender_receiver_setting->$sr->email->text_color.';">'. _l('ib_email').': '.$sender_email.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->website->active) ){
                         $sender_web = isset($updated_data->sender_receiver->sender_infor->website) ? $updated_data->sender_receiver->sender_infor->website : site_url();
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->website->font_size.'px font-style:'.$sender_receiver_setting->$sr->website->font_style.'; color:'.$sender_receiver_setting->$sr->website->text_color.';">'. _l('ib_website').': '.$sender_web.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->website->font_size.'px; font-style:'.$sender_receiver_setting->$sr->website->font_style.'; color:'.$sender_receiver_setting->$sr->website->text_color.';">'. _l('ib_website').': '.$sender_web.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->street->active) ){
                         $sender_street = isset($updated_data->sender_receiver->sender_infor->street) ? $updated_data->sender_receiver->sender_infor->street : get_option('invoice_company_address');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->street->font_size.'px font-style:'.$sender_receiver_setting->$sr->street->font_style.'; color:'.$sender_receiver_setting->$sr->street->text_color.';">'._l('ib_street').': '.$sender_street.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->street->font_size.'px; font-style:'.$sender_receiver_setting->$sr->street->font_style.'; color:'.$sender_receiver_setting->$sr->street->text_color.';">'._l('ib_street').': '.$sender_street.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->city->active) ){
                         $sender_city = isset($updated_data->sender_receiver->sender_infor->city) ? $updated_data->sender_receiver->sender_infor->city : get_option('invoice_company_city');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->city->font_size.'px font-style:'.$sender_receiver_setting->$sr->city->font_style.'; color:'.$sender_receiver_setting->$sr->city->text_color.';">'._l('ib_city').': '.$sender_city.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->city->font_size.'px; font-style:'.$sender_receiver_setting->$sr->city->font_style.'; color:'.$sender_receiver_setting->$sr->city->text_color.';">'._l('ib_city').': '.$sender_city.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->state->active) ){
                         $sender_state = isset($updated_data->sender_receiver->sender_infor->state) ? $updated_data->sender_receiver->sender_infor->state : get_option('company_state');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->state->font_size.'px font-style:'.$sender_receiver_setting->$sr->state->font_style.'; color:'.$sender_receiver_setting->$sr->state->text_color.';">'._l('ib_state').': '.$sender_state.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->state->font_size.'px; font-style:'.$sender_receiver_setting->$sr->state->font_style.'; color:'.$sender_receiver_setting->$sr->state->text_color.';">'._l('ib_state').': '.$sender_state.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->zipcode->active) ){
                         $sender_zipcode = isset($updated_data->sender_receiver->sender_infor->zipcode) ? $updated_data->sender_receiver->sender_infor->zipcode : get_option('invoice_company_postal_code');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->zipcode->font_size.'px font-style:'.$sender_receiver_setting->$sr->zipcode->font_style.'; color:'.$sender_receiver_setting->$sr->zipcode->text_color.';">'._l('ib_zipcode').': '.$sender_zipcode.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->zipcode->font_size.'px; font-style:'.$sender_receiver_setting->$sr->zipcode->font_style.'; color:'.$sender_receiver_setting->$sr->zipcode->text_color.';">'._l('ib_zipcode').': '.$sender_zipcode.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->country->active) ){
                         $sender_country = isset($updated_data->sender_receiver->sender_infor->country) ? $updated_data->sender_receiver->sender_infor->country : get_option('invoice_company_country_code');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->country->font_size.'px font-style:'.$sender_receiver_setting->$sr->country->font_style.'; color:'.$sender_receiver_setting->$sr->country->text_color.';">'._l('ib_country').': '.$sender_country.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->country->font_size.'px; font-style:'.$sender_receiver_setting->$sr->country->font_style.'; color:'.$sender_receiver_setting->$sr->country->text_color.';">'._l('ib_country').': '.$sender_country.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->vat->active) ){
                         $sender_vat = isset($updated_data->sender_receiver->sender_infor->vat) ? $updated_data->sender_receiver->sender_infor->vat : get_option('company_vat');
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->vat->font_size.'px font-style:'.$sender_receiver_setting->$sr->vat->font_style.'; color:'.$sender_receiver_setting->$sr->vat->text_color.';">'._l('ib_vat_number').': '.$sender_vat.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->vat->font_size.'px; font-style:'.$sender_receiver_setting->$sr->vat->font_style.'; color:'.$sender_receiver_setting->$sr->vat->text_color.';">'._l('ib_vat_number').': '.$sender_vat.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->sales_person->active) ){
                         $sales_person = isset($updated_data->sender_receiver->sender_infor->sales_person) ? $updated_data->sender_receiver->sender_infor->sales_person : get_staff_full_name($invoice->sale_agent);
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->sales_person->font_size.'px font-style:'.$sender_receiver_setting->$sr->sales_person->font_style.'; color:'.$sender_receiver_setting->$sr->sales_person->text_color.';">'._l('ib_sales_person').': '.$sales_person.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->sales_person->font_size.'px; font-style:'.$sender_receiver_setting->$sr->sales_person->font_style.'; color:'.$sender_receiver_setting->$sr->sales_person->text_color.';">'._l('ib_sales_person').': '.$sales_person.'</span>';
                     }
 
                     if( isset($sender_receiver_setting->$sr->custom_field) ){
@@ -203,51 +204,51 @@ for($i = 1; $i <= $sender_receiver_setting->col_number; $i++){
                     $tblsr .= '<br><b class="fs-20">'. _l('ib_buyer').'</b>';
                     if( isset($sender_receiver_setting->$sr->name->active) ){ 
                         $receiver_name = isset($updated_data->sender_receiver->receiver_infor->name) ? $updated_data->sender_receiver->receiver_infor->name : get_company_name($invoice->clientid);
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->name->font_size.'px font-style:'.$sender_receiver_setting->$sr->name->font_style.'; color:'.$sender_receiver_setting->$sr->name->text_color.';">'. _l('ib_name').': '.$receiver_name.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->name->font_size.'px; font-style:'.$sender_receiver_setting->$sr->name->font_style.'; color:'.$sender_receiver_setting->$sr->name->text_color.';">'. _l('ib_name').': '.$receiver_name.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->phone->active) ){
                         $receiver_phone = isset($updated_data->sender_receiver->receiver_infor->phone) ? $updated_data->sender_receiver->receiver_infor->phone : $_client->phonenumber;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->phone->font_size.'px font-style:'.$sender_receiver_setting->$sr->phone->font_style.'; color:'.$sender_receiver_setting->$sr->phone->text_color.';">'. _l('ib_phonenumber').': '.$receiver_phone.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->phone->font_size.'px; font-style:'.$sender_receiver_setting->$sr->phone->font_style.'; color:'.$sender_receiver_setting->$sr->phone->text_color.';">'. _l('ib_phonenumber').': '.$receiver_phone.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->email->active) ){ 
                         $receiver_email = isset($updated_data->sender_receiver->receiver_infor->email) ? $updated_data->sender_receiver->receiver_infor->email : $_client_email;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->email->font_size.'px font-style:'.$sender_receiver_setting->$sr->email->font_style.'; color:'.$sender_receiver_setting->$sr->email->text_color.';">'. _l('ib_email').': '.$receiver_email.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->email->font_size.'px; font-style:'.$sender_receiver_setting->$sr->email->font_style.'; color:'.$sender_receiver_setting->$sr->email->text_color.';">'. _l('ib_email').': '.$receiver_email.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->website->active) ){ 
                         $receiver_website = isset($updated_data->sender_receiver->receiver_infor->website) ? $updated_data->sender_receiver->receiver_infor->website : $_client->website;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->website->font_size.'px font-style:'.$sender_receiver_setting->$sr->website->font_style.'; color:'.$sender_receiver_setting->$sr->website->text_color.';">'. _l('ib_website').': '.$receiver_website.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->website->font_size.'px; font-style:'.$sender_receiver_setting->$sr->website->font_style.'; color:'.$sender_receiver_setting->$sr->website->text_color.';">'. _l('ib_website').': '.$receiver_website.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->street->active) ){ 
                         $receiver_street = isset($updated_data->sender_receiver->receiver_infor->street) ? $updated_data->sender_receiver->receiver_infor->street : $_client->address;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->street->font_size.'px font-style:'.$sender_receiver_setting->$sr->street->font_style.'; color:'.$sender_receiver_setting->$sr->street->text_color.';">'. _l('ib_street').': '.$receiver_street.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->street->font_size.'px; font-style:'.$sender_receiver_setting->$sr->street->font_style.'; color:'.$sender_receiver_setting->$sr->street->text_color.';">'. _l('ib_street').': '.$receiver_street.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->city->active) ){ 
                         $receiver_city = isset($updated_data->sender_receiver->receiver_infor->city) ? $updated_data->sender_receiver->receiver_infor->city : $_client->city;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->city->font_size.'px font-style:'.$sender_receiver_setting->$sr->city->font_style.'; color:'.$sender_receiver_setting->$sr->city->text_color.';">'. _l('ib_city').': '.$receiver_city.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->city->font_size.'px; font-style:'.$sender_receiver_setting->$sr->city->font_style.'; color:'.$sender_receiver_setting->$sr->city->text_color.';">'. _l('ib_city').': '.$receiver_city.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->state->active) ){ 
                         $receiver_state = isset($updated_data->sender_receiver->receiver_infor->state) ? $updated_data->sender_receiver->receiver_infor->state : $_client->state;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->state->font_size.'px font-style:'.$sender_receiver_setting->$sr->state->font_style.'; color:'.$sender_receiver_setting->$sr->state->text_color.';">'. _l('ib_state').': '.$receiver_state.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->state->font_size.'px; font-style:'.$sender_receiver_setting->$sr->state->font_style.'; color:'.$sender_receiver_setting->$sr->state->text_color.';">'. _l('ib_state').': '.$receiver_state.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->zipcode->active) ){ 
                         $receiver_zipcode = isset($updated_data->sender_receiver->receiver_infor->zipcode) ? $updated_data->sender_receiver->receiver_infor->zipcode : $_client->zip;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->zipcode->font_size.'px font-style:'.$sender_receiver_setting->$sr->zipcode->font_style.'; color:'.$sender_receiver_setting->$sr->zipcode->text_color.';">'. _l('ib_zipcode').': '.$receiver_zipcode.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->zipcode->font_size.'px; font-style:'.$sender_receiver_setting->$sr->zipcode->font_style.'; color:'.$sender_receiver_setting->$sr->zipcode->text_color.';">'. _l('ib_zipcode').': '.$receiver_zipcode.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->country->active) ){ 
                         $receiver_country = isset($updated_data->sender_receiver->receiver_infor->country) ? $updated_data->sender_receiver->receiver_infor->country : get_country_name($_client->country);
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->country->font_size.'px font-style:'.$sender_receiver_setting->$sr->country->font_style.'; color:'.$sender_receiver_setting->$sr->country->text_color.';">'. _l('ib_country').': '.$receiver_country.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->country->font_size.'px; font-style:'.$sender_receiver_setting->$sr->country->font_style.'; color:'.$sender_receiver_setting->$sr->country->text_color.';">'. _l('ib_country').': '.$receiver_country.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->vat->active) ){ 
                         $receiver_vat = isset($updated_data->sender_receiver->receiver_infor->vat) ? $updated_data->sender_receiver->receiver_infor->vat : $_client->vat;
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->vat->font_size.'px font-style:'.$sender_receiver_setting->$sr->vat->font_style.'; color:'.$sender_receiver_setting->$sr->vat->text_color.';">'. _l('ib_vat_number').': '.$receiver_vat.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->vat->font_size.'px; font-style:'.$sender_receiver_setting->$sr->vat->font_style.'; color:'.$sender_receiver_setting->$sr->vat->text_color.';">'. _l('ib_vat_number').': '.$receiver_vat.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->billing_to->active) ){ 
                         $billing_to = isset($updated_data->sender_receiver->receiver_infor->billing_to) ? $updated_data->sender_receiver->receiver_infor->billing_to : strip_tags(format_customer_info($invoice, 'invoice', 'billing'));
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->billing_to->font_size.'px font-style:'.$sender_receiver_setting->$sr->billing_to->font_style.'; color:'.$sender_receiver_setting->$sr->billing_to->text_color.';">'. _l('ib_billing_to').': '.$billing_to.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->billing_to->font_size.'px; font-style:'.$sender_receiver_setting->$sr->billing_to->font_style.'; color:'.$sender_receiver_setting->$sr->billing_to->text_color.';">'. _l('ib_billing_to').': '.$billing_to.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->shipping_to->active) ){ 
                         $shipping_to = isset($updated_data->sender_receiver->receiver_infor->shipping_to) ? $updated_data->sender_receiver->receiver_infor->shipping_to : strip_tags(format_customer_info($invoice, 'invoice', 'shipping'));
-                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->shipping_to->font_size.'px font-style:'.$sender_receiver_setting->$sr->shipping_to->font_style.'; color:'.$sender_receiver_setting->$sr->shipping_to->text_color.';">'. _l('ib_shipping_to').': '.$shipping_to.'</span>';
+                        $tblsr .= '<br><span class="mbot5 mleft10" style="font-size:'.$sender_receiver_setting->$sr->shipping_to->font_size.'px; font-style:'.$sender_receiver_setting->$sr->shipping_to->font_style.'; color:'.$sender_receiver_setting->$sr->shipping_to->text_color.';">'. _l('ib_shipping_to').': '.$shipping_to.'</span>';
                     }
                     if( isset($sender_receiver_setting->$sr->custom_field) ){
                         $sender_custom_field = $sender_receiver_setting->$sr->custom_field;

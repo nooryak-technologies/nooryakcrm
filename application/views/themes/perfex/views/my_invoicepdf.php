@@ -1,9 +1,18 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 // ── Data preparation ──────────────────────────────────────────────────────────
-$company_name  = get_option('companyname') ?: 'NOORYAK TECHNOLOGIES';
-$company_phone = get_option('companyphonenumber') ?: '+91-6374913298';
-$company_email = get_option('companyemail') ?: 'admin@nooryak.com';
+// All company fields are read from per-tenant options so every subdomain
+// automatically uses its own details set in Settings → Company.
+$company_name      = get_option('invoice_company_name') ?: get_option('companyname') ?: '';
+$company_phone     = get_option('invoice_company_phonenumber') ?: get_option('companyphonenumber') ?: '';
+$company_email     = get_option('companyemail') ?: '';
+$company_address   = get_option('invoice_company_address') ?: '';
+$company_city      = get_option('invoice_company_city') ?: '';
+$company_state     = get_option('company_state') ?: '';
+$company_zip       = get_option('invoice_company_postal_code') ?: '';
+$company_country   = get_option('invoice_company_country_code') ?: '';
+$company_vat       = get_option('company_vat') ?: '';   // GSTIN / VAT number
+$company_website   = get_option('companywebsite') ?: '';
 
 $invoice_no   = $invoice_number;
 $invoice_date = _d($invoice->date);
@@ -59,11 +68,18 @@ if (get_option('company_logo_dark') != '' && file_exists($companyUploadPath . ge
     $logo_path = $companyUploadPath . get_option('company_logo');
 }
 
+// Build the dynamic company address block for the PDF header
+$company_address_lines = [];
+if ($company_address !== '') $company_address_lines[] = htmlspecialchars($company_address);
+$city_state_zip = trim(implode(', ', array_filter([$company_city, $company_state])));
+if ($company_zip !== '') $city_state_zip .= ($city_state_zip ? ' ' : '') . $company_zip;
+if ($city_state_zip !== '') $company_address_lines[] = htmlspecialchars($city_state_zip);
+if ($company_country !== '') $company_address_lines[] = htmlspecialchars($company_country);
+$company_address_html = implode('<br>', $company_address_lines);
+
+// If no logo is configured just leave it empty — no hardcoded fallback
 if ($logo_path == '' || !file_exists($logo_path)) {
-    $logo_path = 'C:/xampp/htdocs/crm/assets/images/nooryak_logo.jpeg';
-    if (!file_exists($logo_path)) {
-        $logo_path = FCPATH . 'assets/images/nooryak_logo.jpeg';
-    }
+    $logo_path = '';
 }
 $logo_html = file_exists($logo_path) ? '<img src="' . $logo_path . '" style="height:80px;" />' : '';
 
@@ -207,13 +223,11 @@ body{font-family:"Arial","Helvetica",sans-serif;color:#000000;margin:0;padding:0
         </td>
         <td style="width:45%;vertical-align:top;text-align:right;padding:28px 40px 0 0;">
             <div style="font-size:62px;font-weight:700;color:#000000;letter-spacing:3px;line-height:1;margin:0;">INVOICE</div>
-            <div style="font-size:13px;font-weight:700;color:#000000;margin:10px 0 2px 0;text-transform:uppercase;line-height:1.4;"><strong>NOORYAK TECHNOLOGIES</strong><br><strong>DEVELOPMENT AGENCY</strong></div>
+            <div style="font-size:13px;font-weight:700;color:#000000;margin:10px 0 2px 0;text-transform:uppercase;line-height:1.4;"><strong>' . htmlspecialchars($company_name) . '</strong></div>
             <div style="font-size:13px;color:#000000;line-height:1.5;">
-                
-                Floor 1, Door, Shafi Tower, Khana Bagh Street,<br>
-                Triplicane, Chennai, Tamil Nadu 600005<br>
-                GSTIN : 33FMFPM6147A1ZB<br>
-                Ph: ' . htmlspecialchars($company_phone) . ' &nbsp;<strong>www.nooryak.com</strong>
+                ' . ($company_address_html !== '' ? $company_address_html . '<br>' : '') . '
+                ' . ($company_vat !== '' ? 'GSTIN : ' . htmlspecialchars($company_vat) . '<br>' : '') . '
+                ' . ($company_phone !== '' ? 'Ph: ' . htmlspecialchars($company_phone) . ($company_website !== '' ? ' &nbsp;<strong>' . htmlspecialchars($company_website) . '</strong>' : '') : ($company_website !== '' ? '<strong>' . htmlspecialchars($company_website) . '</strong>' : '')) . '
             </div>
         </td>
     </tr>
@@ -283,7 +297,7 @@ body{font-family:"Arial","Helvetica",sans-serif;color:#000000;margin:0;padding:0
     <table style="background-color:#17a2b8;width:100%;padding:15px;border-radius:10px;position:relative;z-index:1;">
  <tr style="background-color: #17a2b8;">
     <td style="padding: 15px 20px; font-size: 14px; color: #ffffff; text-align: left; background-color: #17a2b8;">
-        <strong style="font-weight: 800; letter-spacing: 0.5px;">www.nooryak.com</strong>
+        <strong style="font-weight: 800; letter-spacing: 0.5px;">' . htmlspecialchars($company_website) . '</strong>
     </td>
     <td style="padding: 15px 6px; font-size: 14px; color: #ffffff; text-align: center; background-color: #17a2b8;">
         <strong style="font-weight: 800;">' . htmlspecialchars($company_phone) . '</strong>
