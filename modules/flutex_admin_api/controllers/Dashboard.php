@@ -146,8 +146,8 @@ class Dashboard extends RestController
         $this->response([
             'message' => _l('data_retrieved_successfully'),
             'overview' => [
-                'perfex_logo' => ($perfex_logo != '' ? base_url('uploads/company/' . $perfex_logo) : ''),
-                'perfex_logo_dark' => ($perfex_logo_dark != '' ? base_url('uploads/company/' . $perfex_logo_dark) : ''),
+                'perfex_logo' => base_url('assets/images/NOORYAK-CRM-LOGO.png'),
+                'perfex_logo_dark' => base_url('assets/images/NOORYAK-CRM-LOGO.png'),
                 'total_invoices' => strval($total_invoices),
                 'invoices_awaiting_payment_total' => strval($total_invoices_awaiting_payment),
                 'invoices_awaiting_payment_percent' => strval($percent_total_invoices_awaiting_payment),
@@ -191,8 +191,8 @@ class Dashboard extends RestController
         $this->response([
             'message' => _l('data_retrieved_successfully'),
             'data' => [
-                'perfex_logo' => ($perfex_logo != '' ? base_url('uploads/company/' . $perfex_logo) : ''),
-                'perfex_logo_dark' => ($perfex_logo_dark != '' ? base_url('uploads/company/' . $perfex_logo_dark) : ''),
+                'perfex_logo' => base_url('assets/images/NOORYAK-CRM-LOGO.png'),
+                'perfex_logo_dark' => base_url('assets/images/NOORYAK-CRM-LOGO.png'),
                 'perfex_company_name' => $perfex_company_name,
             ],
         ], RestController::HTTP_OK);
