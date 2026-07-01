@@ -773,13 +773,26 @@ class _UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
                                       spacing: Dimensions.space5,
                                       children: [
                                         Flexible(
-                                          flex: 4,
+                                          flex: 2,
                                           child: CustomTextField(
                                             labelText: LocalStrings.qty.tr,
                                             textInputType: TextInputType.number,
                                             controller:
                                                 controller.qtyController,
                                             focusNode: controller.qtyFocusNode,
+                                            nextFocus: controller.durationFocusNode,
+                                            onChanged: (value) {
+                                              return;
+                                            },
+                                          ),
+                                        ),
+                                        Flexible(
+                                          flex: 3,
+                                          child: CustomTextField(
+                                            labelText: LocalStrings.duration.tr,
+                                            textInputType: TextInputType.text,
+                                            controller: controller.durationController,
+                                            focusNode: controller.durationFocusNode,
                                             nextFocus: controller.unitFocusNode,
                                             onChanged: (value) {
                                               return;
@@ -904,7 +917,7 @@ class _UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
                                           spacing: Dimensions.space5,
                                           children: [
                                             Flexible(
-                                              flex: 4,
+                                              flex: 2,
                                               child: CustomTextField(
                                                 labelText: LocalStrings.qty.tr,
                                                 textInputType:
@@ -912,6 +925,20 @@ class _UpdateInvoiceScreenState extends State<UpdateInvoiceScreen> {
                                                 controller: controller
                                                     .invoiceItemList[index]
                                                     .qtyController,
+                                                onChanged: (value) {
+                                                  return;
+                                                },
+                                              ),
+                                            ),
+                                            Flexible(
+                                              flex: 3,
+                                              child: CustomTextField(
+                                                labelText: LocalStrings.duration.tr,
+                                                textInputType:
+                                                    TextInputType.text,
+                                                controller: controller
+                                                    .invoiceItemList[index]
+                                                    .durationController,
                                                 onChanged: (value) {
                                                   return;
                                                 },

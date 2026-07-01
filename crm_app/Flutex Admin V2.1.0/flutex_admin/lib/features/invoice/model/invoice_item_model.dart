@@ -5,6 +5,7 @@ class InvoiceItemModel {
   final TextEditingController descriptionController;
   final TextEditingController qtyController;
   final TextEditingController unitController;
+  final TextEditingController durationController;
   final TextEditingController rateController;
 
   const InvoiceItemModel({
@@ -12,6 +13,7 @@ class InvoiceItemModel {
     required this.descriptionController,
     required this.qtyController,
     required this.unitController,
+    required this.durationController,
     required this.rateController,
   });
 }

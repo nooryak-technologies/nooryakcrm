@@ -278,6 +278,7 @@ class LocalStrings {
   static const String enterRate = "Please, Enter Item Rate.";
   static const String pleaseEnterDate = "Please, Enter Date.";
   static const String pleaseAddItem = "Please, Add items to the invoice.";
+  static const String duration = "Duration";
 
   // Project
   static const String project = "Project";

@@ -256,6 +256,11 @@ class InvoiceController extends GetxController {
               unitController: TextEditingController(
                 text: invoiceDetailsModel.data!.items![i].unit.toString(),
               ),
+              durationController: TextEditingController(
+                text: invoiceDetailsModel.data!.items![i].duration != null && invoiceDetailsModel.data!.items![i].duration.toString() != 'null'
+                    ? invoiceDetailsModel.data!.items![i].duration.toString()
+                    : '',
+              ),
               rateController: TextEditingController(
                 text: invoiceDetailsModel.data!.items![i].rate.toString(),
               ),
@@ -321,6 +326,7 @@ class InvoiceController extends GetxController {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController qtyController = TextEditingController(text: '1');
   TextEditingController unitController = TextEditingController();
+  TextEditingController durationController = TextEditingController();
   TextEditingController rateController = TextEditingController();
 
   FocusNode numberFocusNode = FocusNode();
@@ -354,6 +360,7 @@ class InvoiceController extends GetxController {
   FocusNode descriptionFocusNode = FocusNode();
   FocusNode qtyFocusNode = FocusNode();
   FocusNode unitFocusNode = FocusNode();
+  FocusNode durationFocusNode = FocusNode();
   FocusNode rateFocusNode = FocusNode();
 
   void increaseItemField() {
@@ -365,6 +372,7 @@ class InvoiceController extends GetxController {
         ),
         qtyController: TextEditingController(text: qtyController.text),
         unitController: TextEditingController(text: unitController.text),
+        durationController: TextEditingController(text: durationController.text),
         rateController: TextEditingController(text: rateController.text),
       ),
     );
@@ -372,6 +380,7 @@ class InvoiceController extends GetxController {
     descriptionController.clear();
     qtyController.clear();
     unitController.clear();
+    durationController.clear();
     rateController.clear();
     calculateInvoiceAmount();
     update();
@@ -672,6 +681,7 @@ class InvoiceController extends GetxController {
     descriptionController.text = '';
     qtyController.text = '';
     unitController.text = '';
+    durationController.text = '';
     rateController.text = '';
 
     amountReceivedController.text = '';

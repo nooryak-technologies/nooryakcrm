@@ -177,6 +177,7 @@ class InvoiceRepo {
         params['newitems[$i][qty]'] = invoice.qtyController.text;
         params['newitems[$i][rate]'] = invoiceItemRate;
         params['newitems[$i][unit]'] = invoice.unitController.text;
+        params['newitems[$i][duration]'] = invoice.durationController.text;
         i++;
         //params['newitems[$i][order]'] = '1';
         //params['newitems[0][taxname][]'] = 'CGST|9.00';

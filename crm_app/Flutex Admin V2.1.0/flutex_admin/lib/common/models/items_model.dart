@@ -9,6 +9,7 @@ class Item {
     String? rate,
     String? unit,
     String? itemOrder,
+    String? duration,
   }) {
     _id = id;
     _relId = relId;
@@ -19,6 +20,7 @@ class Item {
     _rate = rate;
     _unit = unit;
     _itemOrder = itemOrder;
+    _duration = duration;
   }
 
   Item.fromJson(dynamic json) {
@@ -31,6 +33,7 @@ class Item {
     _rate = json['rate'];
     _unit = json['unit'];
     _itemOrder = json['item_order'];
+    _duration = json['duration'];
   }
 
   String? _id;
@@ -42,6 +45,7 @@ class Item {
   String? _rate;
   String? _unit;
   String? _itemOrder;
+  String? _duration;
 
   String? get id => _id;
   String? get relId => _relId;
@@ -52,6 +56,7 @@ class Item {
   String? get rate => _rate;
   String? get unit => _unit;
   String? get itemOrder => _itemOrder;
+  String? get duration => _duration;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -64,6 +69,7 @@ class Item {
     map['rate'] = _rate;
     map['unit'] = _unit;
     map['item_order'] = _itemOrder;
+    map['duration'] = _duration;
     return map;
   }
 }
