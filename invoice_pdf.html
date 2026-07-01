@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Template</title>
+    <style>
+        :root {
+            --brand: #17a2b8;
+            --brand-dark: #0e8092;
+            --brand-soft: #eaf7f9;
+            --text-dark: #17171a;
+            --text-gray: #4a4a4a;
+            --red: #cc0000;
+            --green: #1a7d1a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #d9d9d9;
+            /* just so the white page is visible while previewing in a browser */
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* ============ PAGE / SHEET ============ */
+        .invoice-sheet {
+            position: relative;
+            max-width: 820px;
+            margin: 0 auto;
+            background: #ffffff;
+            overflow: hidden;
+            /* clips the decorative curve to the page edges */
+            padding: 36px 40px 0 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Decorative teal curve, top-right corner.
+     REPLACE-IN-PHP: purely decorative, no dynamic data. */
+        .curve-decor {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 230px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 60%, #ffffff 100%);
+            border-bottom-left-radius: 230px;
+            z-index: 0;
+            opacity: 0.9;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .logo-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 46px;
+            height: 40px;
+        }
+
+        .logo-text-main {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+
+        .logo-text-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--brand);
+            letter-spacing: 1.5px;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            text-align: right;
+            padding-top: 4px;
+            min-width: 260px;
+        }
+
+        .invoice-title {
+            font-size: 54px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: var(--text-dark);
+            line-height: 1;
+            margin: 0 0 8px 0;
+        }
+
+        .company-name-block {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.4;
+            margin-bottom: 2px;
+        }
+
+        .company-details {
+            font-size: 12.5px;
+            color: var(--text-gray);
+            line-height: 1.5;
+        }
+
+        .company-details strong {
+            color: var(--text-dark);
+        }
+
+        /* ============ CLIENT / INVOICE INFO ============ */
+        .info-section {
+            position: relative;
+            z-index: 1;
+            margin-top: 26px;
+            max-width: 62%;
+        }
+
+        .client-info-line {
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.4;
+            margin-bottom: 14px;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 3px 0;
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        .info-table td.label {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            width: 145px;
+            white-space: nowrap;
+        }
+
+        .info-table td.value {
+            font-weight: 600;
+        }
+
+        .info-table td.value strong {
+            font-weight: 800;
+        }
+
+        .amount-strike {
+            text-decoration: line-through;
+            font-weight: 400;
+            color: #8a8a8a;
+        }
+
+        .amount-final {
+            font-weight: 800;
+        }
+
+        .amount-note {
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: none;
+            color: var(--text-gray);
+        }
+
+        .balance-note {
+            font-size: 12px;
+            font-weight: 400;
+            text-transform: none;
+            color: var(--text-gray);
+        }
+
+        .status-paid {
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--brand-dark);
+        }
+
+        /* ============ SERVICE TABLE ============ */
+        .items-wrap {
+            position: relative;
+            margin-top: 34px;
+            z-index: 1;
+        }
+
+        table.items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table thead th {
+            background: var(--brand);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 14px;
+            text-align: left;
+        }
+
+        .items-table thead th:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .items-table thead th:last-child {
+            border-radius: 0 8px 8px 0;
+            text-align: right;
+        }
+
+        .items-table thead th.col-duration,
+        .items-table thead th.col-price {
+            text-align: center;
+        }
+
+        /* the little cut-out swoosh on the right edge of the teal bar, like the reference */
+        .items-wrap::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 46px;
+            height: 46px;
+            background: #ffffff;
+            border-bottom-left-radius: 46px;
+        }
+
+        .items-table tbody td {
+            padding: 12px 14px;
+            font-size: 13px;
+            vertical-align: top;
+            border-bottom: 1px solid #eef4f5;
+        }
+
+        .items-table tbody tr:nth-child(even) td {
+            background: #f8fcfd;
+        }
+
+        .item-desc-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .item-bullets {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 11.5px;
+            color: var(--text-gray);
+            line-height: 1.75;
+        }
+
+        .item-bullets li::before {
+            content: "\2022";
+            color: var(--text-gray);
+            margin-right: 6px;
+        }
+
+        .col-duration {
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .col-price {
+            text-align: center;
+        }
+
+        .col-total {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        /* ============ OFFER / NOTE + SUMMARY ============ */
+        .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin-top: 28px;
+        }
+
+        .notes-col {
+            flex: 1 1 55%;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-gray);
+        }
+
+        .notes-col .label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .notes-col .block {
+            margin-bottom: 16px;
+        }
+
+        .summary-col {
+            flex: 0 0 300px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary-table td {
+            padding: 6px 0;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .summary-table td.amt {
+            text-align: right;
+        }
+
+        .summary-table tr.advanced td {
+            color: var(--green);
+        }
+
+        .summary-table tr.balance td {
+            font-size: 17px;
+            color: var(--red);
+            padding-top: 12px;
+            border-top: 1px solid #dcecee;
+        }
+
+        /* ============ FOOTER ============ */
+        .footer-bar {
+            margin-top: 40px;
+            background: linear-gradient(90deg, var(--brand) 0%, var(--brand-dark) 100%);
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .footer-bar .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-bar .icon-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="invoice-sheet">
+        <div class="curve-decor"></div>
+
+        <!-- ============ HEADER ============ -->
+        <div class="header">
+            <div class="logo-block">
+                <!-- REPLACE-IN-PHP: swap for <img src="{logo_path}"> if a real logo is set -->
+                <svg class="logo-mark" viewBox="0 0 60 50" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 40 L18 8 L30 30 L42 8 L58 40" stroke="#ff8c00" stroke-width="7" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M2 40 L18 8 L30 30 L42 8 L58 40" stroke="#1a1a2e" stroke-width="7" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" transform="translate(0,4)" opacity="0.85" />
+                </svg>
+                <div>
+                    <div class="logo-text-main">NOORYAK TECHNOLOGIES</div>
+                    <div class="logo-text-sub">— TECHNOLOGIES</div>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="invoice-title">INVOICE</div>
+                <div class="company-name-block">NOORYAK TECHNOLOGIES<br>DEVELOPMENT AGENCY</div>
+                <div class="company-details">
+                    Old No.201, New, 194, Dr Natesan Rd, Mirshahibpet, Tripicane,<br>
+                    Chennai, Tamil Nadu 600005<br>
+                    GSTIN : 33FMFPM6147A1ZB<br>
+                    Ph: 6374913298 &nbsp;<strong>www.nooryak.com</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ CLIENT / INVOICE INFO ============ -->
+        <div class="info-section">
+            <div class="client-info-line">CLIENT INFO: KP ENTERPRISES | ECOMMERCE WEBSITE DEVELOPMENT PACKAGE</div>
+
+            <table class="info-table">
+                <tr>
+                    <td class="label">INVOICE NO :</td>
+                    <td class="value">INV13032026</td>
+                </tr>
+                <tr>
+                    <td class="label">INVOICE DATE:</td>
+                    <td class="value">09/04/2026</td>
+                </tr>
+                <tr>
+                    <td class="label">AMOUNT:</td>
+                    <td class="value">
+                        <span class="amount-strike">₹32,000</span>
+                        <span class="amount-final">₹26,000</span>
+                        <span class="amount-note">(Excluding 18% GST)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">ADVANCE :</td>
+                    <td class="value">
+                        <strong>₹18,200 (70%)</strong>
+                        <span class="balance-note">- Balance 30% After Website Launch.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">STATUS :</td>
+                    <td class="value"><span class="status-paid">ADVANCE PAID (70%)</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ============ SERVICE TABLE ============ -->
+        <div class="items-wrap">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width:45%;">Service Description</th>
+                        <th class="col-duration" style="width:20%;">Duration</th>
+                        <th class="col-price" style="width:17%;">Price</th>
+                        <th style="width:18%;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- REPLACE-IN-PHP: repeat this <tr> per invoice item -->
+                    <tr>
+                        <td>
+                            <div class="item-desc-title">E-Commerce Website Package Includes :</div>
+                            <ul class="item-bullets">
+                                <li>1 Free Premium Domain</li>
+                                <li>Ecommerce Based Cloud Hosting Server</li>
+                                <li>12 Pages (Modern Website Design)</li>
+                                <li>Unlimited Product Listing</li>
+                                <li>Unlimited Product Categories</li>
+                                <li>3 Business Email ids</li>
+                                <li>Unlimited Product Images (Resized)</li>
+                                <li>100% Responsive with best UI/UX</li>
+                                <li>Technical Ecommerce SEO Ready</li>
+                                <li>Highly Secured SSL Certificate</li>
+                                <li>WhatsApp Order &amp; Support Integration</li>
+                                <li>Social Media Connections</li>
+                                <li>Live Chat Bot Integration</li>
+                                <li>Payment Gateway Integration</li>
+                                <li>Complete Admin Panel Integration</li>
+                                <li>Customer Account Panel Integration</li>
+                            </ul>
+                        </td>
+                        <td class="col-duration">8-10 Days</td>
+                        <td class="col-price">
+                            <span class="amount-strike">₹32,000</span><br>
+                            <span class="amount-final">₹26,000</span>
+                        </td>
+                        <td class="col-total">
+                            <span class="amount-strike">₹32,000</span><br>
+                            <span class="amount-final">₹26,000</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============ OFFER / NOTE + SUMMARY ============ -->
+        <div class="bottom-section">
+            <div class="notes-col">
+                <div class="block">
+                    <div class="label">Offer :</div>
+                    Including Yearly Maintenance For 1<sup>st</sup> Year and 101% website uptime guaranteed once Renewed
+                    Yearly.
+                </div>
+                <div class="block">
+                    <div class="label">NOTE:</div>
+                    We prioritize customer satisfaction. Our team of passionate Developers, graphic designers and
+                    digital marketers are dedicated to deliver exceptional service and ensuring your growth and success
+                    among competitors in the crowded online market.
+                </div>
+            </div>
+
+            <div class="summary-col">
+                <table class="summary-table">
+                    <tr>
+                        <td>SUB TOTAL</td>
+                        <td class="amt">₹26,000</td>
+                    </tr>
+                    <tr class="advanced">
+                        <td>ADVANCED</td>
+                        <td class="amt">₹18,200</td>
+                    </tr>
+                    <tr class="balance">
+                        <td>BALANCE</td>
+                        <td class="amt">₹7,800</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============ FOOTER ============ -->
+        <div class="footer-bar">
+            <div class="footer-item"><span class="icon-dot">&#127760;</span> nooryak.com</div>
+            <div class="footer-item"><span class="icon-dot">&#9742;</span> +91-6374913298</div>
+            <div class="footer-item"><span class="icon-dot">&#9993;</span> admin@nooryak.com</div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
