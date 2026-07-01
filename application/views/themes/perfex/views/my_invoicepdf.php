@@ -255,7 +255,7 @@ $html = '
         }
         
         .info-table td.value {
-            font-weight: 600;
+            font-weight: normal;
         }
         
         .amount-strike {
@@ -265,7 +265,7 @@ $html = '
         }
         
         .amount-final {
-            font-weight: 800;
+            font-weight: normal;
         }
         
         .amount-note {
@@ -283,19 +283,24 @@ $html = '
         }
         
         .status-paid {
-            font-weight: 800;
+            font-weight: normal;
             text-transform: uppercase;
             color: #0e8092;
         }
         
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
+        .table-header-wrapper {
+            background-color: #17a2b8;
+            border-radius: 8px;
+            overflow: hidden;
             margin-top: 34px;
         }
         
-        .items-table th {
-            background-color: #17a2b8;
+        .items-header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .items-header-table th {
             color: #ffffff;
             font-size: 12px;
             font-weight: 700;
@@ -304,24 +309,29 @@ $html = '
             text-align: left;
         }
         
-        .items-table th.col-qty,
-        .items-table th.col-duration,
-        .items-table th.col-rate {
+        .items-header-table th.col-qty,
+        .items-header-table th.col-duration,
+        .items-header-table th.col-rate {
             text-align: center;
         }
         
-        .items-table th.col-total {
+        .items-header-table th.col-total {
             text-align: right;
         }
         
-        .items-table td {
+        .items-body-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .items-body-table td {
             padding: 12px 14px;
             font-size: 13px;
             vertical-align: top;
             border-bottom: 1px solid #eef4f5;
         }
         
-        .items-table tr:nth-child(even) td {
+        .items-body-table tr:nth-child(even) td {
             background-color: #f8fcfd;
         }
         
@@ -491,16 +501,21 @@ $html = '
     </div>
 
     <!-- ITEMS TABLE -->
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 40%;">Service Description</th>
-                <th class="col-qty" style="width: 10%;">Qty</th>
-                <th class="col-duration" style="width: 15%;">Duration</th>
-                <th class="col-rate" style="width: 15%;">Rate</th>
-                <th class="col-total" style="width: 20%;">Amount</th>
-            </tr>
-        </thead>
+    <div class="table-header-wrapper">
+        <table class="items-header-table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Service Description</th>
+                    <th class="col-qty" style="width: 10%;">Qty</th>
+                    <th class="col-duration" style="width: 15%;">Duration</th>
+                    <th class="col-rate" style="width: 15%;">Rate</th>
+                    <th class="col-total" style="width: 20%;">Amount</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    
+    <table class="items-body-table">
         <tbody>
             ' . $items_html . '
         </tbody>
