@@ -3,16 +3,16 @@
 // ── Data preparation ──────────────────────────────────────────────────────────
 // All company fields are read from per-tenant options so every subdomain
 // automatically uses its own details set in Settings → Company.
-$company_name      = get_option('invoice_company_name') ?: get_option('companyname') ?: '';
-$company_phone     = get_option('invoice_company_phonenumber') ?: get_option('companyphonenumber') ?: '';
-$company_email     = get_option('companyemail') ?: '';
+$company_name      = get_option('invoice_company_name') ?: get_option('companyname') ?: 'Nooryak Technologies';
+$company_phone     = get_option('invoice_company_phonenumber') ?: get_option('companyphonenumber') ?: '+91-6374913298';
+$company_email     = get_option('companyemail') ?: 'admin@nooryak.com';
 $company_address   = get_option('invoice_company_address') ?: '';
 $company_city      = get_option('invoice_company_city') ?: '';
 $company_state     = get_option('company_state') ?: '';
 $company_zip       = get_option('invoice_company_postal_code') ?: '';
 $company_country   = get_option('invoice_company_country_code') ?: '';
 $company_vat       = get_option('company_vat') ?: '';   // GSTIN / VAT number
-$company_website   = get_option('companywebsite') ?: '';
+$company_website   = get_option('companywebsite') ?: 'www.nooryak.com';
 
 $invoice_no   = $invoice_number;
 $invoice_date = _d($invoice->date);
