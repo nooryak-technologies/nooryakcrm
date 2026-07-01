@@ -62,9 +62,13 @@ function _inv_money($amount, $symbol) {
 // Logo
 $logo_html = pdf_logo_url();
 if ($logo_html == '') {
-    $fallback_logo = FCPATH . 'assets/images/NOORYAK-CRM-LOGO.png';
-    if (file_exists($fallback_logo)) {
-        $logo_html = '<img src="' . $fallback_logo . '" style="height:48px;" />';
+    // If the company name contains "Nooryak", fall back to the brand logo.
+    // For other tenant subdomains, we do not force the Nooryak logo and let it fall back to text.
+    if (stripos($company_name, 'Nooryak') !== false) {
+        $fallback_logo = FCPATH . 'assets/images/NOORYAK-CRM-LOGO.png';
+        if (file_exists($fallback_logo)) {
+            $logo_html = '<img src="' . $fallback_logo . '" style="height:48px;" />';
+        }
     }
 }
 
@@ -441,7 +445,7 @@ $html = '
                 <div class="logo-block">
                     ' . ($logo_html !== '' ? $logo_html : '
                     <div class="logo-text-main">' . htmlspecialchars($company_name) . '</div>
-                    <div class="logo-text-sub">— TECHNOLOGIES</div>
+                    ' . (stripos($company_name, 'Nooryak') !== false ? '<div class="logo-text-sub">— TECHNOLOGIES</div>' : '') . '
                     ') . '
                 </div>
             </td>
