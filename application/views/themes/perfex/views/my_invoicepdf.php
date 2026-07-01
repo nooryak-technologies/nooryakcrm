@@ -162,7 +162,7 @@ $html = '
             right: -40px;
             width: 230px;
             height: 300px;
-            background: #17a2b8;
+            background: #eaf7f9;
             border-bottom-left-radius: 230px;
             z-index: -100;
         }
@@ -421,7 +421,7 @@ $html = '
         
         .footer-table {
             position: fixed;
-            bottom: -50px;
+            bottom: -35px;
             left: 0px;
             right: 0px;
             width: 100%;
