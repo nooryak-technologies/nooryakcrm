@@ -162,7 +162,7 @@ $html = '
             right: -40px;
             width: 230px;
             height: 300px;
-            background: linear-gradient(135deg, #17a2b8 0%, #0e8092 60%, #ffffff 100%);
+            background: #91e1edff;
             border-bottom-left-radius: 230px;
             z-index: -100;
         }
@@ -199,7 +199,7 @@ $html = '
         
         .header-right {
             text-align: right;
-            padding-right: 25px;
+            padding-right: 10px;
         }
         
         .invoice-title {
@@ -421,20 +421,20 @@ $html = '
         
         .footer-table {
             position: fixed;
-            bottom: -20px;
+            bottom: -35px;
             left: 0px;
             right: 0px;
             width: 100%;
-            background: linear-gradient(90deg, #17a2b8 0%, #0e8092 100%);
+            background-color: #17a2b8;
             border-collapse: collapse;
             border-radius: 12px;
             overflow: hidden;
         }
         
         .footer-table td {
-            padding: 18px 20px;
+            padding: 16px 20px;
             color: #ffffff;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 700;
             vertical-align: middle;
         }
@@ -471,46 +471,39 @@ $html = '
     </table>
 
     <!-- CLIENT & INVOICE INFO -->
-    <table style="width: 100%; margin-top: 30px; border-collapse: collapse; margin-bottom: 20px;">
-        <tr>
-            <td style="width: 50%; vertical-align: top; padding-right: 20px;">
-                <div class="client-info-line">CLIENT INFO:</div>
-                <div style="font-size: 14px; font-weight: 800; color: #17171a; margin-bottom: 5px;">' . htmlspecialchars($client_name) . '</div>
-                ' . ($client_address !== '' ? '<div style="font-size: 12.5px; color: #4a4a4a; line-height: 1.5;">' . nl2br(htmlspecialchars($client_address)) . '</div>' : '') . '
-            </td>
-            <td style="width: 50%; vertical-align: top;">
-                <table class="info-table" style="width: 100%;">
-                    <tr>
-                        <td class="label">INVOICE NO :</td>
-                        <td class="value">' . htmlspecialchars($invoice_no) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">INVOICE DATE:</td>
-                        <td class="value">' . htmlspecialchars($invoice_date) . '</td>
-                    </tr>
-                    <tr>
-                        <td class="label">AMOUNT:</td>
-                        <td class="value">
-                            <span class="amount-final">' . _inv_money($total, $currency_symbol) . '</span>
-                            ' . ($total_tax > 0 ? '<br><span class="amount-note">(Including ' . _inv_money($total_tax, $currency_symbol) . ' GST)</span>' : '') . '
-                        </td>
-                    </tr>
-                    ' . ($advance > 0 ? '
-                    <tr>
-                        <td class="label">ADVANCE :</td>
-                        <td class="value">
-                            <strong>' . _inv_money($advance, $currency_symbol) . ' (' . $advance_percentage . '%)</strong>
-                            <br><span class="balance-note">- Balance ' . $balance_percentage . '%</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">STATUS :</td>
-                        <td class="value"><span class="status-paid">ADVANCE PAID (' . $advance_percentage . '%)</span></td>
-                    </tr>' : '') . '
-                </table>
-            </td>
-        </tr>
-    </table>
+    <div class="info-section">
+        <div class="client-info-line">CLIENT INFO: ' . htmlspecialchars($client_name) . '</div>
+
+        <table class="info-table">
+            <tr>
+                <td class="label">INVOICE NO :</td>
+                <td class="value">' . htmlspecialchars($invoice_no) . '</td>
+            </tr>
+            <tr>
+                <td class="label">INVOICE DATE:</td>
+                <td class="value">' . htmlspecialchars($invoice_date) . '</td>
+            </tr>
+            <tr>
+                <td class="label">AMOUNT:</td>
+                <td class="value">
+                    <span class="amount-final">' . _inv_money($total, $currency_symbol) . '</span>
+                    ' . ($total_tax > 0 ? '<span class="amount-note">(Including ' . _inv_money($total_tax, $currency_symbol) . ' GST)</span>' : '') . '
+                </td>
+            </tr>
+            ' . ($advance > 0 ? '
+            <tr>
+                <td class="label">ADVANCE :</td>
+                <td class="value">
+                    <strong>' . _inv_money($advance, $currency_symbol) . ' (' . $advance_percentage . '%)</strong>
+                    <span class="balance-note">- Balance ' . $balance_percentage . '%</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">STATUS :</td>
+                <td class="value"><span class="status-paid">ADVANCE PAID (' . $advance_percentage . '%)</span></td>
+            </tr>' : '') . '
+        </table>
+    </div>
 
     <!-- ITEMS TABLE -->
     <div class="table-header-wrapper">
