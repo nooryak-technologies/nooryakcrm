@@ -407,13 +407,17 @@ $html = '
             border-top: 1px solid #dcecee;
         }
         
-        .footer-table {
+        .footer-bar {
             width: 100%;
             margin-top: 40px;
             background-color: #17a2b8;
-            border-collapse: collapse;
             border-radius: 12px;
             overflow: hidden;
+        }
+        
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
         .footer-table td {
@@ -553,19 +557,21 @@ $html = '
     </table>
 
     <!-- FOOTER -->
-    <table class="footer-table">
-        <tr>
-            <td style="width: 33.33%; text-align: left;">
-                ' . ($company_website !== '' ? htmlspecialchars($company_website) : '') . '
-            </td>
-            <td style="width: 33.33%; text-align: center;">
-                ' . ($company_phone !== '' ? htmlspecialchars($company_phone) : '') . '
-            </td>
-            <td style="width: 33.33%; text-align: right;">
-                ' . ($company_email !== '' ? htmlspecialchars($company_email) : '') . '
-            </td>
-        </tr>
-    </table>
+    <div class="footer-bar">
+        <table class="footer-table">
+            <tr>
+                <td style="width: 33.33%; text-align: left;">
+                    ' . ($company_website !== '' ? htmlspecialchars($company_website) : '') . '
+                </td>
+                <td style="width: 33.33%; text-align: center;">
+                    ' . ($company_phone !== '' ? htmlspecialchars($company_phone) : '') . '
+                </td>
+                <td style="width: 33.33%; text-align: right;">
+                    ' . ($company_email !== '' ? htmlspecialchars($company_email) : '') . '
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </div>
 
