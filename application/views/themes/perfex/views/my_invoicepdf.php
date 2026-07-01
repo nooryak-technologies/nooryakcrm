@@ -162,7 +162,7 @@ $html = '
             right: -40px;
             width: 230px;
             height: 300px;
-            background: #eaf7f9;
+            background: #91e1edff;
             border-bottom-left-radius: 230px;
             z-index: -100;
         }
