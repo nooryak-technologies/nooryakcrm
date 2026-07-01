@@ -55,8 +55,10 @@ if ($note_text === '') {
 }
 
 // Helper: format money
-function _inv_money($amount, $symbol) {
-    return $symbol . number_format((float)$amount, 2, '.', ',');
+if (!function_exists('_inv_money')) {
+    function _inv_money($amount, $symbol) {
+        return $symbol . number_format((float)$amount, 2, '.', ',');
+    }
 }
 
 // Logo
