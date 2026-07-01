@@ -60,12 +60,12 @@ function _inv_money($amount, $symbol) {
 }
 
 // Logo
-$companyUploadPath = get_upload_path_by_type('company');
-$logo_path = '';
-if (get_option('company_logo_dark') != '' && file_exists($companyUploadPath . get_option('company_logo_dark'))) {
-    $logo_path = $companyUploadPath . get_option('company_logo_dark');
-} elseif (get_option('company_logo') != '' && file_exists($companyUploadPath . get_option('company_logo'))) {
-    $logo_path = $companyUploadPath . get_option('company_logo');
+$logo_html = pdf_logo_url();
+if ($logo_html == '') {
+    $fallback_logo = FCPATH . 'assets/images/NOORYAK-CRM-LOGO.png';
+    if (file_exists($fallback_logo)) {
+        $logo_html = '<img src="' . $fallback_logo . '" style="height:48px;" />';
+    }
 }
 
 // Build the dynamic company address block for the PDF header
@@ -76,12 +76,6 @@ if ($company_zip !== '') $city_state_zip .= ($city_state_zip ? ' ' : '') . $comp
 if ($city_state_zip !== '') $company_address_lines[] = htmlspecialchars($city_state_zip);
 if ($company_country !== '') $company_address_lines[] = htmlspecialchars($company_country);
 $company_address_html = implode('<br>', $company_address_lines);
-
-// If no logo is configured just leave it empty — no hardcoded fallback
-if ($logo_path == '' || !file_exists($logo_path)) {
-    $logo_path = '';
-}
-$logo_html = file_exists($logo_path) ? '<img src="' . $logo_path . '" style="height:60px;" />' : '';
 
 // ── Build items HTML ──────────────────────────────────────────────────────────
 $items_html = '';
