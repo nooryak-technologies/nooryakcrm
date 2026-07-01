@@ -12,7 +12,7 @@ $company_state     = get_option('company_state') ?: '';
 $company_zip       = get_option('invoice_company_postal_code') ?: '';
 $company_country   = get_option('invoice_company_country_code') ?: '';
 $company_vat       = get_option('company_vat') ?: '';   // GSTIN / VAT number
-$company_website   = get_option('companywebsite') ?: 'www.nooryak.com';
+$company_website   = get_option('companywebsite') ?: 'www.nooryakcrm.com';
 
 $invoice_no   = $invoice_number;
 $invoice_date = _d($invoice->date);
