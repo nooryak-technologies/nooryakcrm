@@ -13,9 +13,6 @@ $company_zip       = get_option('invoice_company_postal_code') ?: '';
 $company_country   = get_option('invoice_company_country_code') ?: '';
 $company_vat       = get_option('company_vat') ?: '';   // GSTIN / VAT number
 $company_website   = get_option('companywebsite') ?: 'www.nooryakcrm.com';
-if ($company_website === 'www.nooryak.com') {
-    $company_website = 'www.nooryakcrm.com';
-}
 
 $invoice_no   = $invoice_number;
 $invoice_date = _d($invoice->date);
@@ -141,6 +138,10 @@ $html = '
 <head>
     <meta charset="utf-8">
     <style>
+        @page {
+            margin: 40px 40px 80px 40px;
+        }
+        
         body {
             margin: 0;
             padding: 0;
@@ -419,8 +420,11 @@ $html = '
         }
         
         .footer-table {
+            position: fixed;
+            bottom: -50px;
+            left: 0px;
+            right: 0px;
             width: 100%;
-            margin-top: 40px;
             background-color: #17a2b8;
             border-collapse: collapse;
             border-radius: 12px;
