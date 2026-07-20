@@ -116,7 +116,7 @@ class New_updates_wp extends AdminController
             $response = $client->request('POST', 'https://2fa.tehub.in/api/whatsapp.php', [
                 'json' => $payload,
                 'headers' => [
-                    'Authorization' => 'Bearer teh_api_47dbc4f2285eeadfcdc8b60edc25f4ae',
+                    'Authorization' => 'Bearer 3bf6211c4ba7000f46ea1cb9d2d0f78f',
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ]

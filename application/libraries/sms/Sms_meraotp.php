@@ -12,8 +12,8 @@ class Sms_meraotp extends App_sms
         parent::__construct();
 
         $db_key = $this->get_option('meraotp', 'api_key');
-        if (empty($db_key) || strpos($db_key, 'teh_api_') !== 0) {
-            $this->api_key = 'teh_api_47dbc4f2285eeadfcdc8b60edc25f4ae';
+        if (empty($db_key)) {
+            $this->api_key = '3bf6211c4ba7000f46ea1cb9d2d0f78f';
         } else {
             $this->api_key = $db_key;
         }
@@ -44,7 +44,7 @@ class Sms_meraotp extends App_sms
             $payload = [
                 'to'      => $number,
                 'message' => $message,
-                'type'    => 'otp',
+                'type'    => 'general',
             ];
 
             $response = $this->client->request('POST', $this->apiUrl, [

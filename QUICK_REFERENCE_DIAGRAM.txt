@@ -1,0 +1,361 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    CRM SYSTEM - QUICK REFERENCE DIAGRAM                      ║
+║                          Understanding the Flow                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          🏢 YOUR CRM SYSTEM HAS 2 DOORS                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    🚪 DOOR 1: ADMIN PORTAL                    🚪 DOOR 2: CLIENT PORTAL
+    ══════════════════════════                  ═══════════════════════
+    
+    URL: /admin                                 URL: /clients
+    
+    WHO ENTERS:                                 WHO ENTERS:
+    👨‍💼 Staff (You, managers, sales team)        👤 Customers (People you sell to)
+    
+    KEY TYPE:                                   KEY TYPE:
+    🔑 Staff credentials                         🔑 Client credentials
+       email: staff@yourcompany.com                email: client@theirccompany.com
+       password: admin_password                    password: client_password
+    
+    WHAT'S INSIDE:                              WHAT'S INSIDE:
+    ✅ Full CRM Dashboard                        👁️  Personal Dashboard
+    ✅ Manage ALL leads                          ❌ No leads access
+    ✅ Manage ALL customers                      👁️  See own data only
+    ✅ Create invoices                           👁️  View own invoices
+    ✅ View reports                              👁️  Pay invoices
+    ✅ System settings                           ❌ No system settings
+    ✅ Add staff members                         ❌ No staff access
+    ✅ View all projects                         👁️  View own projects
+    
+    CURRENT STATUS:                             CURRENT STATUS:
+    ❌ You DON'T have credentials               ✅ You HAVE credentials
+    ⚠️  NEED TO FIND THESE!                     ✅ wezan.bahad@gmail.com
+                                                ✅ Working perfectly!
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                       🎯 YOUR CURRENT SITUATION                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    What You Have Now:
+    ═════════════════
+    ✅ CLIENT Portal Access
+       └─> You can login at /clients
+       └─> You can see: Invoices, Projects, Subscriptions
+       └─> You CANNOT: Manage business, add leads, create invoices
+    
+    What You Need:
+    ══════════════
+    🔍 ADMIN Portal Access
+       └─> Need to find staff credentials
+       └─> Then login at /admin
+       └─> Then manage your full CRM system
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    📊 COMPLETE BUSINESS FLOW (Simple View)                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    STEP 1: Get Potential Customer
+    ═══════════════════════════════
+    
+    [Someone interested] 
+            ↓
+    Admin adds as LEAD
+            ↓
+    ┌─────────────────┐
+    │  LEAD BOARD     │ ← You see this in /admin → Leads → Kanban View
+    │  (Kanban View)  │
+    └─────────────────┘
+    
+    Lead Stages:
+    [New] → [Contacted] → [Qualified] → [Proposal Sent] → [Won/Lost]
+    
+    
+    STEP 2: Lead Becomes Customer
+    ══════════════════════════════
+    
+    Lead Status: WON
+            ↓
+    Admin clicks "Convert to Customer"
+            ↓
+    ┌─────────────────────────┐
+    │  CUSTOMER CREATED ✅    │
+    │  (Stored in database)   │
+    └─────────────────────────┘
+            ↓
+    System sends email to customer
+            ↓
+    Customer gets CLIENT LOGIN credentials
+    
+    
+    STEP 3: Do Business with Customer
+    ══════════════════════════════════
+    
+    Admin (You):                          Customer (Client):
+    ════════════                          ══════════════════
+    
+    ① Create ESTIMATE                     ⓵ Receive email notification
+       "Website: ₹50,000"                    
+            ↓                                     ↓
+    ② Send to customer ────────────────>  ⓶ Login to /clients portal
+                                                  ↓
+                                          ⓷ View estimate
+                                                  ↓
+                                          ⓸ Approve or reject
+            ↓                                     ↓
+    ③ Receive approval    <────────────── ⓹ Approved! ✅
+            ↓
+    ④ Convert to INVOICE
+            ↓
+    ⑤ Send invoice ───────────────────>   ⓺ View invoice
+                                                  ↓
+                                          ⓻ Pay online
+            ↓                                     ↓
+    ⑥ Receive payment     <────────────── ⓼ Payment sent ✅
+            ↓
+    ⑦ Create PROJECT
+            ↓
+    ⑧ Add tasks, track work
+            ↓                                     ↓
+    ⑨ Update progress ────────────────>   ⓽ Track progress
+            ↓                                     ↓
+    ⑩ Complete project                    ⓾ Receive notification
+            ↓                                     ↓
+    ⑪ Happy customer! 🎉                  ⑪ Happy! Leave review! ⭐
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         🔄 DATA VISIBILITY MATRIX                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    What Can Each User Type SEE?
+    
+    Feature               │  Admin Portal  │  Client Portal  │
+    ══════════════════════╪════════════════╪═════════════════╡
+    Dashboard Analytics   │       ✅       │       ❌        │
+    ALL Leads             │       ✅       │       ❌        │
+    ALL Customers         │       ✅       │       ❌        │
+    Own Profile           │       ✅       │       ✅        │
+    ALL Invoices          │       ✅       │       ❌        │
+    Own Invoices          │       ✅       │       ✅        │
+    Create Invoices       │       ✅       │       ❌        │
+    Pay Invoices          │       ❌       │       ✅        │
+    ALL Projects          │       ✅       │       ❌        │
+    Own Projects          │       ✅       │       ✅        │
+    Create Projects       │       ✅       │       ❌        │
+    Financial Reports     │       ✅       │       ❌        │
+    System Settings       │       ✅       │       ❌        │
+    Add Staff             │       ✅       │       ❌        │
+    Submit Tickets        │       ✅       │       ✅        │
+    View All Tickets      │       ✅       │       ❌        │
+    Subscription Info     │       ✅       │       ✅        │
+    Package/Billing       │    👁️ View     │    ✅ Manage    │
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                   🎭 USER ROLE COMPARISON (Real Examples)                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Scenario: "I want to see all customer invoices"
+    ═══════════════════════════════════════════════
+    
+    👨‍💼 Admin:  Login at /admin → Sales → Invoices → See ALL invoices ✅
+    👤 Client: Login at /clients → Invoices → See ONLY my invoices 👁️
+    
+    
+    Scenario: "I want to add a new lead"
+    ════════════════════════════════════
+    
+    👨‍💼 Admin:  Login at /admin → Leads → New Lead → Fill form → Save ✅
+    👤 Client: No option to add leads ❌ (clients don't manage leads)
+    
+    
+    Scenario: "I want to create an invoice"
+    ═══════════════════════════════════════
+    
+    👨‍💼 Admin:  Login at /admin → Sales → Invoices → New Invoice ✅
+    👤 Client: Cannot create invoices ❌ (only receive them)
+    
+    
+    Scenario: "I want to pay an invoice"
+    ════════════════════════════════════
+    
+    👨‍💼 Admin:  Can mark as paid manually 👁️
+    👤 Client: Can pay online through gateway ✅
+    
+    
+    Scenario: "I want to view sales reports"
+    ════════════════════════════════════════
+    
+    👨‍💼 Admin:  Login at /admin → Reports → Sales → See graphs ✅
+    👤 Client: No reports section ❌
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                      🔍 HOW TO FIND YOUR ADMIN CREDENTIALS                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Option 1: Check Email Inbox 📧
+    ═══════════════════════════════
+    
+    Search Gmail for:
+    ▸ "staff member created"
+    ▸ "admin account"
+    ▸ "welcome to CRM"
+    ▸ from:noreply@nooryakcrm.com
+    
+    Look for email with subject like:
+    ✉️  "Staff Member Created"
+    ✉️  "Your CRM Admin Access"
+    ✉️  "Company CRM Instance created successfully" (might have admin info)
+    
+    
+    Option 2: Use Password Reset Tool 🔧
+    ════════════════════════════════════
+    
+    ① Open: http://localhost/crm/reset_admin_password.php
+    ② Find: Your staff account (look for admin role)
+    ③ Click: "Reset Password" button
+    ④ Enter: New password
+    ⑤ Login: Use new password at /admin
+    ⚠️  DELETE: The reset file after use!
+    
+    
+    Option 3: Database Query 💾
+    ═══════════════════════════
+    
+    ① Open: phpMyAdmin
+    ② Select: nooryak_crm database
+    ③ Run SQL:
+    
+       SELECT staffid, firstname, lastname, email, admin, active
+       FROM tbl_staff
+       WHERE admin = 1 AND active = 1;
+    
+    ④ Note: Your admin email
+    ⑤ Use: Option 2 to reset password
+    
+    
+    Option 4: Contact Support 📞
+    ═══════════════════════════════
+    
+    Contact: Nooryak Technologies
+    Request: Admin credentials for vezan instance
+    Provide: Proof of ownership
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        ⚡ QUICK TROUBLESHOOTING                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Problem: "Invalid email or password" at /admin
+    ═══════════════════════════════════════════════
+    Cause:   You're using CLIENT credentials
+    Fix:     Use STAFF credentials instead
+    
+    
+    Problem: "I don't see Leads menu"
+    ══════════════════════════════════
+    Cause:   You're logged into /clients portal
+    Fix:     Logout and login at /admin portal
+    
+    
+    Problem: "I can only see my own invoices"
+    ══════════════════════════════════════════
+    Cause:   You're logged in as CLIENT
+    Fix:     You need ADMIN login to see all invoices
+    
+    
+    Problem: "Where is the Kanban board?"
+    ══════════════════════════════════════
+    Cause:   You're in wrong portal OR wrong view
+    Fix:     Login at /admin → Leads → Click "Kanban" button
+    
+    
+    Problem: "Currency shows $ instead of ₹"
+    ════════════════════════════════════════
+    Cause:   Currency not updated in database
+    Fix:     Run update_currency_symbol.php tool
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                           📚 SIMPLE ANALOGY                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Think of your CRM like a RESTAURANT:
+    
+    🏢 Restaurant (CRM System)
+    
+        👨‍🍳 Kitchen (Admin Portal /admin)
+        ═════════════════════════════════
+        • Chefs = Admins/Staff
+        • They cook = Create invoices, manage leads
+        • They see all orders = View all customer data
+        • They control everything = Full system access
+        
+        🍽️  Dining Area (Client Portal /clients)
+        ═════════════════════════════════════════
+        • Customers = Clients
+        • They eat = View their invoices
+        • They see their own table = View own projects
+        • They pay bill = Make payments
+        
+    YOU CURRENTLY:
+    • Have a seat in dining area (/clients) ✅
+    • Need key to kitchen (/admin) ❌
+    
+    TO MANAGE RESTAURANT:
+    • You need kitchen key = Admin credentials 🔑
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          ✅ ACTION CHECKLIST                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    Immediate Actions:
+    
+    □ Find admin credentials (check email or use reset tool)
+    □ Login at https://vezan.nooryakcrm.com/admin
+    □ Explore the admin dashboard
+    □ Add yourself as primary admin (if needed)
+    □ Verify currency is set to ₹
+    □ Delete temporary security files
+    
+    After Getting Admin Access:
+    
+    □ Go to Setup → Staff → Add team members
+    □ Go to Setup → Settings → Configure system
+    □ Go to Leads → Add your first lead
+    □ Try the Kanban board view
+    □ Go to Customers → Add/import customers
+    □ Create a sample invoice
+    □ Explore reports section
+    □ Set up email templates
+    □ Configure payment gateways
+    
+    Security:
+    
+    □ Delete: reset_admin_password.php
+    □ Delete: check_currency.php
+    □ Delete: update_currency_symbol.php
+    □ Delete: verify_fixes.php
+    □ Keep: Custom CSS file and documentation
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            📞 NEED HELP?                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+    1. Read: CRM_SYSTEM_FLOW_GUIDE.md (detailed explanation)
+    2. Watch: YouTube "Perfex CRM Tutorial"
+    3. Contact: Nooryak Technologies support
+    4. Check: /admin/knowledge_base (after you get admin access)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+            YOUR NEXT STEP: Find admin credentials and login at /admin
+═══════════════════════════════════════════════════════════════════════════════
