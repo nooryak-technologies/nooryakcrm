@@ -528,12 +528,25 @@ function page_builder_serve_page($page, $options = [])
 
             $defaultValues = [
                 '[PAGE_BUILDER_SEO_ROBOT]' => 'index, follow',
-                '[PAGE_BUILDER_TITLE]' => get_option('company_name'),
+                '[PAGE_BUILDER_TITLE]' => 'Nooryak CRM | ALL-IN-ONE CRM PLATFORM',
+                '[PAGE_BUILDER_SEO_DESCRIPTION]' => 'Manage Leads. Close Deals. Grow Faster.',
+                '[PAGE_BUILDER_SEO_IMAGE]' => base_url('assets/images/crm_sharingicon.png'),
             ];
 
             foreach (PAGE_BUILDER_TAGS as $tag => $value) {
                 $tagValue = !empty($metadata[$tag]) ? $metadata[$tag] : ($defaultValues[$tag] ?? '');
                 $pageData[$tag] = str_starts_with($value, '_') ? $tagValue : xss_clean($tagValue);
+            }
+
+            // Enforce social sharing preview metadata
+            if (empty($pageData['[PAGE_BUILDER_TITLE]']) || $pageData['[PAGE_BUILDER_TITLE]'] === get_option('company_name') || $pageData['[PAGE_BUILDER_TITLE]'] === 'Nooryak CRM' || $pageData['[PAGE_BUILDER_TITLE]'] === 'Nooryak CRM ') {
+                $pageData['[PAGE_BUILDER_TITLE]'] = 'Nooryak CRM | ALL-IN-ONE CRM PLATFORM';
+            }
+            if (empty($pageData['[PAGE_BUILDER_SEO_DESCRIPTION]']) || $pageData['[PAGE_BUILDER_SEO_DESCRIPTION]'] === 'Nooryak CRM') {
+                $pageData['[PAGE_BUILDER_SEO_DESCRIPTION]'] = 'Manage Leads. Close Deals. Grow Faster.';
+            }
+            if (empty($pageData['[PAGE_BUILDER_SEO_IMAGE]']) || strpos($pageData['[PAGE_BUILDER_SEO_IMAGE]'], 'crm_sharingicon.png') === false) {
+                $pageData['[PAGE_BUILDER_SEO_IMAGE]'] = base_url('assets/images/crm_sharingicon.png');
             }
 
             if (empty($pageData['[PAGE_BUILDER_FAVICON]'])) {

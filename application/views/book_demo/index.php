@@ -4,7 +4,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= e($title); ?></title>
+    <title><?= !empty($title) ? e($title) : 'Nooryak CRM | ALL-IN-ONE CRM PLATFORM'; ?></title>
+    <meta name="description" content="Manage Leads. Close Deals. Grow Faster.">
+    <meta property="og:title" content="Nooryak CRM | ALL-IN-ONE CRM PLATFORM">
+    <meta property="og:description" content="Manage Leads. Close Deals. Grow Faster.">
+    <meta property="og:image" content="<?= base_url('assets/images/crm_sharingicon.png'); ?>">
+    <meta property="og:image:secure_url" content="<?= base_url('assets/images/crm_sharingicon.png'); ?>">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Nooryak CRM">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nooryak CRM | ALL-IN-ONE CRM PLATFORM">
+    <meta name="twitter:description" content="Manage Leads. Close Deals. Grow Faster.">
+    <meta name="twitter:image" content="<?= base_url('assets/images/crm_sharingicon.png'); ?>">
     <link rel="icon" type="image/png" href="<?= e($favicon_url); ?>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
